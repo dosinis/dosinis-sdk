@@ -20,6 +20,7 @@ namespace DosinisSDK.Utils
 
             return amount;
         }
+
     }
 
 }

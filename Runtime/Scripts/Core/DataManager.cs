@@ -42,7 +42,7 @@ namespace DosinisSDK.Core
             dataRegistry.Add(typeof(T).Name, data);
         }
 
-        public T LoadData<T>()
+        public T LoadData<T>() where T : class, new()
         {
             if (PlayerPrefs.HasKey(typeof(T).Name))
             {
@@ -50,7 +50,7 @@ namespace DosinisSDK.Core
             }
             else
             {
-                return default;
+                return new T();
             }
         }
 

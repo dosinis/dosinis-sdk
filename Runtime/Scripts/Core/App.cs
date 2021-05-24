@@ -39,11 +39,17 @@ namespace DosinisSDK.Core
 
             }
 
+            Array.Sort(cachedBehaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
+            {
+                return x.InitOrder.CompareTo(y.InitOrder);
+            });
+
             foreach (var module in cachedBehaviourModules)
             {
                 try
                 {
                     module.Init(this);
+                    Debug.Log($"Module {module.GetType().Name} is initiallized successfully. Init Order Id: {module.InitOrder}");
                 }
                 catch (Exception ex)
                 {
