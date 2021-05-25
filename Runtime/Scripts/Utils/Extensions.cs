@@ -20,6 +20,17 @@ namespace DosinisSDK.Utils
 
             return amount;
         }
+        public static string RemoveExtention(this string path)
+        {
+            string ext = System.IO.Path.GetExtension(path);
+
+            if (string.IsNullOrEmpty(ext) == false)
+            {
+                return path.Remove(path.Length - ext.Length, ext.Length);
+            }
+
+            return path;
+        }
 
     }
 
