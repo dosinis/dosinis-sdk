@@ -2,6 +2,7 @@ using DosinisSDK.Config;
 using DosinisSDK.Model;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace DosinisSDK.Core
 {
@@ -121,6 +122,18 @@ namespace DosinisSDK.Core
             {
                 AudioListener.volume = 1;
             }
+        }
+
+        public async void PlayOneShot(AssetReferenceT<AudioClip> clipRef, float volume = 1)
+        {
+            var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
+            PlayOneShot(clip, volume);
+        }
+
+        public async void PlayMusic(AssetReferenceT<AudioClip> clipRef)
+        {
+            var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
+            PlayMusic(clip);
         }
     }
 }
