@@ -3,6 +3,8 @@ using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using GoogleMobileAds.Api;
 using System;
+using System.Collections;
+using UnityEngine;
 
 namespace DosinisSDK.Ads
 {
@@ -109,6 +111,21 @@ namespace DosinisSDK.Ads
             }
 
             OnRewardedAdFinished += CallBack;
+
+            if (Application.isEditor)
+            {
+                StartCoroutine(DummyCallback());
+                return;
+            }
+
+            foreach (RewardedAd ad in rewardedAds)
+            {
+                if (ad != null && ad.IsLoaded())
+                {
+                    ad.Show();
+                    break;
+                }
+            }
         }
 
         public override void ShowBanner(string placement = "")
@@ -136,6 +153,12 @@ namespace DosinisSDK.Ads
             {
                 interstitial.Show();
             }
+        }
+
+        private IEnumerator DummyCallback()
+        {
+            yield return new WaitForSeconds(2f);
+            OnRewardedAdFinished(true);
         }
 
         private void HandleRewardedAdClosed(object sender, EventArgs e)

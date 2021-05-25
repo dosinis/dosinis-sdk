@@ -4,6 +4,7 @@ namespace DosinisSDK.Core
     {
         void SaveData<T>(T data);
         T LoadData<T>() where T : class, new();
+        bool HasData<T>();
         void RegisterData<T>(T data);
     }
 

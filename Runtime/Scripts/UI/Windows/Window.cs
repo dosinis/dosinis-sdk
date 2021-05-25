@@ -6,7 +6,7 @@ namespace DosinisSDK.UI
 {
     public class Window : MonoBehaviour
     {
-        [SerializeField] private Button closeButton;
+        [SerializeField] protected Button closeButton;
 
         public event Action OnWindowShown = () => { };
         public event Action OnWindowHidden = () => { };

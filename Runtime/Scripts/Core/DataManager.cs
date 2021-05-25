@@ -44,7 +44,7 @@ namespace DosinisSDK.Core
 
         public T LoadData<T>() where T : class, new()
         {
-            if (PlayerPrefs.HasKey(typeof(T).Name))
+            if (HasData<T>())
             {
                 return JsonUtility.FromJson<T>(PlayerPrefs.GetString(typeof(T).Name));
             }
@@ -64,6 +64,11 @@ namespace DosinisSDK.Core
         public void SaveData<T>(T data)
         {
             SaveRawData(data, typeof(T).Name);
+        }
+
+        public bool HasData<T>()
+        {
+            return PlayerPrefs.HasKey(typeof(T).Name);
         }
     }
 }
