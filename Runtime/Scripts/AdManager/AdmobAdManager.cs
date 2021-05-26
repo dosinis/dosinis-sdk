@@ -24,7 +24,7 @@ namespace DosinisSDK.Ads
         private const string bannerTestId = "ca-app-pub-3940256099942544/6300978111";
         private const string rewardedTestId = "ca-app-pub-3940256099942544/5224354917";
 
-
+        private bool rewarded = false;
         public override void Init(IApp app)
         {
             MobileAds.Initialize(initStatus =>
@@ -112,12 +112,6 @@ namespace DosinisSDK.Ads
 
             OnRewardedAdFinished += CallBack;
 
-            if (Application.isEditor)
-            {
-                StartCoroutine(DummyCallback());
-                return;
-            }
-
             foreach (RewardedAd ad in rewardedAds)
             {
                 if (ad != null && ad.IsLoaded())
@@ -155,18 +149,13 @@ namespace DosinisSDK.Ads
             }
         }
 
-        private IEnumerator DummyCallback()
-        {
-            yield return new WaitForSeconds(2f);
-            OnRewardedAdFinished(true);
-        }
-
         private void HandleRewardedAdClosed(object sender, EventArgs e)
         {
             Log("AdManager : Rewarded ad closed");
             Dispatcher.RunOnMainThread(() =>
             {
-                OnRewardedAdFinished(false);
+                OnRewardedAdFinished(rewarded);
+                rewarded = false;
                 LoadRewardedAds();
             });
         }
@@ -174,11 +163,7 @@ namespace DosinisSDK.Ads
         private void HandleUserEarnedReward(object sender, Reward e)
         {
             Log("AdManager : Rewarded ad user rewarded");
-            Dispatcher.RunOnMainThread(() =>
-            {
-                OnRewardedAdFinished(true);
-                LoadRewardedAds();
-            });
+            rewarded = true;
         }
 
         private void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs e)
