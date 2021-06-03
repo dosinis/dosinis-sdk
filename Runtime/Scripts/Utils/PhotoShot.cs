@@ -38,7 +38,7 @@ namespace DosinisSDK.Utils
             cam = Camera.main;
         }
 
-        private string uniqueFilename(int width, int height)
+        private string GetFileName(int width, int height)
         {
             if (folder == null || folder.Length == 0)
             {
@@ -63,12 +63,52 @@ namespace DosinisSDK.Utils
             return filename;
         }
 
-        public void CaptureScreenshot()
+        private void ExportScreenshot()
         {
-            captureScreenshot = true;
+            string filename = GetFileName((int)rect.width, (int)rect.height);
+
+            byte[] fileHeader = null;
+            byte[] fileData = null;
+
+            if (format == Format.RAW)
+            {
+                fileData = screenShot.GetRawTextureData();
+            }
+            else if (format == Format.PNG)
+            {
+                fileData = screenShot.EncodeToPNG();
+            }
+            else if (format == Format.JPG)
+            {
+                fileData = screenShot.EncodeToJPG();
+            }
+            else
+            {
+                string headerStr = string.Format("P6\n{0} {1}\n255\n", rect.width, rect.height);
+                fileHeader = System.Text.Encoding.ASCII.GetBytes(headerStr);
+                fileData = screenShot.GetRawTextureData();
+            }
+
+            new System.Threading.Thread(() =>
+            {
+                var f = File.Create(filename);
+                if (fileHeader != null) f.Write(fileHeader, 0, fileHeader.Length);
+                f.Write(fileData, 0, fileData.Length);
+                f.Close();
+                Debug.Log(string.Format("Wrote screenshot {0} of size {1}", filename, fileData.Length));
+            }).Start();
+
+            if (hideGameObject != null) hideGameObject.SetActive(true);
+
+            if (optimizeForManyScreenshots == false)
+            {
+                Destroy(renderTexture);
+                renderTexture = null;
+                screenShot = null;
+            }
         }
 
-        void Update()
+        private void Update()
         {
             captureScreenshot |= Input.GetKeyDown("c");
             captureVideo = Input.GetKey("v");
@@ -96,46 +136,7 @@ namespace DosinisSDK.Utils
                 cam.targetTexture = null;
                 RenderTexture.active = null;
 
-                string filename = uniqueFilename((int)rect.width, (int)rect.height);
-
-                byte[] fileHeader = null;
-                byte[] fileData = null;
-                if (format == Format.RAW)
-                {
-                    fileData = screenShot.GetRawTextureData();
-                }
-                else if (format == Format.PNG)
-                {
-                    fileData = screenShot.EncodeToPNG();
-                }
-                else if (format == Format.JPG)
-                {
-                    fileData = screenShot.EncodeToJPG();
-                }
-                else
-                {
-                    string headerStr = string.Format("P6\n{0} {1}\n255\n", rect.width, rect.height);
-                    fileHeader = System.Text.Encoding.ASCII.GetBytes(headerStr);
-                    fileData = screenShot.GetRawTextureData();
-                }
-
-                new System.Threading.Thread(() =>
-                {
-                    var f = File.Create(filename);
-                    if (fileHeader != null) f.Write(fileHeader, 0, fileHeader.Length);
-                    f.Write(fileData, 0, fileData.Length);
-                    f.Close();
-                    Debug.Log(string.Format("Wrote screenshot {0} of size {1}", filename, fileData.Length));
-                }).Start();
-
-                if (hideGameObject != null) hideGameObject.SetActive(true);
-
-                if (optimizeForManyScreenshots == false)
-                {
-                    Destroy(renderTexture);
-                    renderTexture = null;
-                    screenShot = null;
-                }
+                ExportScreenshot();
             }
         }
     }
