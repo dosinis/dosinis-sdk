@@ -4,8 +4,8 @@ namespace DosinisSDK.Model
     public class AudioData : ModuleData
     {
         public float volume;
-        public bool isSfxEnabled;
-        public bool isMusicEnabled;
+        public bool isSfxMuted;
+        public bool isMusicMuted;
     }
 
 }

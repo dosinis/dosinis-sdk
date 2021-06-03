@@ -7,6 +7,11 @@ namespace DosinisSDK.Utils
 {
     public static class Extensions
     {
+        public static T Random<T>(this T[] array)
+        {
+            return array[UnityEngine.Random.Range(0, array.Length)];
+        }
+
         public static T Random<T>(this List<T> list)
         {
             return list[UnityEngine.Random.Range(0, list.Count)];
@@ -47,7 +52,7 @@ namespace DosinisSDK.Utils
 
                 padding = 1 - padding;
                 float ratio = image.texture.width / (float)image.texture.height;
-     
+
                 var bounds = new Rect(0, 0, parent.rect.width, parent.rect.height);
                 if (Mathf.RoundToInt(imageTransform.eulerAngles.z) % 180 == 90)
                 {

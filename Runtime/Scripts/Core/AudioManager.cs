@@ -18,6 +18,8 @@ namespace DosinisSDK.Core
         private IDataManager dataManager;
 
         private AudioData data;
+        public bool IsSfxMuted => data.isSfxMuted;
+        public bool IsMusicMuted => data.isMusicMuted;
 
         public override void Init(IApp app)
         {
@@ -41,6 +43,9 @@ namespace DosinisSDK.Core
 
             musicSource = mSource.AddComponent<AudioSource>();
             musicSource.loop = true;
+
+            SetMusicMuted(data.isMusicMuted);
+            SetSfxMuted(data.isSfxMuted);
         }
 
         public void StopMusic(AudioClip clip)
@@ -92,16 +97,13 @@ namespace DosinisSDK.Core
             }
         }
 
-        public void SetSFXMuted(bool value)
+        public void SetSfxMuted(bool value)
         {
-            data.isSfxEnabled = !value;
-            if (value)
+            data.isSfxMuted = value;
+
+            foreach (var src in sources)
             {
-                AudioListener.volume = 0;
-            }
-            else
-            {
-                AudioListener.volume = 1;
+                src.volume = value ? 0 : 1;
             }
         }
 
@@ -113,24 +115,25 @@ namespace DosinisSDK.Core
 
         public void SetMusicMuted(bool value)
         {
-            data.isMusicEnabled = !value;
+            data.isMusicMuted = value;
+
             if (value)
             {
-                AudioListener.volume = 0;
+                musicSource.volume = 0;
             }
             else
             {
-                AudioListener.volume = 1;
+                musicSource.volume = 1;
             }
         }
 
-        public async void PlayOneShot(AssetReferenceT<AudioClip> clipRef, float volume = 1)
+        public async void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1)
         {
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
             PlayOneShot(clip, volume);
         }
 
-        public async void PlayMusic(AssetReferenceT<AudioClip> clipRef)
+        public async void PlayMusicAsync(AssetReferenceT<AudioClip> clipRef)
         {
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
             PlayMusic(clip);
