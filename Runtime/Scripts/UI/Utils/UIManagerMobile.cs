@@ -13,7 +13,7 @@ namespace DosinisSDK.UI
         public override void Init(IApp app)
         {
             base.Init(app);
-            adManager = app.GetCachedBehaviourModule<IAdManager>();
+            adManager = app.GetCachedModule<IAdManager>();
         }
         public void ShowRewardedAdWindow(Action<bool> callback)
         {

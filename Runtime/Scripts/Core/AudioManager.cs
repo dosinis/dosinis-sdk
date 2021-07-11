@@ -23,7 +23,7 @@ namespace DosinisSDK.Core
 
         public override void Init(IApp app)
         {
-            dataManager = app.GetCachedBehaviourModule<IDataManager>();
+            dataManager = app.GetCachedModule<IDataManager>();
 
             data = dataManager.LoadData<AudioData>();
 

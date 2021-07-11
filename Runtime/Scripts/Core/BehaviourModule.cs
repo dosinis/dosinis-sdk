@@ -30,7 +30,6 @@ namespace DosinisSDK.Core
             {
                 Debug.Log(msg);
             }
-           
         }
     }
 }

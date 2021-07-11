@@ -1,0 +1,16 @@
+{
+    "name": "DosinisSDK.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:ba55aab39d97f8d4d8a552da093e94e4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

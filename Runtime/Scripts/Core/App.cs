@@ -1,42 +1,84 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    internal enum ModulesInstallType
+    internal enum BehaviourModulesInstallType
     {
         LookInResources,
         LookInScene,
         LookInBoth
     }
 
+    [RequireComponent(typeof(ModulesRegistry))]
     public sealed class App : MonoBehaviour, IApp
     {
-        [SerializeField] private ModulesInstallType modulesInstallType;
+        [SerializeField] private BehaviourModulesInstallType modulesInstallType;
 
+        private readonly List<IModule> cachedModules = new List<IModule>();
         private IBehaviourModule[] cachedBehaviourModules;
 
+        public event Action<bool> OnAppPaused = paused => { };
+        public event Action<bool> OnAppFocus = focus => { };
+
         public static App Core;
+
+        public T GetCachedModule<T>() where T : class, IModule
+        {
+            foreach (var module in cachedBehaviourModules)
+            {
+                if (module is T value)
+                {
+                    return value;
+                }
+            }
+
+            foreach (var module in cachedModules)
+            {
+                if (module is T value)
+                {
+                    return value;
+                }
+            }
+
+            Debug.LogError($"Cached Behaviour Module {typeof(T).Name} is not ready yet!");
+            return default;
+        }
+
+        public void RegisterModule(IModule module)
+        {
+            if (cachedModules.Contains(module) == false)
+            {
+                module.Init(this);
+                cachedModules.Add(module);
+            }
+            else
+            {
+                Debug.LogWarning($"App already contains module {nameof(module)}! Skipping...");
+            }
+        }
 
         private void Awake()
         {
             Core = this;
 
+            GetComponent<ModulesRegistry>().Init(this);
+
             switch (modulesInstallType)
             {
-                case ModulesInstallType.LookInResources:
+                case BehaviourModulesInstallType.LookInResources:
 
                     break;
-                case ModulesInstallType.LookInScene:
+                case BehaviourModulesInstallType.LookInScene:
                     cachedBehaviourModules = FindObjectsOfType(typeof(BehaviourModule)) as IBehaviourModule[];
                     break;
-                case ModulesInstallType.LookInBoth:
+                case BehaviourModulesInstallType.LookInBoth:
 
                     break;
                 default:
                     Debug.LogError("Unknown module installation type");
                     break;
-
             }
 
             Array.Sort(cachedBehaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
@@ -55,7 +97,6 @@ namespace DosinisSDK.Core
                 {
                     Debug.LogError($"Module {module.GetType().Name} experienced error while initializing: {ex.Message}");
                 }
-
             }
         }
 
@@ -67,19 +108,14 @@ namespace DosinisSDK.Core
             }
         }
 
-        public T GetCachedBehaviourModule<T>() where T : class, IBehaviourModule
+        private void OnApplicationPause(bool paused)
         {
-            foreach (var module in cachedBehaviourModules)
-            {
-                if (module is T value)
-                {
-                    return value;
-                }
-            }
-
-            Debug.LogError($"Cached Behaviour Module {typeof(T).Name} is not ready yet!");
-            return default;
+            OnAppPaused(paused);
         }
 
+        private void OnApplicationFocus(bool focus)
+        {
+            OnAppFocus(focus);
+        }
     }
 }

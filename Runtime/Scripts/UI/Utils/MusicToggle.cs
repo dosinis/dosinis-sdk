@@ -7,7 +7,7 @@ namespace DosinisSDK.UI
         protected override void OnClick()
         {
             base.OnClick();
-            var audioModule = App.Core.GetCachedBehaviourModule<IAudioManager>();
+            var audioModule = App.Core.GetCachedModule<IAudioManager>();
 
             audioModule.SetMusicMuted(!audioModule.IsMusicMuted);
         }

@@ -1,6 +1,6 @@
 namespace DosinisSDK.Core
 {
-    public interface IDataManager : IBehaviourModule
+    public interface IDataManager : IModule
     {
         void SaveData<T>(T data);
         T LoadData<T>() where T : class, new();

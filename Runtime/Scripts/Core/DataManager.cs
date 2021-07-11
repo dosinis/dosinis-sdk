@@ -4,24 +4,25 @@ using UnityEngine;
 namespace DosinisSDK.Core
 {
 
-    public class DataManager : BehaviourModule, IDataManager
+    public class DataManager : IDataManager
     {
         private Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
 
-        public override void Init(IApp app)
+        public void Init(IApp app)
         {
-
+            app.OnAppFocus += App_OnAppFocus;
+            app.OnAppPaused += App_OnAppPaused;
         }
 
-        private void OnApplicationPause(bool pauseStatus)
+        private void App_OnAppPaused(bool paused)
         {
-            if (pauseStatus)
+            if (paused)
             {
                 SaveAll();
             }
         }
 
-        private void OnApplicationFocus(bool focus)
+        private void App_OnAppFocus(bool focus)
         {
             if (!focus)
             {
