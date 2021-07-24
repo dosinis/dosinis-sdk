@@ -1,14 +1,14 @@
-using DosinisSDK.Config;
 using DosinisSDK.Model;
 using System.Collections.Generic;
 using UnityEngine;
+#if ADDRESSABLES
 using UnityEngine.AddressableAssets;
+#endif
 
 namespace DosinisSDK.Core
 {
     public class AudioManager : BehaviourModule, IAudioManager
     {
-
         private const int POOL_SIZE = 10;
 
         private List<AudioSource> sources = new List<AudioSource>();
@@ -127,6 +127,7 @@ namespace DosinisSDK.Core
             }
         }
 
+    #if ADDRESSABLES
         public async void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1)
         {
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
@@ -138,5 +139,6 @@ namespace DosinisSDK.Core
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
             PlayMusic(clip);
         }
+    #endif
     }
 }
