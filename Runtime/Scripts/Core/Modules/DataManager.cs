@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-
     public class DataManager : IDataManager
     {
         private Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
