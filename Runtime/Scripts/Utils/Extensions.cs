@@ -70,7 +70,6 @@ namespace DosinisSDK.Utils
 
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
-
         }
 
     }
