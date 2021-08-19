@@ -1,6 +1,5 @@
-namespace DosinisSDK.Model
+namespace DosinisSDK.Core
 {
-
     [System.Serializable]
     public class ModuleData
     {

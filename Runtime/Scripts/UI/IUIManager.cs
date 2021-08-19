@@ -1,6 +1,6 @@
-using DosinisSDK.UI;
+using DosinisSDK.Core;
 
-namespace DosinisSDK.Core
+namespace DosinisSDK.UI
 {
     public interface IUIManager : IBehaviourModule 
     {

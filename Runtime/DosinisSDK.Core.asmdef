@@ -4,7 +4,8 @@
     "references": [
         "Unity.TextMeshPro",
         "Unity.Addressables",
-        "Unity.ResourceManager"
+        "Unity.ResourceManager",
+        "DosinisSDK.Core.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

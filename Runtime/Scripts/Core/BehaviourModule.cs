@@ -1,5 +1,3 @@
-using DosinisSDK.Config;
-using DosinisSDK.Model;
 using UnityEngine;
 
 namespace DosinisSDK.Core

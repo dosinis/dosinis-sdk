@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DosinisSDK.Config
+namespace DosinisSDK.Core
 {
     public class ModuleConfig : ScriptableObject
     {

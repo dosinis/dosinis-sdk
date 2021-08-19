@@ -1,4 +1,6 @@
-namespace DosinisSDK.Model
+using DosinisSDK.Core;
+
+namespace DosinisSDK.Audio
 {
     [System.Serializable]
     public class AudioData : ModuleData
@@ -7,6 +9,4 @@ namespace DosinisSDK.Model
         public bool isSfxMuted;
         public bool isMusicMuted;
     }
-
 }
-

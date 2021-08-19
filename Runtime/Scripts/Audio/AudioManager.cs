@@ -1,11 +1,11 @@
-using DosinisSDK.Model;
+using DosinisSDK.Core;
 using System.Collections.Generic;
 using UnityEngine;
 #if ADDRESSABLES
 using UnityEngine.AddressableAssets;
 #endif
 
-namespace DosinisSDK.Core
+namespace DosinisSDK.Audio
 {
     public class AudioManager : BehaviourModule, IAudioManager
     {

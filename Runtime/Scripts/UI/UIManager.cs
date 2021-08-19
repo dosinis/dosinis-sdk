@@ -1,9 +1,9 @@
-using DosinisSDK.UI;
+using DosinisSDK.Core;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK.Core
+namespace DosinisSDK.UI
 {
     public class UIManager : BehaviourModule, IUIManager
     {
