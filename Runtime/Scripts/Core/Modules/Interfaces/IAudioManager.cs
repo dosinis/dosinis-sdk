@@ -13,6 +13,7 @@ namespace DosinisSDK.Core
         public void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1);
         public void PlayMusicAsync(AssetReferenceT<AudioClip> clipRef);
 #endif
+        public void StopMusic();
         public void PlayMusic(AudioClip clip);
         public void PlayLoop(AudioClip clip);
         public void StopLoop(AudioClip clip);

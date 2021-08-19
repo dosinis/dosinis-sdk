@@ -48,7 +48,7 @@ namespace DosinisSDK.Core
             SetSfxMuted(data.isSfxMuted);
         }
 
-        public void StopMusic(AudioClip clip)
+        public void StopMusic()
         {
             musicSource.Stop();
         }

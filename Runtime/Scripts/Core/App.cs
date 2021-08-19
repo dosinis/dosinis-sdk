@@ -16,8 +16,9 @@ namespace DosinisSDK.Core
     {
         [SerializeField] private BehaviourModulesInstallType modulesInstallType;
 
-        private readonly List<IModule> cachedModules = new List<IModule>();
-        private IBehaviourModule[] cachedBehaviourModules;
+        private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
+
+        private IBehaviourModule[] cachedBehaviourModules = new IBehaviourModule[0];
 
         public event Action<bool> OnAppPaused = paused => { };
         public event Action<bool> OnAppFocus = focus => { };
@@ -26,42 +27,55 @@ namespace DosinisSDK.Core
 
         public T GetCachedModule<T>() where T : class, IModule
         {
-            foreach (var module in cachedBehaviourModules)
+            var mType = typeof(T);
+
+            if (cachedModules.TryGetValue(mType, out IModule module))
             {
-                if (module is T value)
+                return (T) module;
+            }
+
+            foreach (var m in cachedModules)
+            {
+                if (m.Value is T value)
                 {
+                    cachedModules.Add(mType, m.Value);
                     return value;
                 }
             }
 
-            foreach (var module in cachedModules)
-            {
-                if (module is T value)
-                {
-                    return value;
-                }
-            }
-
-            Debug.LogError($"Cached Behaviour Module {typeof(T).Name} is not ready yet!");
+            Debug.LogError($"Cached Module {typeof(T).Name} is not found!");
             return default;
         }
 
         public void RegisterModule(IModule module)
         {
-            if (cachedModules.Contains(module) == false)
+            var mType = module.GetType();
+
+            if (cachedModules.ContainsKey(mType))
+            {
+                Debug.LogError($"Modules registry already contains {mType.Name} module");
+                return;
+            }
+
+            try
             {
                 module.Init(this);
-                cachedModules.Add(module);
             }
-            else
+            catch (Exception ex)
             {
-                Debug.LogWarning($"App already contains module {nameof(module)}! Skipping...");
+                Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}");
             }
+
+            cachedModules.Add(mType, module);
+
+            Debug.Log($"Registered {mType.Name} successfully");
         }
 
         private void Awake()
         {
             Core = this;
+
+            Debug.Log("Registering Modules...");
 
             GetComponent<ModulesRegistry>().Init(this);
 
@@ -86,17 +100,11 @@ namespace DosinisSDK.Core
                 return x.InitOrder.CompareTo(y.InitOrder);
             });
 
+            Debug.Log("Registering Behaviour Modules...");
+
             foreach (var module in cachedBehaviourModules)
             {
-                try
-                {
-                    module.Init(this);
-                    Debug.Log($"Module {module.GetType().Name} is initiallized successfully. Init Order Id: {module.InitOrder}");
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Module {module.GetType().Name} experienced error while initializing: {ex.Message}");
-                }
+                RegisterModule(module);
             }
         }
 
