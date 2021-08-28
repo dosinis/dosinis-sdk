@@ -6,5 +6,3 @@ namespace DosinisSDK.Core
         public int version;
     }
 }
-
-

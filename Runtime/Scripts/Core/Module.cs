@@ -2,14 +2,26 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
+    public abstract class Module : IModule
     {
-        [SerializeField] private int initOrder = 0;
-        [SerializeField] protected ModuleConfig config;
-
-        public int InitOrder => initOrder;
-
         public abstract void Init(IApp app);
+    }
+
+    public class Module<T> : Module where T : ModuleConfig
+    {
+        protected ModuleConfig config;
+
+        public override void Init(IApp app)
+        {
+            foreach (var cfg in app.ModulesRegistry.Configs)
+            {
+                if (cfg.GetType() == typeof(T))
+                {
+                    config = cfg;
+                    break;
+                }
+            }
+        }
 
         protected T GetConfigAs<T>() where T : ModuleConfig
         {

@@ -1,9 +1,10 @@
 using DosinisSDK.Core;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class Game : BehaviourModule, IGame
+    public class Game : BehaviourModule, IGame, IProcessable
     {
         private readonly List<GameElement> gameElements = new List<GameElement>();
 
@@ -16,25 +17,43 @@ namespace DosinisSDK.Game
             }
         }
 
-        public override void Process(float delta)
+        public virtual void Process(float delta)
         {
-            foreach (var ge in gameElements)
+            foreach(var gameElement in gameElements)
             {
-                if (ge.Alive)
+                if (gameElement.Alive)
                 {
-                    ge.Process(delta);
+                    gameElement.Process(delta);
                 }
             }
         }
 
-        public void CreateGameElement()
+        public void CreateGameElement(GameObject source)
         {
-           
+            if (source == null)
+            {
+                LogError("Trying to create GameElement which source is null");
+                return;
+            }
+
+            var gameElement = source.GetComponent<GameElement>();
+
+            if (gameElement)
+            {
+                var instance = Instantiate(gameElement, transform);
+                instance.Init(this);
+                gameElements.Add(instance);
+            }
+            else
+            {
+                LogError($"Source {source.name} doesn't have GameElement! Have you forgot to assign it?");
+            }
         }
 
-        public void ReturnElementToPool(GameElement element)
+        public void DestroyGameElement(GameElement element)
         {
-            element.gameObject.SetActive(false);
+            gameElements.Remove(element);
+            element.Destruct();
         }
     }
 }

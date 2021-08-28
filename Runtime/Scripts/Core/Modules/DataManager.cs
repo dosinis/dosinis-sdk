@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class DataManager : IDataManager
+    public class DataManager : Module, IDataManager
     {
         private Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
 
-        public void Init(IApp app)
+        public override void Init(IApp app)
         {
             app.OnAppFocus += App_OnAppFocus;
             app.OnAppPaused += App_OnAppPaused;

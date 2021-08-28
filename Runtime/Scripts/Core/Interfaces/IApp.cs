@@ -6,7 +6,8 @@ namespace DosinisSDK.Core
     {
         event Action<bool> OnAppPaused;
         event Action<bool> OnAppFocus;
-        public T GetCachedModule<T>() where T : class, IModule;
-        public void RegisterModule(IModule module);
+        T GetCachedModule<T>() where T : class, IModule;
+        void RegisterModule(IModule module);
+        ModulesRegistry ModulesRegistry { get; }
     }
 }

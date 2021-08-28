@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace DosinisSDK.Game
@@ -10,7 +8,7 @@ namespace DosinisSDK.Game
 
         public bool Alive { get; private set; }
 
-        public void Init(IGame game)
+        public virtual void Init(IGame game)
         {
             this.game = game;
             Alive = true;
@@ -24,7 +22,8 @@ namespace DosinisSDK.Game
         public virtual void Destruct()
         {
             Alive = false;
-            game.ReturnElementToPool(this);
+            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
     }
 }

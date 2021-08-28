@@ -18,10 +18,14 @@ namespace DosinisSDK.Core
 
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
 
-        private IBehaviourModule[] cachedBehaviourModules = new IBehaviourModule[0];
+        private List<IProcessable> processables = new List<IProcessable>();
+
+        private int processablesSize = 0;
 
         public event Action<bool> OnAppPaused = paused => { };
         public event Action<bool> OnAppFocus = focus => { };
+
+        public ModulesRegistry ModulesRegistry { get; private set; }
 
         public static App Core;
 
@@ -31,7 +35,7 @@ namespace DosinisSDK.Core
 
             if (cachedModules.TryGetValue(mType, out IModule module))
             {
-                return (T) module;
+                return (T)module;
             }
 
             foreach (var m in cachedModules)
@@ -68,6 +72,12 @@ namespace DosinisSDK.Core
 
             cachedModules.Add(mType, module);
 
+            if (module is IProcessable)
+            {
+                processables.Add(module as IProcessable);
+                processablesSize++;
+            }
+
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
@@ -77,7 +87,18 @@ namespace DosinisSDK.Core
 
             Debug.Log("Registering Modules...");
 
-            GetComponent<ModulesRegistry>().Init(this);
+            ModulesRegistry = GetComponent<ModulesRegistry>();
+
+            if (ModulesRegistry)
+            {
+                ModulesRegistry.Init(this);
+            }
+            else
+            {
+                Debug.LogWarning("No ModulesRegistry found! Have you forgot to attach it to App?");
+            }
+
+            IBehaviourModule[] cachedBehaviourModules = new IBehaviourModule[0];
 
             switch (modulesInstallType)
             {
@@ -110,9 +131,9 @@ namespace DosinisSDK.Core
 
         private void Update()
         {
-            foreach (var module in cachedBehaviourModules)
+            for (int i = 0; i < processablesSize; i++)
             {
-                module.Process(Time.deltaTime);
+                processables[i].Process(Time.deltaTime);
             }
         }
 

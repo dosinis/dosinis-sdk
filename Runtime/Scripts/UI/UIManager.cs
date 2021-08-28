@@ -22,11 +22,6 @@ namespace DosinisSDK.UI
             }
         }
 
-        public override void Process(float delta)
-        {
-
-        }
-
         public T GetWindow<T>() where T : Window
         {
             var wType = typeof(T);
