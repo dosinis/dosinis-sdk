@@ -28,6 +28,7 @@ namespace DosinisSDK.Core
         public ModulesRegistry ModulesRegistry { get; private set; }
 
         public static App Core;
+        public static Timer Timer;
 
         public T GetCachedModule<T>() where T : class, IModule
         {
@@ -84,6 +85,11 @@ namespace DosinisSDK.Core
         private void Awake()
         {
             Core = this;
+
+            var timerObject = new GameObject();
+            timerObject.transform.parent = transform;
+            timerObject.name = nameof(Timer);
+            Timer = timerObject.AddComponent<Timer>();
 
             Debug.Log("Registering Modules...");
 

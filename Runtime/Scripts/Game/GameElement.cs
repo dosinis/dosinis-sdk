@@ -4,7 +4,7 @@ namespace DosinisSDK.Game
 {
     public class GameElement : MonoBehaviour
     {
-        private IGame game;
+        protected IGame game;
 
         public bool Alive { get; private set; }
 
