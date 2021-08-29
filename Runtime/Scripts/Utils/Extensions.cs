@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityRandom = UnityEngine.Random;
 
 namespace DosinisSDK.Utils
 {
     public static class Extensions
     {
+        // Collections
+
         public static T Random<T>(this T[] array)
         {
-            return array[UnityEngine.Random.Range(0, array.Length)];
+            return array[UnityRandom.Range(0, array.Length)];
         }
 
         public static T Random<T>(this List<T> list)
         {
-            return list[UnityEngine.Random.Range(0, list.Count)];
+            return list[UnityRandom.Range(0, list.Count)];
         }
 
         public static int CountFast(this IEnumerable list)
@@ -27,7 +30,37 @@ namespace DosinisSDK.Utils
 
             return amount;
         }
-        public static string RemoveExtention(this string path)
+
+        // Vectors
+
+        public static void SetX(this Vector3 vector, float newX)
+        {
+            vector.Set(newX, vector.y, vector.z);
+        }
+
+        public static void SetY(this Vector3 vector, float newY)
+        {
+            vector.Set(vector.x, newY, vector.z);
+        }
+        
+        public static void SetZ(this Vector3 vector, float newZ)
+        {
+            vector.Set(vector.x, vector.y, newZ);
+        }
+
+        public static void SetX(this Vector2 vector, float newX)
+        {
+            vector.Set(newX, vector.y);
+        }
+
+        public static void SetY(this Vector2 vector, float newY)
+        {
+            vector.Set(vector.x, newY);
+        }
+
+        // Strings
+
+        public static string RemovePathExtention(this string path)
         {
             string ext = System.IO.Path.GetExtension(path);
 
@@ -38,6 +71,8 @@ namespace DosinisSDK.Utils
 
             return path;
         }
+
+        // Images
 
         public static void PreserveAspectRatio(this RawImage image, float padding = 0)
         {
@@ -71,7 +106,5 @@ namespace DosinisSDK.Utils
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
         }
-
     }
-
 }

@@ -7,11 +7,22 @@ namespace DosinisSDK.Utils
     {
         public static event Action<Vector2> OnClickHappened = pos => { };
 
+        [SerializeField] private Camera cam;
+
+        private void Awake()
+        {
+            if (cam == null)
+            {
+                cam = Camera.main;
+            }
+        }
+
         private void Update()
         {
             if (Input.GetMouseButtonDown(0))
             {
-                OnClickHappened(Input.mousePosition);
+                var pos = cam.ScreenToWorldPoint(Input.mousePosition);
+                OnClickHappened(pos);
             }
         }
     }

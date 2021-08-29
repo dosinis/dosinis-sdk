@@ -28,7 +28,7 @@ namespace DosinisSDK.Game
             }
         }
 
-        public void CreateGameElement(GameObject source)
+        public void CreateGameElement(GameObject source, Vector3 position)
         {
             if (source == null)
             {
@@ -41,6 +41,7 @@ namespace DosinisSDK.Game
             if (gameElement)
             {
                 var instance = Instantiate(gameElement, transform);
+                instance.gameObject.transform.position = position;
                 instance.Init(this);
                 gameElements.Add(instance);
             }
