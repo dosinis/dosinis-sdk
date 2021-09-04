@@ -9,7 +9,7 @@ namespace DosinisSDK.Core
 
     public class Module<T> : Module where T : ModuleConfig
     {
-        protected ModuleConfig config;
+        protected ModuleConfig mainConfig;
 
         public override void Init(IApp app)
         {
@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
             {
                 if (cfg.GetType() == typeof(T))
                 {
-                    config = cfg;
+                    mainConfig = cfg;
                     break;
                 }
             }
@@ -25,24 +25,24 @@ namespace DosinisSDK.Core
 
         protected T GetConfigAs<T>() where T : ModuleConfig
         {
-            return config as T;
+            return mainConfig as T;
         }
 
         protected void Log(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.Log($"[{GetType().Name}] {message}");
         }
 
         protected void LogError(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogError($"[{GetType().Name}] {message}");
         }
 
         protected void Warn(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
         }
     }

@@ -18,19 +18,19 @@ namespace DosinisSDK.Core
 
         protected void Log(string message)
         {
-            if (mainConfig && mainConfig.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.Log($"[{GetType().Name}] {message}");
         }
 
         protected void LogError(string message)
         {
-            if (mainConfig && mainConfig.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogError($"[{GetType().Name}] {message}");
         }
 
         protected void Warn(string message)
         {
-            if (mainConfig && mainConfig.enableLogs)
+            if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
         }
     }

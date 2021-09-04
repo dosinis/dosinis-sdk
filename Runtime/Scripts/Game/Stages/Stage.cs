@@ -4,9 +4,9 @@ namespace DosinisSDK.Game
 {
     public class Stage : GameElement
     {
-        [SerializeField] protected StageConfig config;
+        [SerializeField] protected StageConfig mainConfig;
 
-        protected IStagedGame stagedGame;
+        protected IStagedGame game;
 
         public int Index { get; private set; }
 
@@ -14,8 +14,8 @@ namespace DosinisSDK.Game
         {
             base.Init(game);
 
-            stagedGame = game as IStagedGame;
-            Index = stagedGame.CurrentStageId;
+            this.game = game as IStagedGame;
+            Index = this.game.CurrentStageId;
         }
     }
 }
