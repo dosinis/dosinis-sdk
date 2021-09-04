@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
     public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
     {
         [SerializeField] private int initOrder = 0;
-        [SerializeField] protected ModuleConfig config;
+        [SerializeField] protected ModuleConfig mainConfig;
 
         public int InitOrder => initOrder;
 
@@ -13,24 +13,24 @@ namespace DosinisSDK.Core
 
         protected T GetConfigAs<T>() where T : ModuleConfig
         {
-            return config as T;
+            return mainConfig as T;
         }
 
         protected void Log(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig && mainConfig.enableLogs)
                 Debug.Log($"[{GetType().Name}] {message}");
         }
 
         protected void LogError(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig && mainConfig.enableLogs)
                 Debug.LogError($"[{GetType().Name}] {message}");
         }
 
         protected void Warn(string message)
         {
-            if (config && config.enableLogs)
+            if (mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
         }
     }

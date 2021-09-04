@@ -15,15 +15,13 @@ namespace DosinisSDK.Audio
 
         private AudioSource musicSource;
 
-        private IDataManager dataManager;
-
         private AudioData data;
         public bool IsSfxMuted => data.isSfxMuted;
         public bool IsMusicMuted => data.isMusicMuted;
 
         public override void Init(IApp app)
         {
-            dataManager = app.GetCachedModule<IDataManager>();
+            var dataManager = app.GetCachedModule<IDataManager>();
 
             data = dataManager.LoadData<AudioData>();
 

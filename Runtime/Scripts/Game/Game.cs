@@ -28,31 +28,49 @@ namespace DosinisSDK.Game
             }
         }
 
-        public void CreateGameElement(GameObject source, Vector3 position)
+        public GameElement CreateGameElement(GameElement gameElement, Vector3 position)
+        {
+            if (gameElement == null)
+            {
+                LogError("Trying to create GameElement which source is null");
+                return null;
+            }
+
+            var instance = Instantiate(gameElement, transform);
+            instance.gameObject.transform.position = position;
+            instance.Init(this);
+            gameElements.Add(instance);
+
+            return instance;
+        }
+
+        public GameElement CreateGameElement(GameObject source, Vector3 position)
         {
             if (source == null)
             {
                 LogError("Trying to create GameElement which source is null");
-                return;
+                return null;
             }
 
             var gameElement = source.GetComponent<GameElement>();
 
             if (gameElement)
             {
-                var instance = Instantiate(gameElement, transform);
-                instance.gameObject.transform.position = position;
-                instance.Init(this);
-                gameElements.Add(instance);
+                return CreateGameElement(gameElement, position);
             }
-            else
-            {
-                LogError($"Source {source.name} doesn't have GameElement! Have you forgot to assign it?");
-            }
+            
+            LogError($"Source {source.name} doesn't have GameElement! Have you forgot to assign it?");
+            return null;
         }
 
         public void DestroyGameElement(GameElement element)
         {
+            if (element == null)
+            {
+                LogError("Trying to destroy game element which is null");
+                return;
+            }
+
             gameElements.Remove(element);
             element.Destruct();
         }
