@@ -6,6 +6,7 @@ namespace DosinisSDK.Core
         T LoadData<T>() where T : class, new();
         bool HasData<T>();
         void RegisterData<T>(T data);
+        void DeleteData<T>() where T : class, new();
     }
 
 }

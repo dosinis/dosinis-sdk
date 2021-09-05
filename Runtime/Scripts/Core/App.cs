@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
@@ -24,6 +25,7 @@ namespace DosinisSDK.Core
 
         public event Action<bool> OnAppPaused = paused => { };
         public event Action<bool> OnAppFocus = focus => { };
+        public event Action OnAppInitialized = () => { };
 
         public ModulesRegistry ModulesRegistry { get; private set; }
 
@@ -82,6 +84,11 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
+        public void Restart()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
         private void Awake()
         {
             Core = this;
@@ -133,6 +140,8 @@ namespace DosinisSDK.Core
             {
                 RegisterModule(module);
             }
+
+            OnAppInitialized();
         }
 
         private void Update()
