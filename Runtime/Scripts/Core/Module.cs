@@ -42,6 +42,7 @@ namespace DosinisSDK.Core
         {
             return mainConfig as T;
         }
+
         protected override void Log(string message)
         {
             if (mainConfig == null || mainConfig && mainConfig.enableLogs)
@@ -59,6 +60,5 @@ namespace DosinisSDK.Core
             if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
         }
-
     }
 }

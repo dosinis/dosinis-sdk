@@ -16,24 +16,11 @@ namespace DosinisSDK.Core
             app.OnAppPaused += App_OnAppPaused;
 
 #if UNITY_EDITOR
-            bool orderedDeletion = false;
 
             if (Directory.Exists(EDITOR_SAVE_PATH) == false)
             {
                 Directory.CreateDirectory(EDITOR_SAVE_PATH);
-                orderedDeletion = true;
             }
-
-            app.OnAppInitialized += () => 
-            {
-                if (orderedDeletion)
-                {
-                    if(TryDeleteAll())
-                    {
-                        app.Restart();
-                    }
-                }
-            };
 #endif
         }
 
@@ -59,18 +46,6 @@ namespace DosinisSDK.Core
             {
                 SaveRawData(pair.Value, pair.Key);
             }
-        }
-
-        private bool TryDeleteAll()
-        {
-            bool deleted = false;
-            foreach (var pair in dataRegistry)
-            {
-                DeleteRawData(pair.Key);
-                deleted = true;
-            }
-
-            return deleted;
         }
 
         private void SaveRawData<T>(T data, string key)
@@ -119,7 +94,7 @@ namespace DosinisSDK.Core
 
             if (HasData<T>())
             {
-                json = PlayerPrefs.GetString(dataKey);          
+                json = PlayerPrefs.GetString(dataKey);
             }
 
 #if UNITY_EDITOR
@@ -127,8 +102,11 @@ namespace DosinisSDK.Core
             {
                 json = File.ReadAllText(GetEditorSavePath(dataKey));
             }
+            else
+            {
+                return new T();
+            }
 #endif
-
             T data = JsonUtility.FromJson<T>(json);
 
             if (data != null)
