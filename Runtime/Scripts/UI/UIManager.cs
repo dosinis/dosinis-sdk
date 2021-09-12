@@ -1,7 +1,6 @@
 using DosinisSDK.Core;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DosinisSDK.UI
 {
@@ -40,7 +39,7 @@ namespace DosinisSDK.UI
                 }
             }
 
-            Debug.LogError($"No Window {typeof(T).Name} is available!");
+            LogError($"No Window {typeof(T).Name} is available!");
             return default;
         }
 

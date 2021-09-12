@@ -1,4 +1,5 @@
 using DosinisSDK.Core;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace DosinisSDK.Game
     public class Game : BehaviourModule, IGame, IProcessable
     {
         private readonly List<GameElement> gameElements = new List<GameElement>();
+        private readonly Dictionary<Type, SingletonGameElement> singletons = new Dictionary<Type, SingletonGameElement>();
 
         public override void Init(IApp app)
         {
@@ -14,6 +16,21 @@ namespace DosinisSDK.Game
             {
                 ge.Init(this);
                 gameElements.Add(ge);
+
+                var singleton = ge as SingletonGameElement;
+
+                if (singleton)
+                {
+                    var sType = singleton.GetType();
+
+                    if (singletons.ContainsKey(sType))
+                    {
+                        LogError($"Found more than one {sType.Name} singleton. Please make sure to have only one such element per Game");
+                        continue;
+                    }
+
+                    singletons.Add(sType, singleton);
+                }
             }
         }
 
@@ -73,6 +90,17 @@ namespace DosinisSDK.Game
 
             gameElements.Remove(element);
             element.Destruct();
+        }
+
+        public T GetSingletonOfType<T>() where T : SingletonGameElement
+        {
+            if (singletons.TryGetValue(typeof(T), out SingletonGameElement element))
+            {
+                return (T) element;
+            }
+
+            LogError($"No Singleton {typeof(T).Name} is found!");
+            return default;
         }
     }
 }

@@ -8,6 +8,7 @@ namespace DosinisSDK.Game
         GameElement CreateGameElement(GameObject source, Vector3 position);
         GameElement CreateGameElement(GameElement gameElement, Vector3 position);
         void DestroyGameElement(GameElement element);
+        T GetSingletonOfType<T>() where T : SingletonGameElement;
     }
 }
 
