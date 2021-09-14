@@ -16,6 +16,10 @@ namespace DosinisSDK.Game
 
         public event Action<Stage> OnStageLoaded = stage => { };
 
+        public event Action<Stage> OnStageCompleted = stage => { };
+
+        public event Action<Stage> OnStageFailed = stage => { };
+
         public override void Init(IApp app)
         {
             base.Init(app);
@@ -31,23 +35,13 @@ namespace DosinisSDK.Game
             LoadStage(data.stageId);
         }
 
-        public override void Process(float delta)
-        {
-            base.Process(delta);
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                NextStage();
-            }
-        }
-
         public void LoadStage(int id)
         {
             if (CurrentStage)
             {
                 DestroyGameElement(CurrentStage);
             }
-            
+
             if (config.stages.Length < id)
             {
                 id = Random.Range(Mathf.FloorToInt(config.stages.Length / 2), config.stages.Length);
@@ -58,15 +52,20 @@ namespace DosinisSDK.Game
             OnStageLoaded(CurrentStage);
         }
 
-        public void NextStage()
+        public void LoadStage()
         {
-            data.stageId++;
             LoadStage(data.stageId);
         }
 
-        public void RestartStage()
+        public void CompleteStage()
         {
-            LoadStage(data.stageId);
+            data.stageId++;
+            OnStageCompleted(CurrentStage);
+        }
+
+        public void FailStage()
+        {
+            OnStageFailed(CurrentStage);
         }
     }
 }
