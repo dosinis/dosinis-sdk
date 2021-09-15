@@ -4,18 +4,24 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Timer : MonoBehaviour
+    public class Timer : Module, ITimer
     {
         private WaitForEndOfFrame skipFrame = new WaitForEndOfFrame();
+        private ICoroutineManager coroutineManager;
+
+        public override void Init(IApp app)
+        {
+            coroutineManager = app.Coroutine;
+        }
 
         public void Delay(float delay, Action done)
         {
-            StartCoroutine(DelayCoroutine(delay, done));
+            coroutineManager.Begin(DelayCoroutine(delay, done));
         }
-            
+        
         public void SkipOneFrame(Action done)
         {
-            StartCoroutine(SkipFrameCoroutine(done));
+            coroutineManager.Begin(SkipFrameCoroutine(done));
         }
 
         private IEnumerator DelayCoroutine(float delay, Action done)

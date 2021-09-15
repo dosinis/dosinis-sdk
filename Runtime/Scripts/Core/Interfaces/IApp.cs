@@ -11,5 +11,8 @@ namespace DosinisSDK.Core
         void RegisterModule(IModule module);
         ModulesRegistry ModulesRegistry { get; }
         void Restart();
+        ITimer Timer { get; }
+        ICoroutineManager Coroutine { get; }
+        void CreateBehaviourModule<T>() where T : BehaviourModule;
     }
 }

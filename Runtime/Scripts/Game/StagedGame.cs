@@ -42,7 +42,7 @@ namespace DosinisSDK.Game
                 DestroyGameElement(CurrentStage);
             }
 
-            if (config.stages.Length < id)
+            if (config.stages.Length <= id)
             {
                 id = Random.Range(Mathf.FloorToInt(config.stages.Length / 2), config.stages.Length);
             }
@@ -57,13 +57,13 @@ namespace DosinisSDK.Game
             LoadStage(data.stageId);
         }
 
-        public void CompleteStage()
+        public virtual void CompleteStage()
         {
             data.stageId++;
             OnStageCompleted(CurrentStage);
         }
 
-        public void FailStage()
+        public virtual void FailStage()
         {
             OnStageFailed(CurrentStage);
         }

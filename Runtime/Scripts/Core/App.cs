@@ -15,8 +15,6 @@ namespace DosinisSDK.Core
     [RequireComponent(typeof(ModulesRegistry))]
     public sealed class App : MonoBehaviour, IApp
     {
-        [SerializeField] private BehaviourModulesInstallType modulesInstallType;
-
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
 
         private List<IProcessable> processables = new List<IProcessable>();
@@ -30,7 +28,8 @@ namespace DosinisSDK.Core
         public ModulesRegistry ModulesRegistry { get; private set; }
 
         public static App Core;
-        public static Timer Timer;
+        public ITimer Timer => GetCachedModule<ITimer>();
+        public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
 
         public T GetCachedModule<T>() where T : class, IModule
         {
@@ -89,18 +88,26 @@ namespace DosinisSDK.Core
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        public void CreateBehaviourModule<T>() where T : BehaviourModule
+        {
+            var moduleObject = new GameObject();
+            moduleObject.transform.parent = transform;
+            moduleObject.name = typeof(T).Name;
+            T module = moduleObject.AddComponent<T>();
+
+            RegisterModule(module);
+        }
+
         private void Awake()
         {
             Core = this;
 
-            var timerObject = new GameObject();
-            timerObject.transform.parent = transform;
-            timerObject.name = nameof(Timer);
-            Timer = timerObject.AddComponent<Timer>();
-
             Debug.Log("Registering Modules...");
 
             ModulesRegistry = GetComponent<ModulesRegistry>();
+
+            CreateBehaviourModule<CoroutineManager>();
+            RegisterModule(new Timer());
 
             if (ModulesRegistry)
             {
@@ -108,25 +115,14 @@ namespace DosinisSDK.Core
             }
             else
             {
-                Debug.LogWarning("No ModulesRegistry found! Have you forgot to attach it to App?");
+                Debug.LogWarning("No ModulesRegistry found! Did you forget to attach it to the App?");
             }
 
-            IBehaviourModule[] cachedBehaviourModules = new IBehaviourModule[0];
-
-            switch (modulesInstallType)
+            IBehaviourModule[] cachedBehaviourModules = FindObjectsOfType(typeof(BehaviourModule)) as IBehaviourModule[];
+            
+            if (cachedBehaviourModules == null)
             {
-                case BehaviourModulesInstallType.LookInResources:
-
-                    break;
-                case BehaviourModulesInstallType.LookInScene:
-                    cachedBehaviourModules = FindObjectsOfType(typeof(BehaviourModule)) as IBehaviourModule[];
-                    break;
-                case BehaviourModulesInstallType.LookInBoth:
-
-                    break;
-                default:
-                    Debug.LogError("Unknown module installation type");
-                    break;
+                return;
             }
 
             Array.Sort(cachedBehaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
@@ -138,6 +134,9 @@ namespace DosinisSDK.Core
 
             foreach (var module in cachedBehaviourModules)
             {
+                if (module is ICoroutineManager)
+                    continue;
+
                 RegisterModule(module);
             }
 
