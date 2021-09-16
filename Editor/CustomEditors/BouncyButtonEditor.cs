@@ -17,8 +17,6 @@ namespace DosinisSDK.Editor
 
         public override void OnInspectorGUI()
         {
-            //EditorUtility.SetDirty(target);
-
             base.OnInspectorGUI();
 
             EditorGUILayout.Space(10);

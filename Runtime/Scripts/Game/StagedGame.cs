@@ -11,6 +11,8 @@ namespace DosinisSDK.Game
 
         private StagedGameData data;
 
+        private bool interrupted = false;
+
         public Stage CurrentStage { get; private set; }
         public int CurrentStageId => data.stageId;
 
@@ -35,6 +37,14 @@ namespace DosinisSDK.Game
             LoadStage(data.stageId);
         }
 
+        public override void Process(float delta)
+        {
+            if (interrupted)
+                return;
+
+            base.Process(delta);
+        }
+
         public void LoadStage(int id)
         {
             if (CurrentStage)
@@ -55,16 +65,19 @@ namespace DosinisSDK.Game
         public void LoadStage()
         {
             LoadStage(data.stageId);
+            interrupted = false;
         }
 
         public virtual void CompleteStage()
         {
+            interrupted = true;
             data.stageId++;
             OnStageCompleted(CurrentStage);
         }
 
         public virtual void FailStage()
         {
+            interrupted = true;
             OnStageFailed(CurrentStage);
         }
     }
