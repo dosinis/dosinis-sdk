@@ -89,11 +89,6 @@ namespace DosinisSDK.Game
                 return null;
             }
 
-            if (CurrentStage == null)
-            {
-                LogError("WTF");
-            }
-
             return CreateGameElement(gameElement, position, CurrentStage.transform) as StageElement;
         }
 
