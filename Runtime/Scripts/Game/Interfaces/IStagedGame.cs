@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace DosinisSDK.Game
 {
@@ -13,5 +14,7 @@ namespace DosinisSDK.Game
         event Action<Stage> OnStageFailed;
         Stage CurrentStage { get; }
         int CurrentStageId { get; }
+        StageElement CreateStageElement(StageElement gameElement, Vector3 position);
+        StageElement CreateStageElement(GameObject source, Vector3 position);
     }
 }

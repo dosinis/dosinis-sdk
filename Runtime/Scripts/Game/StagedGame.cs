@@ -80,5 +80,40 @@ namespace DosinisSDK.Game
             interrupted = true;
             OnStageFailed(CurrentStage);
         }
+
+        public StageElement CreateStageElement(StageElement gameElement, Vector3 position)
+        {
+            if (gameElement == null)
+            {
+                LogError("Trying to create StageElement which source is null");
+                return null;
+            }
+
+            if (CurrentStage == null)
+            {
+                LogError("WTF");
+            }
+
+            return CreateGameElement(gameElement, position, CurrentStage.transform) as StageElement;
+        }
+
+        public StageElement CreateStageElement(GameObject source, Vector3 position)
+        {
+            if (source == null)
+            {
+                LogError("Trying to create GameElement which source is null");
+                return null;
+            }
+
+            var gameElement = source.GetComponent<StageElement>();
+
+            if (gameElement)
+            {
+                return CreateStageElement(gameElement, position);
+            }
+
+            LogError($"Source {source.name} doesn't have StageElement! Have you forgot to assign it?");
+            return null;
+        }
     }
 }

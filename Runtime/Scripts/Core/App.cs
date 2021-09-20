@@ -21,9 +21,11 @@ namespace DosinisSDK.Core
 
         private int processablesSize = 0;
 
+        private static bool initialized = false;
+
         public event Action<bool> OnAppPaused = paused => { };
         public event Action<bool> OnAppFocus = focus => { };
-        public event Action OnAppInitialized = () => { };
+        public static event Action OnAppInitialized = () => { };
 
         public ModulesRegistry ModulesRegistry { get; private set; }
 
@@ -88,6 +90,18 @@ namespace DosinisSDK.Core
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        public static void InitSignal(Action onInit)
+        {
+            if (initialized)
+            { 
+                onInit();
+            }
+            else
+            {
+                OnAppInitialized += onInit;
+            }
+        }
+
         public void CreateBehaviourModule<T>() where T : BehaviourModule
         {
             var moduleObject = new GameObject();
@@ -119,7 +133,7 @@ namespace DosinisSDK.Core
             }
 
             IBehaviourModule[] cachedBehaviourModules = FindObjectsOfType(typeof(BehaviourModule)) as IBehaviourModule[];
-            
+
             if (cachedBehaviourModules == null)
             {
                 return;
@@ -140,6 +154,8 @@ namespace DosinisSDK.Core
                 RegisterModule(module);
             }
 
+            initialized = true;
+            
             OnAppInitialized();
         }
 

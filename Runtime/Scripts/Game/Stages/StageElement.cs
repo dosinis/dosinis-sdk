@@ -2,27 +2,17 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class StageElement : MonoBehaviour
+    public class StageElement : GameElement
     {
         protected Stage stage;
-        public bool Alive { get; private set; }
 
-        public virtual void Init(Stage stage)
+        public override void Init(IGame game)
         {
-            this.stage = stage;
-            Alive = true;
-        }
+            base.Init(game);
 
-        public virtual void Process(float delta)
-        {
+            var stagedGame = game as IStagedGame;
 
-        }
-
-        public virtual void Destruct()
-        {
-            Alive = false;
-            gameObject.SetActive(false);
-            Destroy(gameObject);
+            stage = stagedGame.CurrentStage;
         }
     }
 }

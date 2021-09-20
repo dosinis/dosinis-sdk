@@ -45,6 +45,16 @@ namespace DosinisSDK.Game
             }
         }
 
+        protected GameElement CreateGameElement(GameElement gameElement, Vector3 position, Transform parent)
+        {
+            var instance = Instantiate(gameElement, parent);
+            instance.gameObject.transform.position = position;
+            instance.Init(this);
+            gameElements.Add(instance);
+
+            return instance;
+        }
+
         public GameElement CreateGameElement(GameElement gameElement, Vector3 position)
         {
             if (gameElement == null)
@@ -52,13 +62,8 @@ namespace DosinisSDK.Game
                 LogError("Trying to create GameElement which source is null");
                 return null;
             }
-
-            var instance = Instantiate(gameElement, transform);
-            instance.gameObject.transform.position = position;
-            instance.Init(this);
-            gameElements.Add(instance);
-
-            return instance;
+            
+            return CreateGameElement(gameElement, position, transform);
         }
 
         public GameElement CreateGameElement(GameObject source, Vector3 position)
