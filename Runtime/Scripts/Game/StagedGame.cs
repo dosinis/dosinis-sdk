@@ -1,5 +1,6 @@
 using DosinisSDK.Core;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -49,6 +50,7 @@ namespace DosinisSDK.Game
         {
             if (CurrentStage)
             {
+                CleanupCurrentStage();
                 DestroyGameElement(CurrentStage);
             }
 
@@ -109,6 +111,24 @@ namespace DosinisSDK.Game
 
             LogError($"Source {source.name} doesn't have StageElement! Have you forgot to assign it?");
             return null;
+        }
+
+        private void CleanupCurrentStage()
+        {
+            var stageElement = new List<StageElement>();
+
+            foreach (var gameElement in gameElements)
+            {
+                if (gameElement is StageElement)
+                {
+                    stageElement.Add(gameElement as StageElement);
+                }
+            }
+
+            foreach (var se in stageElement)
+            {
+                DestroyGameElement(se);
+            }
         }
     }
 }

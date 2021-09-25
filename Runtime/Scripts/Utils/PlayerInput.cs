@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace DosinisSDK.Utils
 {
@@ -19,11 +20,24 @@ namespace DosinisSDK.Utils
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && IsPointerOverUI() == false)
             {
                 var pos = cam.ScreenToWorldPoint(Input.mousePosition);
                 OnClickHappened(pos);
             }
+        }
+        
+        private bool IsPointerOverUI()
+        {
+            if (Application.isEditor == false && Input.touchSupported)
+            {
+                if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                {
+                    return true;
+                }
+            }
+
+            return EventSystem.current.IsPointerOverGameObject();
         }
     }
 }

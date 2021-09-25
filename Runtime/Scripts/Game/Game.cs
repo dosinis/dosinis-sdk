@@ -7,7 +7,7 @@ namespace DosinisSDK.Game
 {
     public class Game : BehaviourModule, IGame, IProcessable
     {
-        private readonly List<GameElement> gameElements = new List<GameElement>();
+        protected readonly List<GameElement> gameElements = new List<GameElement>();
         private readonly Dictionary<Type, SingletonGameElement> singletons = new Dictionary<Type, SingletonGameElement>();
 
         public override void Init(IApp app)
@@ -15,6 +15,7 @@ namespace DosinisSDK.Game
             foreach (var ge in GetComponentsInChildren<GameElement>(true))
             {
                 ge.Init(this);
+
                 gameElements.Add(ge);
 
                 var singleton = ge as SingletonGameElement;
