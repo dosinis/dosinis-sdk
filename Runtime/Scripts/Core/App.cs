@@ -5,13 +5,6 @@ using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
-    internal enum BehaviourModulesInstallType
-    {
-        LookInResources,
-        LookInScene,
-        LookInBoth
-    }
-
     [RequireComponent(typeof(ModulesRegistry))]
     public sealed class App : MonoBehaviour, IApp
     {
