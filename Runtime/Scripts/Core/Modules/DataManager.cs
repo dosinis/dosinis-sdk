@@ -12,8 +12,8 @@ namespace DosinisSDK.Core
 
         public override void Init(IApp app)
         {
-            app.OnAppFocus += App_OnAppFocus;
-            app.OnAppPaused += App_OnAppPaused;
+            app.OnAppFocus += OnAppFocus;
+            app.OnAppPaused += OnAppPaused;
 
 #if UNITY_EDITOR
 
@@ -24,7 +24,7 @@ namespace DosinisSDK.Core
 #endif
         }
 
-        private void App_OnAppPaused(bool paused)
+        private void OnAppPaused(bool paused)
         {
             if (paused)
             {
@@ -32,7 +32,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void App_OnAppFocus(bool focus)
+        private void OnAppFocus(bool focus)
         {
             if (!focus)
             {
@@ -40,7 +40,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void SaveAll()
+        public void SaveAll()
         {
             foreach (var pair in dataRegistry)
             {
