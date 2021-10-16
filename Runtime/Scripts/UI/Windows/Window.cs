@@ -29,6 +29,7 @@ namespace DosinisSDK.UI
             IsShown = true;
             OnShown();
         }
+
         public virtual void Hide()
         {
             gameObject.SetActive(false);

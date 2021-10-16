@@ -10,10 +10,12 @@ namespace DosinisSDK.UI
 
         public int Size => spawnedElements.Count;
 
-        private List<Element> spawnedElements = new List<Element>();
+        private readonly List<Element> spawnedElements = new List<Element>();
 
         private void SetupElement<T>(Element element, T arg)
         {
+            element.Init();
+
             var elementFor = element as ElementFor<T>;
 
             if (elementFor)
@@ -31,7 +33,7 @@ namespace DosinisSDK.UI
         {
             if (spawnedElements.Count <= index)
             {
-                Debug.LogError("Asked element is out of bounds");
+                Debug.LogError($"Element {index} is out of bounds");
                 return null;
             }
 
@@ -65,7 +67,6 @@ namespace DosinisSDK.UI
 
                 spawnedElements.Add(instance);
             }
-
         }
 
         private void Update()
@@ -75,7 +76,5 @@ namespace DosinisSDK.UI
                 e.Process(Time.deltaTime);
             }
         }
-
     }
-
 }

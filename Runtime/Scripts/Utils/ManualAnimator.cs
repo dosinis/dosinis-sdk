@@ -6,7 +6,6 @@ namespace DosinisSDK.Utils
     [RequireComponent(typeof(Animator))]
     public class ManualAnimator : MonoBehaviour
     {
-        // NOTE: Possible use of AnimationClip instead
         [SerializeField] private string motionTimeKey;
 
         private Animator animator;
