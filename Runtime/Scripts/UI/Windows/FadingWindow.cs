@@ -17,9 +17,9 @@ namespace DosinisSDK.UI
         private CanvasGroup canvasGroup;
         private RectTransform rectTransform;
 
-        public override void Init()
+        public override void Init(IUIManager uIManager)
         {
-            base.Init();
+            base.Init(uIManager);
             canvasGroup = GetComponent<CanvasGroup>();
             rectTransform = GetComponent<RectTransform>();
         }

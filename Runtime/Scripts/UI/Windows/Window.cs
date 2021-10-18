@@ -13,7 +13,7 @@ namespace DosinisSDK.UI
 
         public bool IsShown { get; private set; }
 
-        public virtual void Init()
+        public virtual void Init(IUIManager uiManager)
         {
             if (closeButton != null)
             {

@@ -17,7 +17,7 @@ namespace DosinisSDK.UI
 
             foreach (var win in windows)
             {
-                win.Value.Init();
+                win.Value.Init(this);
             }
         }
 
@@ -42,6 +42,5 @@ namespace DosinisSDK.UI
             LogError($"No Window {typeof(T).Name} is available!");
             return default;
         }
-
     }
 }

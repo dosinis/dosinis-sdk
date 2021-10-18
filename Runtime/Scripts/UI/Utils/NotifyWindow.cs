@@ -12,9 +12,9 @@ namespace DosinisSDK.UI
         [SerializeField] private TMP_Text messageText;
 
         private event Action<bool> OnProceed = b => { };
-        public override void Init()
+        public override void Init(IUIManager uIManager)
         {
-            base.Init();
+            base.Init(uIManager);
             ok.onClick.AddListener(OkClick);
             cancel.onClick.AddListener(CancelClick);
         }
