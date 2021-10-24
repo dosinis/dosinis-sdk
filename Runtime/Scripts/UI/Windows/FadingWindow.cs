@@ -35,27 +35,37 @@ namespace DosinisSDK.UI
             StartCoroutine(FadeInRoutine());
         }
 
+        public override void Hide()
+        {
+            StartCoroutine(FadeOutRoutine(() => {
+                base.Hide();
+            }));
+        }
+
         public override void Hide(Action done)
         {
-            StartCoroutine(FadeOutRoutine(done));
+            StartCoroutine(FadeOutRoutine(() =>
+            {
+                base.Hide(done);
+            }));
         }
 
         private IEnumerator FadeInRoutine()
         {
             float timer = 0;
-            
+
             while (timer < fadeDuration)
             {
                 timer += Time.deltaTime;
 
                 canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 1, fadeCurve.Evaluate(timer / fadeDuration));
-                
+
                 if (useScale)
                 {
                     float evaluation = scaleInCurve.Evaluate(timer / fadeDuration);
                     rectTransform.localScale = new Vector3(evaluation, evaluation, evaluation);
                 }
-                   
+
                 yield return null;
             }
         }
@@ -79,7 +89,7 @@ namespace DosinisSDK.UI
                 yield return null;
             }
 
-            base.Hide(done);
+            done();
         }
     }
 }

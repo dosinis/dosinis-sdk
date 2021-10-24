@@ -6,12 +6,18 @@ namespace DosinisSDK.UI
     {
         protected bool initialized = false;
 
-        public virtual void Init()
+        public void Init()
         {
             if (initialized)
                 return;
 
             initialized = true;
+            OnInit();
+        }
+
+        protected virtual void OnInit()
+        {
+
         }
 
         public void Show()
