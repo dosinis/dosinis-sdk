@@ -30,11 +30,23 @@ namespace DosinisSDK.UI
             OnShown();
         }
 
+        public virtual void Show(Action done)
+        {
+            Show();
+            done();
+        }
+
         public virtual void Hide()
         {
             gameObject.SetActive(false);
             IsShown = false;
             OnHidden();
+        }
+
+        public virtual void Hide(Action done)
+        {
+            Hide();
+            done();
         }
 
         public virtual void OnShown()

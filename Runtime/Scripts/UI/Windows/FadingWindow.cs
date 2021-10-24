@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -34,9 +35,9 @@ namespace DosinisSDK.UI
             StartCoroutine(FadeInRoutine());
         }
 
-        public override void Hide()
+        public override void Hide(Action done)
         {
-            StartCoroutine(FadeOutRoutine());
+            StartCoroutine(FadeOutRoutine(done));
         }
 
         private IEnumerator FadeInRoutine()
@@ -59,7 +60,7 @@ namespace DosinisSDK.UI
             }
         }
 
-        private IEnumerator FadeOutRoutine()
+        private IEnumerator FadeOutRoutine(Action done)
         {
             float timer = 0;
 
@@ -78,7 +79,7 @@ namespace DosinisSDK.UI
                 yield return null;
             }
 
-            base.Hide();
+            base.Hide(done);
         }
     }
 }
