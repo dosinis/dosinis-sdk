@@ -22,6 +22,7 @@ namespace DosinisSDK.RateUs
                 b.onClick.AddListener(() =>
                 {
                     rateUsManager.Rate();
+                    Hide();
                 });
             }
 
@@ -30,6 +31,7 @@ namespace DosinisSDK.RateUs
                 b.onClick.AddListener(() => 
                 {
                     Popup.Pop("Thanks for your rating!", 2f);
+                    Hide();
                 });
             }
 
