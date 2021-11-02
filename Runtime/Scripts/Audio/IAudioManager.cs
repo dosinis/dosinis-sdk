@@ -18,10 +18,10 @@ namespace DosinisSDK.Audio
         public void PlayMusic(AudioClip clip);
         public void PlayLoop(AudioClip clip);
         public void StopLoop(AudioClip clip);
-        public void SetSfxMuted(bool value);
-        public void SetMusicMuted(bool value);
+        public void SetSfxEnabled(bool value);
+        public void SetMusicEnabled(bool value);
         public void SetVolume(float volume);
-        bool IsSfxMuted { get; }
-        bool IsMusicMuted { get; }
+        bool IsSfxEnabled { get; }
+        bool IsMusicEnabled { get; }
     }
 }

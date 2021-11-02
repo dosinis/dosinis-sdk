@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.UI
 {
+    [RequireComponent(typeof(Button))]
     public class SwitcherButton : MonoBehaviour
     {
         [SerializeField] private GameObject enabledState;

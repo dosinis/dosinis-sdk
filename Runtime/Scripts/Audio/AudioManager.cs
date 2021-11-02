@@ -16,8 +16,8 @@ namespace DosinisSDK.Audio
         private AudioSource musicSource;
 
         private AudioData data;
-        public bool IsSfxMuted => data.isSfxMuted;
-        public bool IsMusicMuted => data.isMusicMuted;
+        public bool IsSfxEnabled => data.isSfxEnabled;
+        public bool IsMusicEnabled => data.isMusicEnabled;
 
         public override void Init(IApp app)
         {
@@ -42,8 +42,8 @@ namespace DosinisSDK.Audio
             musicSource = mSource.AddComponent<AudioSource>();
             musicSource.loop = true;
 
-            SetMusicMuted(data.isMusicMuted);
-            SetSfxMuted(data.isSfxMuted);
+            SetMusicEnabled(data.isMusicEnabled);
+            SetSfxEnabled(data.isSfxEnabled);
         }
 
         public void StopMusic()
@@ -95,9 +95,9 @@ namespace DosinisSDK.Audio
             }
         }
 
-        public void SetSfxMuted(bool value)
+        public void SetSfxEnabled(bool value)
         {
-            data.isSfxMuted = value;
+            data.isSfxEnabled = value;
 
             foreach (var src in sources)
             {
@@ -111,9 +111,9 @@ namespace DosinisSDK.Audio
             data.volume = volume;
         }
 
-        public void SetMusicMuted(bool value)
+        public void SetMusicEnabled(bool value)
         {
-            data.isMusicMuted = value;
+            data.isMusicEnabled = value;
 
             if (value)
             {

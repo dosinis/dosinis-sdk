@@ -10,7 +10,7 @@ namespace DosinisSDK.UI
             base.OnClick();
             var audioModule = App.Core.GetCachedModule<IAudioManager>();
 
-            audioModule.SetSfxMuted(!audioModule.IsSfxMuted);
+            audioModule.SetSfxEnabled(!audioModule.IsSfxEnabled);
         }
     }
 

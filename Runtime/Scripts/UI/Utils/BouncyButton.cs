@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.UI
 {
-    public class BouncyButton : Button
+    public sealed class BouncyButton : Button
     {
         public float scaleRatio = 0.95f;
         public float animationDuration = 0.1f;
