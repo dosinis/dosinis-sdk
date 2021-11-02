@@ -80,6 +80,14 @@ namespace DosinisSDK.Core
             return Path.Combine(EDITOR_SAVE_PATH, key + ".json");
         }
 
+        public T LoadAndRegisterData<T>() where T : class, new()
+        {
+            var data = LoadData<T>();
+            RegisterData(data);
+
+            return data;
+        }
+
         public void RegisterData<T>(T data)
         {
             dataRegistry.Add(typeof(T).Name, data);

@@ -29,11 +29,7 @@ namespace DosinisSDK.Game
 
             config = GetConfigAs<StagedGameConfig>();
 
-            var dataManager = app.GetCachedModule<IDataManager>();
-
-            data = dataManager.LoadData<StagedGameData>();
-
-            dataManager.RegisterData(data);
+            data = app.GetCachedModule<IDataManager>().LoadAndRegisterData<StagedGameData>();
 
             LoadStage(data.stageId);
         }

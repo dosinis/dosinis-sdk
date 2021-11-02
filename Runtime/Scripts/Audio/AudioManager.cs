@@ -21,11 +21,7 @@ namespace DosinisSDK.Audio
 
         public override void Init(IApp app)
         {
-            var dataManager = app.GetCachedModule<IDataManager>();
-
-            data = dataManager.LoadData<AudioData>();
-
-            dataManager.RegisterData(data);
+            data = app.GetCachedModule<IDataManager>().LoadAndRegisterData<AudioData>();
 
             for (int i = 0; i < POOL_SIZE; i++)
             {

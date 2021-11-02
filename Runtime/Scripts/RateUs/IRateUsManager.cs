@@ -1,14 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using DosinisSDK.Core;
 
 namespace DosinisSDK.RateUs
 {
-    public interface IRateUsManager
+    public interface IRateUsManager : IModule
     {
-        void Init();
         bool IsRated { get; }
         void Rate();
-
     }
 }

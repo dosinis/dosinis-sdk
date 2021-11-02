@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DosinisSDK.UI
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public class FadingWindow : Window
+    public class FadingWindow : Window // TODO: make more generic and customizable - AnimatedWindow
     {
         [SerializeField] private float fadeDuration = 0.5f;
         [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.Linear(0, 0, 1, 1);
