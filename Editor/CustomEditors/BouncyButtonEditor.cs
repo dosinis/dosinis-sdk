@@ -1,5 +1,6 @@
 using DosinisSDK.UI;
 using UnityEditor;
+using UnityEngine;
 
 namespace DosinisSDK.Editor
 {
@@ -22,6 +23,7 @@ namespace DosinisSDK.Editor
             EditorGUILayout.Space(10);
             button.scaleRatio = EditorGUILayout.FloatField("Scale Ratio", button.scaleRatio);
             button.animationDuration = EditorGUILayout.FloatField("Animation Duration", button.animationDuration);
+            button.clickSfx = EditorGUILayout.ObjectField("Click SFX", button.clickSfx, typeof(AudioClip), false) as AudioClip;
         }
     }
 }

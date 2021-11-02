@@ -1,3 +1,5 @@
+using DosinisSDK.Audio;
+using DosinisSDK.Core;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -9,19 +11,32 @@ namespace DosinisSDK.UI
     {
         public float scaleRatio = 0.95f;
         public float animationDuration = 0.1f;
+        public AudioClip clickSfx;
 
         private Vector3 startScale;
-        
+
+        private IAudioManager audioManager;
+
         protected override void Awake()
         {
             base.Awake();
             startScale = transform.localScale;
+
+            if (clickSfx)
+            {
+                audioManager = App.Core.GetCachedModule<IAudioManager>();
+            }
         }
 
         public override void OnPointerDown(PointerEventData eventData)
         {
             base.OnPointerDown(eventData);
             StartCoroutine(PressAnimationRoutine());
+            
+            if (clickSfx && audioManager != null)
+            {
+                audioManager.PlayOneShot(clickSfx);
+            }
         }
 
         public override void OnPointerUp(PointerEventData eventData)

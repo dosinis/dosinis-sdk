@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.UI
 {
-    public class MessageWindow : Window
+    public class MessageWindow : FadingWindow
     {
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text messageText;

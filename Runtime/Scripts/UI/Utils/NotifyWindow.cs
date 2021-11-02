@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.UI
 {
-    public class NotifyWindow : Window
+    public class NotifyWindow : FadingWindow
     {
         [SerializeField] private Button ok;
         [SerializeField] private Button cancel;
         [SerializeField] private TMP_Text messageText;
 
         private event Action<bool> OnProceed = b => { };
+
         public override void Init(IUIManager uIManager)
         {
             base.Init(uIManager);
@@ -19,13 +20,13 @@ namespace DosinisSDK.UI
             cancel.onClick.AddListener(CancelClick);
         }
 
-        public void Show(string message, Action<bool> callback)
+        public void Show(string message, Action<bool> onProceed)
         {
             messageText.text = message;
 
             void CallBack(bool success)
             {
-                callback(success);
+                onProceed(success);
                 OnProceed -= CallBack;
             }
 
@@ -45,6 +46,5 @@ namespace DosinisSDK.UI
             OnProceed(false);
             Hide();
         }
-
     }
 }
