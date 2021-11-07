@@ -17,6 +17,8 @@ namespace DosinisSDK.RateUs
 
             rateUsManager = App.Core.GetCachedModule<IRateUsManager>();
 
+            rateUsManager.OnInitRating += Show;
+
             foreach (var b in rateButtons)
             {
                 b.onClick.AddListener(() =>
@@ -34,7 +36,6 @@ namespace DosinisSDK.RateUs
                     Hide();
                 });
             }
-
         }
     }
 }

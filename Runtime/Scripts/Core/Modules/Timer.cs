@@ -19,7 +19,7 @@ namespace DosinisSDK.Core
             coroutineManager.Begin(DelayCoroutine(delay, done));
         }
         
-        public void SkipOneFrame(Action done)
+        public void SkipFrame(Action done)
         {
             coroutineManager.Begin(SkipFrameCoroutine(done));
         }
