@@ -22,14 +22,12 @@ namespace DosinisSDK.Core
                 Shader.WarmupAllShaders();
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
-            loadSceneOperation = SceneManager.LoadSceneAsync(targetSceneId, loadMode);
-            StartCoroutine(LoadSceneAsync());
-        }
+            yield return new WaitForSeconds(0.5f);
 
-        private IEnumerator LoadSceneAsync()
-        {
+            loadSceneOperation = SceneManager.LoadSceneAsync(targetSceneId, loadMode);
+
             while (!loadSceneOperation.isDone)
             {
                 yield return null;

@@ -12,6 +12,8 @@ namespace DosinisSDK.Utils
     /// </summary>
     public class PhotoShot : MonoBehaviour
     {
+        [Header("USE 'C' TO CAPTURE SCREENSHOT")]
+
         [SerializeField] private int captureWidth = 3840;
         [SerializeField] private int captureHeight = 2160;
 
