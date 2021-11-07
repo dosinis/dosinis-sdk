@@ -102,7 +102,7 @@ namespace DosinisSDK.Ads
                 }
             }
         }
-        public override void ShowRewardedAd(Action<bool> callBack, string placement = "")
+        public override void ShowRewardedAd(string placement, Action<bool> callBack)
         {
             void CallBack(bool success)
             {

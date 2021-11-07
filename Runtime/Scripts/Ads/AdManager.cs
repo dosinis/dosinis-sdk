@@ -22,7 +22,7 @@ namespace DosinisSDK.Ads
 
         [SerializeField] protected bool useTestAds;
 
-        public abstract void ShowRewardedAd(Action<bool> callBack, string placement = "");
+        public abstract void ShowRewardedAd(string placement, Action<bool> callBack);
         public abstract void ShowInterstitial(string placement = "");
         public abstract void ShowBanner(string placement = "");
         protected abstract void LoadRewardedAds();

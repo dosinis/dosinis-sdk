@@ -17,36 +17,39 @@ namespace DosinisSDK.UI
             adManager = app.GetCachedModule<IAdManager>();
         }
 
-        public void ShowRewardedAdWindow(Action<bool> callback)
+        public void ShowRewardedAdWindow(string placement, Action<bool> callback)
         {
             var messageWindow = GetWindow<MessageWindow>();
-            messageWindow.Show("One moment!", "Ad is being loaded...");
-            messageWindow.SetCloseButtonEnabled(false);
 
-            adManager.ShowRewardedAd(success =>
+            adIsBeingLoaded = true;
+
+            adManager.ShowRewardedAd(placement, success =>
             {
-                adIsBeingLoaded = true;
-
                 if (success)
                 {
                     adIsBeingLoaded = false;
                     messageWindow.Hide();
-                    messageWindow.SetCloseButtonEnabled(true);
                 }
 
                 callback(success);
             });
-
+            
             StartCoroutine(AdWindowButtonCoroutine(messageWindow));
         }
 
         private IEnumerator AdWindowButtonCoroutine(MessageWindow messageWindow)
         {
+            yield return new WaitForSeconds(0.1f);
+
             float timer = 10f;
+
+            messageWindow.Show("One moment!", "Ad is loading...");
+            messageWindow.SetCloseButtonEnabled(false);
+
             while (timer > 0)
             {
                 timer -= Time.deltaTime;
-
+                
                 if (adIsBeingLoaded == false)
                 {
                     yield break;
