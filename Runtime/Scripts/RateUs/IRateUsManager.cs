@@ -7,7 +7,7 @@ namespace DosinisSDK.RateUs
     {
         event Action OnInitRating;
         bool IsRated { get; }
-        void Rate();
+        void Rate(bool dummyRate = false);
         void InitRating();
     }
 }

@@ -17,9 +17,11 @@ namespace DosinisSDK.RateUs
             data = dataManager.LoadAndRegisterData<RateUsData>();
         }
 
-        public void Rate()
+        public void Rate(bool dummyRate = false)
         {
-            Application.OpenURL($"https://play.google.com/store/apps/details?id={Application.identifier}");
+            if (dummyRate == false)
+                Application.OpenURL($"https://play.google.com/store/apps/details?id={Application.identifier}");
+
             data.rated = true;
         }
 
