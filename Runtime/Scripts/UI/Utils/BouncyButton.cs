@@ -22,10 +22,13 @@ namespace DosinisSDK.UI
             base.Awake();
             startScale = transform.localScale;
 
-            if (clickSfx)
+            App.InitSignal(() => 
             {
-                audioManager = App.Core.GetCachedModule<IAudioManager>();
-            }
+                if (clickSfx)
+                {
+                    audioManager = App.Core.GetCachedModule<IAudioManager>();
+                }
+            });
         }
 
         public override void OnPointerDown(PointerEventData eventData)

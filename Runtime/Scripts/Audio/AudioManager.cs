@@ -97,7 +97,7 @@ namespace DosinisSDK.Audio
 
             foreach (var src in sources)
             {
-                src.volume = value ? 0 : 1;
+                src.volume = value ? 1 : 0;
             }
         }
 
@@ -111,14 +111,7 @@ namespace DosinisSDK.Audio
         {
             data.isMusicEnabled = value;
 
-            if (value)
-            {
-                musicSource.volume = 0;
-            }
-            else
-            {
-                musicSource.volume = 1;
-            }
+            musicSource.volume = value ? 1 : 0;
         }
 
     #if ADDRESSABLES

@@ -12,7 +12,7 @@ namespace DosinisSDK.UI
 
         public event Action<bool> ClickAction = b => { };
 
-        private bool value;
+        private bool isEnabled;
 
         private bool initialized = false;
 
@@ -24,7 +24,7 @@ namespace DosinisSDK.UI
                 return;
             }
 
-            this.value = value;
+            isEnabled = value;
             UpdateSwitcherState();
             GetComponent<Button>().onClick.AddListener(OnClick);
             initialized = true;
@@ -32,15 +32,15 @@ namespace DosinisSDK.UI
 
         protected virtual void OnClick()
         {
-            value = !value;
+            isEnabled = !isEnabled;
             UpdateSwitcherState();
-            ClickAction(value);
+            ClickAction(isEnabled);
         }
 
         private void UpdateSwitcherState()
         {
-            enabledState.SetActive(value);
-            disabledState.SetActive(!value);
+            enabledState.SetActive(isEnabled);
+            disabledState.SetActive(!isEnabled);
         }
     }
 }
