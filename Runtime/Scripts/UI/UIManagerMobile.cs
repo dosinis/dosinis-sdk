@@ -52,6 +52,7 @@ namespace DosinisSDK.UI
                 
                 if (adIsBeingLoaded == false)
                 {
+                    messageWindow.Hide();
                     yield break;
                 }
 
