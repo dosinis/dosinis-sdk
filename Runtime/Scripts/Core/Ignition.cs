@@ -11,9 +11,9 @@ namespace DosinisSDK.Core
         [SerializeField] private int targetSceneId = 1;
         [SerializeField] private LoadSceneMode loadMode = LoadSceneMode.Single;
 
-        private AsyncOperation loadSceneOperation = new AsyncOperation();
+        private AsyncOperation loadSceneOperation = null;
 
-        public float NormalizedProgress => loadSceneOperation.progress / 0.9f;
+        public float NormalizedProgress => loadSceneOperation == null ? 0 : loadSceneOperation.progress / 0.9f;
         public event Action OnMainSceneLoaded = () => { };
 
         private void Awake()
