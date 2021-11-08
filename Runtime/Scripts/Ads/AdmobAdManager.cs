@@ -3,8 +3,6 @@ using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using GoogleMobileAds.Api;
 using System;
-using System.Collections;
-using UnityEngine;
 
 namespace DosinisSDK.Ads
 {
@@ -25,6 +23,7 @@ namespace DosinisSDK.Ads
         private const string rewardedTestId = "ca-app-pub-3940256099942544/5224354917";
 
         private bool rewarded = false;
+
         public override void Init(IApp app)
         {
             MobileAds.Initialize(initStatus =>
@@ -40,7 +39,6 @@ namespace DosinisSDK.Ads
                 ShowBanner();
                 LoadBanner();
             }
-
         }
 
         protected override void InitializeRewardedAds()
@@ -57,6 +55,7 @@ namespace DosinisSDK.Ads
         protected override void LoadInterstitialAds()
         {
             string id = interstitialId;
+
             if (useTestAds)
             {
                 id = intesrtitialTestId;
@@ -64,6 +63,9 @@ namespace DosinisSDK.Ads
 
             interstitial = new InterstitialAd(id);
             AdRequest request = new AdRequest.Builder().Build();
+
+            interstitial.OnAdClosed += HandleInterstitialClosed;
+
             interstitial.LoadAd(request);
         }
 
@@ -102,8 +104,11 @@ namespace DosinisSDK.Ads
                 }
             }
         }
+
         public override void ShowRewardedAd(string placement, Action<bool> callBack)
         {
+            Log($"Showing rewarded ad {placement}");
+
             void CallBack(bool success)
             {
                 callBack(success);
@@ -124,6 +129,8 @@ namespace DosinisSDK.Ads
 
         public override void ShowBanner(string placement = "")
         {
+            Log($"Showing banner ad {placement}");
+
             string id = bannerId;
 
             if (useTestAds)
@@ -143,15 +150,20 @@ namespace DosinisSDK.Ads
 
         public override void ShowInterstitial(string placement = "")
         {
+            Log($"Showing interstitial ad {placement}");
+
             if (interstitial.IsLoaded())
             {
                 interstitial.Show();
             }
         }
 
+        // Rewarded Ads
+
         private void HandleRewardedAdClosed(object sender, EventArgs e)
         {
             Log("AdManager : Rewarded ad closed");
+
             Dispatcher.RunOnMainThread(() =>
             {
                 OnRewardedAdFinished(rewarded);
@@ -187,6 +199,15 @@ namespace DosinisSDK.Ads
             Log("AdManager : Rewarded Ad is Loaded");
         }
 
+        // Interstitial
+
+        private void HandleInterstitialClosed(object sender, EventArgs e)
+        {
+            Dispatcher.RunOnMainThread(() =>
+            {
+                LoadInterstitialAds();
+            });
+        }
     }
 }
 #endif
