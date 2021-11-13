@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class MessageWindow : FadingWindow
     {

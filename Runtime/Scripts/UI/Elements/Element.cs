@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Elements
 {
     public class Element : MonoBehaviour
     {

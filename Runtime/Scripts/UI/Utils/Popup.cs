@@ -2,7 +2,7 @@ using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class Popup : FadingWindow
     {

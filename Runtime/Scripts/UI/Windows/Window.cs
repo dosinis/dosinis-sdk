@@ -7,11 +7,14 @@ namespace DosinisSDK.UI
     public class Window : MonoBehaviour
     {
         [SerializeField] protected Button closeButton;
+        [SerializeField] protected bool ignoreSafeArea = false;
 
         public event Action OnWindowShown = () => { };
         public event Action OnWindowHidden = () => { };
 
         public bool IsShown { get; private set; }
+
+        private RectTransform rect;
 
         public virtual void Init(IUIManager uiManager)
         {
@@ -21,6 +24,11 @@ namespace DosinisSDK.UI
             }
 
             IsShown = gameObject.activeSelf;
+
+            rect = GetComponent<RectTransform>();
+            
+            if (ignoreSafeArea == false)
+                ApplySafeArea();
         }
 
         public virtual void Show()
@@ -57,6 +65,24 @@ namespace DosinisSDK.UI
         public virtual void OnHidden()
         {
             OnWindowHidden();
+        }
+
+        private void ApplySafeArea()
+        {
+            var rootCanvas = GetComponentInParent<Canvas>();
+
+            Rect safeArea = Screen.safeArea;
+
+            Vector2 anchorMin = safeArea.position;
+            Vector2 anchorMax = safeArea.position + safeArea.size;
+
+            anchorMin.x /= rootCanvas.pixelRect.width;
+            anchorMin.y /= rootCanvas.pixelRect.height;
+            anchorMax.x /= rootCanvas.pixelRect.width;
+            anchorMax.y /= rootCanvas.pixelRect.height;
+
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
         }
     }
 }

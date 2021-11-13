@@ -1,7 +1,7 @@
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class SoundToggle : SwitcherButton
     {

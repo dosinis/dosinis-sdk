@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class BounceLoop : MonoBehaviour
     {

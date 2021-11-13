@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class NotifyWindow : FadingWindow
     {

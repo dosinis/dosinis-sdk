@@ -1,4 +1,4 @@
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Elements
 {
     public abstract class ElementFor<T> : Element
     {

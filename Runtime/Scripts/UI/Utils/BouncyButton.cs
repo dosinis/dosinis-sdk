@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public sealed class BouncyButton : Button
     {

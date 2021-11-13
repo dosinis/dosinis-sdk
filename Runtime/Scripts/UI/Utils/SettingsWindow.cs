@@ -2,7 +2,7 @@ using DosinisSDK.Audio;
 using DosinisSDK.Core;
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     public class SettingsWindow : FadingWindow
     {

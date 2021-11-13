@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Elements
 {
     public class ElementSet : MonoBehaviour
     {

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.UI.Utils
 {
     [RequireComponent(typeof(Button))]
     public class SwitcherButton : MonoBehaviour

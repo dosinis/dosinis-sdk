@@ -1,13 +1,15 @@
 using DosinisSDK.Core;
 using DosinisSDK.UI;
+using DosinisSDK.UI.Utils;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DosinisSDK.RateUs
 {
     public class RateUsWindow : FadingWindow
     {
-        [SerializeField] private BouncyButton[] rateButtons;
-        [SerializeField] private BouncyButton[] lowRateButtons;
+        [SerializeField] private Button[] rateButtons;
+        [SerializeField] private Button[] lowRateButtons;
 
         private IRateUsManager rateUsManager;
 
