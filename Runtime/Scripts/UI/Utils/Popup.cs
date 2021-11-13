@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class Popup : FadingWindow
+    public class Popup : AnimatedWindow
     {
         [SerializeField] private TMP_Text messageText;
 

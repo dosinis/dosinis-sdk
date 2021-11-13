@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class SettingsWindow : FadingWindow
+    public class SettingsWindow : AnimatedWindow
     {
         [SerializeField] private SoundToggle soundToggle;
         [SerializeField] private MusicToggle musicToggle;

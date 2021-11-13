@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.RateUs
 {
-    public class RateUsWindow : FadingWindow
+    public class RateUsWindow : AnimatedWindow
     {
         [SerializeField] private Button[] rateButtons;
         [SerializeField] private Button[] lowRateButtons;

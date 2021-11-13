@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DosinisSDK.UI
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public class FadingWindow : Window // TODO: make more generic and customizable - AnimatedWindow
+    public class AnimatedWindow : Window // TODO: make more generic and customizable - AnimatedWindow
     {
         [SerializeField] private bool showOverlay = false;
 
@@ -36,7 +36,7 @@ namespace DosinisSDK.UI
 
             if (showOverlay && !(this is OverlayWindow))
             {
-                OverlayWindow.ShowOverlay();
+                OverlayWindow.ShowOverlay(transform.GetSiblingIndex());
             }
 
             base.Show();

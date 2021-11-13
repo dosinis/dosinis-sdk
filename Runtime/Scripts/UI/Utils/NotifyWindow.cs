@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class NotifyWindow : FadingWindow
+    public class NotifyWindow : AnimatedWindow
     {
         [SerializeField] private Button ok;
         [SerializeField] private Button cancel;
