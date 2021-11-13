@@ -1,25 +1,54 @@
 using DosinisSDK.Core;
+using System.Collections.Generic;
 
 namespace DosinisSDK.UI
 {
     public class OverlayWindow : AnimatedWindow
     {
-        public static void ShowOverlay(int callerSiblingIndex)
-        {
-            var overlay = App.Core.GetCachedModule<UIManager>().GetWindow<OverlayWindow>();
+        private static Queue<Window> overlayQueue = new Queue<Window>();
 
-            overlay.transform.SetSiblingIndex(callerSiblingIndex - 1);
-            overlay.Show();
+        public static void ShowOverlay(Window caller)
+        {
+            if (overlayQueue.Contains(caller))
+                return;
+
+            overlayQueue.Enqueue(caller);
+
+            var overlay = App.Core.GetCachedModule<UIManager>().GetWindow<OverlayWindow>();
+            
+            var callerSiblingId = caller.transform.GetSiblingIndex();
+
+            if (overlay.isActiveAndEnabled == false)
+            {
+                overlay.transform.SetSiblingIndex(callerSiblingId - 1);
+                overlay.Show();
+            }
         }
 
         public static void HideOverlay()
         {
             var overlay = App.Core.GetCachedModule<UIManager>().GetWindow<OverlayWindow>();
 
-            overlay.Hide(() =>
+            overlayQueue.Dequeue();
+
+            App.Core.Timer.SkipFrame(() => 
             {
-                overlay.transform.SetAsFirstSibling();
+                if (overlayQueue.Count > 0)
+                {
+                    overlay.transform.SetSiblingIndex(overlayQueue.Peek().transform.GetSiblingIndex() - 1);
+                }
+                else
+                {
+                    if (overlay.isActiveAndEnabled)
+                    {
+                        overlay.Hide(() =>
+                        {
+                            overlay.transform.SetAsFirstSibling();
+                        });
+                    }
+                }
             });
+                      
         }
     }
 }

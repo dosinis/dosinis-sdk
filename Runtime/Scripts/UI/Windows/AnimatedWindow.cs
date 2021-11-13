@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace DosinisSDK.UI
@@ -27,8 +26,10 @@ namespace DosinisSDK.UI
             rectTransform = GetComponent<RectTransform>();
         }
 
-        public override void Show()
+        public sealed override void Show(Action done = null)
         {
+            OnBeforeShow();
+
             if (useScale)
                 rectTransform.localScale = Vector3.zero;
 
@@ -36,27 +37,18 @@ namespace DosinisSDK.UI
 
             if (showOverlay && !(this is OverlayWindow))
             {
-                OverlayWindow.ShowOverlay(transform.GetSiblingIndex());
+                transform.SetAsLastSibling();
+                OverlayWindow.ShowOverlay(this);
             }
 
-            base.Show();
+            base.Show(done);
             StartCoroutine(FadeInRoutine());
         }
 
-        public override void Hide()
+        public sealed override void Hide(Action done = null)
         {
-            if (showOverlay && !(this is OverlayWindow))
-            {
-                OverlayWindow.HideOverlay();
-            }
+            OnBeforeHide();
 
-            StartCoroutine(FadeOutRoutine(() => {
-                base.Hide();
-            }));
-        }
-
-        public override void Hide(Action done)
-        {
             if (showOverlay && !(this is OverlayWindow))
             {
                 OverlayWindow.HideOverlay();
@@ -68,13 +60,23 @@ namespace DosinisSDK.UI
             }));
         }
 
+        public virtual void OnBeforeShow() 
+        { 
+
+        }
+
+        public virtual void OnBeforeHide() 
+        { 
+
+        }
+
         private IEnumerator FadeInRoutine()
         {
             float timer = 0;
 
             while (timer < fadeDuration)
             {
-                timer += Time.deltaTime;
+                timer += Time.unscaledDeltaTime;
 
                 canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 1, fadeCurve.Evaluate(timer / fadeDuration));
 
@@ -94,7 +96,7 @@ namespace DosinisSDK.UI
 
             while (timer < fadeDuration)
             {
-                timer += Time.deltaTime;
+                timer += Time.unscaledDeltaTime;
 
                 canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, 0, fadeCurve.Evaluate(timer / fadeDuration));
 

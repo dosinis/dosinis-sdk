@@ -20,7 +20,7 @@ namespace DosinisSDK.UI
         {
             if (closeButton != null)
             {
-                closeButton.onClick.AddListener(Hide);
+                closeButton.onClick.AddListener(() => Hide());
             }
 
             IsShown = gameObject.activeSelf;
@@ -31,30 +31,22 @@ namespace DosinisSDK.UI
                 ApplySafeArea();
         }
 
-        public virtual void Show()
+        public virtual void Show(Action done = null)
         {
             gameObject.SetActive(true);
             IsShown = true;
             OnShown();
+
+            done?.Invoke();
         }
 
-        public virtual void Show(Action done)
-        {
-            Show();
-            done();
-        }
-
-        public virtual void Hide()
+        public virtual void Hide(Action done = null)
         {
             gameObject.SetActive(false);
             IsShown = false;
             OnHidden();
-        }
 
-        public virtual void Hide(Action done)
-        {
-            Hide();
-            done();
+            done?.Invoke();
         }
 
         public virtual void OnShown()

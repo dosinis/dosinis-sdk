@@ -19,7 +19,7 @@ namespace DosinisSDK.RateUs
 
             rateUsManager = App.Core.GetCachedModule<IRateUsManager>();
 
-            rateUsManager.OnInitRating += Show;
+            rateUsManager.OnInitRating += () => Show();
 
             foreach (var b in rateButtons)
             {
