@@ -6,13 +6,12 @@ namespace DosinisSDK.Core
     {
         event Action<bool> OnAppPaused;
         event Action<bool> OnAppFocus;
+        event Action OnAppQuit;
         T GetCachedModule<T>() where T : class, IModule;
         void RegisterModule(IModule module, ModuleConfig config = null);
-        ModulesRegistry ModulesRegistry { get; }
         void Restart();
         ITimer Timer { get; }
         ICoroutineManager Coroutine { get; }
         ISceneManager SceneManager { get; }
-        void CreateBehaviourModule<T>() where T : BehaviourModule;
     }
 }

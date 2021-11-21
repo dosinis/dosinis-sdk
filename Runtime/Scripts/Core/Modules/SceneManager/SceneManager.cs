@@ -13,27 +13,27 @@ namespace DosinisSDK.Core
         {
             base.Init(app, config);
 
-            foreach (var ge in GetComponentsInChildren<Managed>(true)) // TODO: Make it check whole scene instead of children components
-            {
-                ge.Init(this);
+            //foreach (var ge in GetComponentsInChildren<Managed>(true)) // TODO: Make it check whole scene instead of children components
+            //{
+            //    ge.Init(this);
 
-                managedElements.Add(ge);
+            //    managedElements.Add(ge);
 
-                var singleton = ge as ManagedSingleton;
+            //    var singleton = ge as ManagedSingleton;
 
-                if (singleton)
-                {
-                    var sType = singleton.GetType();
+            //    if (singleton)
+            //    {
+            //        var sType = singleton.GetType();
 
-                    if (singletons.ContainsKey(sType))
-                    {
-                        LogError($"Found more than one {sType.Name} singleton. Make sure you only have one such element per Scene");
-                        continue;
-                    }
+            //        if (singletons.ContainsKey(sType))
+            //        {
+            //            LogError($"Found more than one {sType.Name} singleton. Make sure you only have one such element per Scene");
+            //            continue;
+            //        }
 
-                    singletons.Add(sType, singleton);
-                }
-            }
+            //        singletons.Add(sType, singleton);
+            //    }
+            //}
         }
 
         public virtual void Process(float delta)

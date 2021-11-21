@@ -1,11 +1,12 @@
+using DosinisSDK.Core;
 using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace DosinisSDK.Core
+namespace DosinisSDK.Utils
 {
-    public class IntroManager : SceneManager
+    public class IntroManager : Core.SceneManager
     {
         [SerializeField] private bool prewarmShaders = false;
         [SerializeField] private int targetSceneId = 1;

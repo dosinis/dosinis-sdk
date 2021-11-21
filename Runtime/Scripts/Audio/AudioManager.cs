@@ -116,7 +116,7 @@ namespace DosinisSDK.Audio
             musicSource.volume = value ? 1 : 0;
         }
 
-    #if ADDRESSABLES
+#if ADDRESSABLES
         public async void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1)
         {
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
@@ -128,6 +128,6 @@ namespace DosinisSDK.Audio
             var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
             PlayMusic(clip);
         }
-    #endif
+#endif
     }
 }

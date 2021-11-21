@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    [RequireComponent(typeof(ModulesRegistry))]
     public sealed class App : MonoBehaviour, IApp
     {
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
@@ -18,9 +17,6 @@ namespace DosinisSDK.Core
         public event Action<bool> OnAppPaused;
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
-
-        public ModulesRegistry ModulesRegistry { get; private set; }
-        public AppConfig Config { get; private set; }
 
         public ITimer Timer => GetCachedModule<ITimer>();
         public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
@@ -79,6 +75,16 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
+        public void CreateBehaviourModule<T>() where T : BehaviourModule
+        {
+            var moduleObject = new GameObject();
+            moduleObject.transform.parent = transform;
+            moduleObject.name = typeof(T).Name;
+            T module = moduleObject.AddComponent<T>();
+
+            RegisterModule(module);
+        }
+
         public void Restart()
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
@@ -96,20 +102,12 @@ namespace DosinisSDK.Core
             }
         }
 
-        public void CreateBehaviourModule<T>() where T : BehaviourModule
-        {
-            var moduleObject = new GameObject();
-            moduleObject.transform.parent = transform;
-            moduleObject.name = typeof(T).Name;
-            T module = moduleObject.AddComponent<T>();
-
-            RegisterModule(module);
-        }
-
         public static void Create(AppConfig config)
         {
-            var app = new App();
-            app.Init(config);
+            var appObject = new GameObject();
+            appObject.name = nameof(App);
+
+            appObject.AddComponent<App>().Init(config);
         }
 
         private void Init(AppConfig config)
@@ -125,60 +123,44 @@ namespace DosinisSDK.Core
 
             Core = this;
 
-            DontDestroyOnLoad(Core);
+            DontDestroyOnLoad(this);
 
             Debug.Log("Registering Modules...");
-
-            ModulesRegistry = GetComponent<ModulesRegistry>();
 
             CreateBehaviourModule<CoroutineManager>();
             RegisterModule(new Timer());
 
-            if (ModulesRegistry)
+            if (config.modulesRegistry)
             {
-                ModulesRegistry.Init(this);
+                config.modulesRegistry.Init(this);
             }
             else
             {
-                Debug.LogWarning("No ModulesRegistry found! Did you forget to attach it to the App?");
+                Debug.LogWarning($"{nameof(ModulesRegistry)} is null. Did you forget to assign it to {nameof(AppConfig)}?");
             }
 
-            IBehaviourModule[] cachedBehaviourModules = FindObjectsOfType(typeof(BehaviourModule)) as IBehaviourModule[];
+            Debug.Log("Registering Behaviour Modules...");
 
-            if (cachedBehaviourModules == null)
-            {
-                return;
-            }
+            BehaviourModule[] behaviourModules = new BehaviourModule[config.behaviourModules.Length];
 
-            Array.Sort(cachedBehaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
+            Array.Copy(config.behaviourModules, behaviourModules, config.behaviourModules.Length);
+
+            Array.Sort(behaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
             {
                 return x.InitOrder.CompareTo(y.InitOrder);
             });
 
-            Debug.Log("Registering Behaviour Modules...");
-
-            foreach (var module in cachedBehaviourModules)
+            foreach (var module in behaviourModules)
             {
-                if (module is ICoroutineManager)
-                    continue;
+                var moduleInstance = Instantiate(module);
 
-                RegisterModule(module);
+                RegisterModule(moduleInstance);
             }
 
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
+            Debug.Log("Setting up scene manager...");
+
+            void setupSceneManager(UnityEngine.SceneManagement.Scene scene)
             {
-                Debug.Log($"Scene was changed from {oldScene.name} to {newScene.name}");
-
-                if (cachedModules.ContainsKey(typeof(ISceneManager)))
-                {
-                    cachedModules.Remove(typeof(ISceneManager));
-                }
-
-                if (cachedModules.ContainsKey(typeof(SceneManager)))
-                {
-                    cachedModules.Remove(typeof(SceneManager));
-                }
-
                 var newSceneManager = FindObjectOfType<SceneManager>() as ISceneManager;
 
                 if (newSceneManager != null)
@@ -187,8 +169,33 @@ namespace DosinisSDK.Core
                 }
                 else
                 {
-                    Debug.LogWarning($"{newScene.name} doesn't have {nameof(SceneManager)}");
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}");
                 }
+            }
+
+            // This might not be needed after all
+            // setupSceneManager(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
+            {
+                Debug.Log($"Scene was changed to {newScene.name}");
+
+                Type activeSceneManager = null;
+
+                foreach (var module in cachedModules)
+                {
+                    if (module.Value is ISceneManager value)
+                    {
+                        activeSceneManager = module.Key;
+                    }
+                }
+
+                if (activeSceneManager != null && cachedModules.ContainsKey(activeSceneManager))
+                {
+                    cachedModules.Remove(activeSceneManager);
+                }
+
+                setupSceneManager(newScene);
             };
 
             initialized = true;
