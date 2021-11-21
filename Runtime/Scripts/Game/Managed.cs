@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class GameElement : MonoBehaviour
+    public class Managed : MonoBehaviour
     {
-        protected IGame game;
+        protected ISceneManager game;
 
         public bool Alive { get; private set; }
 
-        public virtual void Init(IGame game)
+        public virtual void Init(ISceneManager game)
         {
             this.game = game;
             Alive = true;

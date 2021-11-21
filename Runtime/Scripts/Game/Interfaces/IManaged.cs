@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public interface IGameElement
+    public interface IManaged
     {
         
     }

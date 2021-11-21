@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class StageElement : GameElement
+    public class StageElement : Managed
     {
         protected Stage stage;
 
-        public override void Init(IGame game)
+        public override void Init(ISceneManager game)
         {
             base.Init(game);
 

@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class Stage : GameElement
+    public class Stage : Managed
     {
         [SerializeField] protected StageConfig mainConfig;
 
         public IStagedGame stagedGame { get; private set; }
         public int Index { get; private set; }
 
-        public override void Init(IGame game)
+        public override void Init(ISceneManager game)
         {
             base.Init(game);
 

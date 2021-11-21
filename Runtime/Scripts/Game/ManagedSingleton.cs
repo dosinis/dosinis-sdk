@@ -1,6 +1,6 @@
 namespace DosinisSDK.Game
 {
-    public class SingletonGameElement : GameElement
+    public class ManagedSingleton : Managed
     {
         
     }

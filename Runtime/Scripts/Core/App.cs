@@ -16,9 +16,10 @@ namespace DosinisSDK.Core
 
         private static bool initialized = false;
 
-        public event Action<bool> OnAppPaused = paused => { };
-        public event Action<bool> OnAppFocus = focus => { };
-        public static event Action OnAppInitialized = () => { };
+        public event Action<bool> OnAppPaused;
+        public event Action<bool> OnAppFocus;
+        public event Action OnAppQuit;
+        public static event Action OnAppInitialized;
 
         public ModulesRegistry ModulesRegistry { get; private set; }
 
@@ -107,7 +108,18 @@ namespace DosinisSDK.Core
 
         private void Awake()
         {
+            if (Core)
+            {
+                Debug.LogWarning($"Tried to create more than one {nameof(App)} instance. " +
+                    $"Make sure there's only one instance of the {nameof(App)}");
+
+                Destroy(this);
+                return;
+            }
+
             Core = this;
+
+            DontDestroyOnLoad(Core);
 
             Debug.Log("Registering Modules...");
 
@@ -149,7 +161,7 @@ namespace DosinisSDK.Core
 
             initialized = true;
             
-            OnAppInitialized();
+            OnAppInitialized?.Invoke();
         }
 
         private void Update()
@@ -162,12 +174,17 @@ namespace DosinisSDK.Core
 
         private void OnApplicationPause(bool paused)
         {
-            OnAppPaused(paused);
+            OnAppPaused?.Invoke(paused);
         }
 
         private void OnApplicationFocus(bool focus)
         {
-            OnAppFocus(focus);
+            OnAppFocus?.Invoke(focus);
+        }
+
+        private void OnApplicationQuit()
+        {
+            OnAppQuit?.Invoke();
         }
     }
 }

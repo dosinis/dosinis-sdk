@@ -5,20 +5,20 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class Game : BehaviourModule, IGame, IProcessable
+    public class SceneManager : BehaviourModule, ISceneManager, IProcessable
     {
-        protected readonly List<GameElement> gameElements = new List<GameElement>();
-        private readonly Dictionary<Type, SingletonGameElement> singletons = new Dictionary<Type, SingletonGameElement>();
+        protected readonly List<Managed> gameElements = new List<Managed>();
+        private readonly Dictionary<Type, ManagedSingleton> singletons = new Dictionary<Type, ManagedSingleton>();
 
         public override void Init(IApp app)
         {
-            foreach (var ge in GetComponentsInChildren<GameElement>(true))
+            foreach (var ge in GetComponentsInChildren<Managed>(true))
             {
                 ge.Init(this);
 
                 gameElements.Add(ge);
 
-                var singleton = ge as SingletonGameElement;
+                var singleton = ge as ManagedSingleton;
 
                 if (singleton)
                 {
@@ -46,7 +46,7 @@ namespace DosinisSDK.Game
             }
         }
 
-        protected GameElement CreateGameElement(GameElement gameElement, Vector3 position, Transform parent)
+        protected Managed CreateGameElement(Managed gameElement, Vector3 position, Transform parent)
         {
             var instance = Instantiate(gameElement, parent);
             instance.gameObject.transform.position = position;
@@ -56,7 +56,7 @@ namespace DosinisSDK.Game
             return instance;
         }
 
-        public GameElement CreateGameElement(GameElement gameElement, Vector3 position)
+        public Managed CreateGameElement(Managed gameElement, Vector3 position)
         {
             if (gameElement == null)
             {
@@ -67,7 +67,7 @@ namespace DosinisSDK.Game
             return CreateGameElement(gameElement, position, transform);
         }
 
-        public GameElement CreateGameElement(GameObject source, Vector3 position)
+        public Managed CreateGameElement(GameObject source, Vector3 position)
         {
             if (source == null)
             {
@@ -75,7 +75,7 @@ namespace DosinisSDK.Game
                 return null;
             }
 
-            var gameElement = source.GetComponent<GameElement>();
+            var gameElement = source.GetComponent<Managed>();
 
             if (gameElement)
             {
@@ -86,7 +86,7 @@ namespace DosinisSDK.Game
             return null;
         }
 
-        public void DestroyGameElement(GameElement element)
+        public void DestroyGameElement(Managed element)
         {
             if (element == null)
             {
@@ -98,9 +98,9 @@ namespace DosinisSDK.Game
             element.Destruct();
         }
 
-        public T GetSingletonOfType<T>() where T : SingletonGameElement
+        public T GetSingletonOfType<T>() where T : ManagedSingleton
         {
-            if (singletons.TryGetValue(typeof(T), out SingletonGameElement element))
+            if (singletons.TryGetValue(typeof(T), out ManagedSingleton element))
             {
                 return (T) element;
             }

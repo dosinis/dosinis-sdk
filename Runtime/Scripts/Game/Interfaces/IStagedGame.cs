@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public interface IStagedGame : IGame
+    public interface IStagedGame //: IGame
     {
         void LoadStage(int id);
         void LoadStage();
