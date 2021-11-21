@@ -6,16 +6,16 @@ namespace DosinisSDK.Core
 {
     public class SceneManager : BehaviourModule, ISceneManager, IProcessable
     {
-        protected readonly List<Managed> gameElements = new List<Managed>();
+        protected readonly List<Managed> managedElements = new List<Managed>();
         private readonly Dictionary<Type, ManagedSingleton> singletons = new Dictionary<Type, ManagedSingleton>();
 
         public override void Init(IApp app)
         {
-            foreach (var ge in GetComponentsInChildren<Managed>(true))
+            foreach (var ge in GetComponentsInChildren<Managed>(true)) // TODO: Make it check whole scene instead of children components
             {
                 ge.Init(this);
 
-                gameElements.Add(ge);
+                managedElements.Add(ge);
 
                 var singleton = ge as ManagedSingleton;
 
@@ -25,7 +25,7 @@ namespace DosinisSDK.Core
 
                     if (singletons.ContainsKey(sType))
                     {
-                        LogError($"Found more than one {sType.Name} singleton. Please make sure to have only one such element per Game");
+                        LogError($"Found more than one {sType.Name} singleton. Make sure you only have one such element per Scene");
                         continue;
                     }
 
@@ -36,37 +36,37 @@ namespace DosinisSDK.Core
 
         public virtual void Process(float delta)
         {
-            foreach(var gameElement in gameElements)
+            foreach(var managed in managedElements)
             {
-                if (gameElement.Alive)
+                if (managed.Alive)
                 {
-                    gameElement.Process(delta);
+                    managed.Process(delta);
                 }
             }
         }
 
-        protected Managed CreateGameElement(Managed gameElement, Vector3 position, Transform parent)
+        protected Managed CreateGameElement(Managed managed, Vector3 position, Transform parent)
         {
-            var instance = Instantiate(gameElement, parent);
+            var instance = Instantiate(managed, parent);
             instance.gameObject.transform.position = position;
             instance.Init(this);
-            gameElements.Add(instance);
+            managedElements.Add(instance);
 
             return instance;
         }
 
-        public Managed CreateGameElement(Managed gameElement, Vector3 position)
+        public Managed CreateManagedElement(Managed managed, Vector3 position)
         {
-            if (gameElement == null)
+            if (managed == null)
             {
                 LogError("Trying to create GameElement which source is null");
                 return null;
             }
             
-            return CreateGameElement(gameElement, position, transform);
+            return CreateGameElement(managed, position, transform);
         }
 
-        public Managed CreateGameElement(GameObject source, Vector3 position)
+        public Managed CreateManagedElement(GameObject source, Vector3 position)
         {
             if (source == null)
             {
@@ -74,30 +74,30 @@ namespace DosinisSDK.Core
                 return null;
             }
 
-            var gameElement = source.GetComponent<Managed>();
+            var managed = source.GetComponent<Managed>();
 
-            if (gameElement)
+            if (managed)
             {
-                return CreateGameElement(gameElement, position);
+                return CreateManagedElement(managed, position);
             }
             
             LogError($"Source {source.name} doesn't have GameElement! Have you forgot to assign it?");
             return null;
         }
 
-        public void DestroyGameElement(Managed element)
+        public void DestroyManagedElement(Managed managed)
         {
-            if (element == null)
+            if (managed == null)
             {
                 LogError("Trying to destroy game element which is null");
                 return;
             }
 
-            gameElements.Remove(element);
-            element.Destruct();
+            managedElements.Remove(managed);
+            managed.Destruct();
         }
 
-        public T GetSingletonOfType<T>() where T : ManagedSingleton
+        public T GetSingletonOfType<T>() where T : ManagedSingleton // Make it IManagedSingleton
         {
             if (singletons.TryGetValue(typeof(T), out ManagedSingleton element))
             {

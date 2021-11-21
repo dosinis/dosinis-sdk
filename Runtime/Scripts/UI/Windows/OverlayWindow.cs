@@ -14,8 +14,8 @@ namespace DosinisSDK.UI
 
             overlayQueue.Enqueue(caller);
 
-            var overlay = App.Core.GetCachedModule<UIManager>().GetWindow<OverlayWindow>();
-            
+            var overlay = App.Core.SceneManager.GetSingletonOfType<UIManager>().GetWindow<OverlayWindow>(); // TODO: IUIManager?
+
             var callerSiblingId = caller.transform.GetSiblingIndex();
 
             if (overlay.isActiveAndEnabled == false)
@@ -27,7 +27,7 @@ namespace DosinisSDK.UI
 
         public static void HideOverlay()
         {
-            var overlay = App.Core.GetCachedModule<UIManager>().GetWindow<OverlayWindow>();
+            var overlay = App.Core.SceneManager.GetSingletonOfType<UIManager>().GetWindow<OverlayWindow>(); // TODO: IUIManager?
 
             overlayQueue.Dequeue();
 

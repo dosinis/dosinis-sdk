@@ -5,9 +5,9 @@ namespace DosinisSDK.Core
 {
     public interface ISceneManager : IBehaviourModule
     {
-        Managed CreateGameElement(GameObject source, Vector3 position);
-        Managed CreateGameElement(Managed gameElement, Vector3 position);
-        void DestroyGameElement(Managed element);
+        Managed CreateManagedElement(GameObject source, Vector3 position);
+        Managed CreateManagedElement(Managed managed, Vector3 position);
+        void DestroyManagedElement(Managed managed);
         T GetSingletonOfType<T>() where T : ManagedSingleton;
     }
 }

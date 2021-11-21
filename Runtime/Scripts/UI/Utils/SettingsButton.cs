@@ -11,7 +11,7 @@ namespace DosinisSDK.UI.Utils
         {
             GetComponent<Button>().onClick.AddListener(() =>
             {
-                App.Core.GetCachedModule<IUIManager>().GetWindow<SettingsWindow>().Show();
+                App.Core.SceneManager.GetSingletonOfType<UIManager>().GetWindow<SettingsWindow>().Show(); // TODO: IUIManager?
             });
         }
     }

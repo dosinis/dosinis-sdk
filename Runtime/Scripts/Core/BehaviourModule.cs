@@ -5,6 +5,7 @@ namespace DosinisSDK.Core
     public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
     {
         [SerializeField] private int initOrder = 0;
+        [SerializeField] private bool dontDestroyOnLoad = true;
         [SerializeField] protected ModuleConfig mainConfig;
 
         public int InitOrder => initOrder;
@@ -32,6 +33,12 @@ namespace DosinisSDK.Core
         {
             if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
+        }
+
+        private void Awake()
+        {
+            if (dontDestroyOnLoad)
+                DontDestroyOnLoad(this);
         }
     }
 }

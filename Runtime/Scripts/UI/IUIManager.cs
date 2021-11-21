@@ -2,7 +2,7 @@ using DosinisSDK.Core;
 
 namespace DosinisSDK.UI
 {
-    public interface IUIManager : IBehaviourModule 
+    public interface IUIManager : IManaged 
     {
         T GetWindow<T>() where T : Window;
     }

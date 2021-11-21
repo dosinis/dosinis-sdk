@@ -12,10 +12,10 @@ namespace DosinisSDK.UI
         private IAdManager adManager;
         private bool adIsBeingLoaded = false;
 
-        public override void Init(IApp app)
+        public override void Init(ISceneManager sceneManager)
         {
-            base.Init(app);
-            adManager = app.GetCachedModule<IAdManager>();
+            base.Init(sceneManager);
+            adManager = App.Core.GetCachedModule<IAdManager>();
         }
 
         public void ShowRewardedAdWindow(string placement, Action<bool> callback)

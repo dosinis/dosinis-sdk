@@ -1,14 +1,15 @@
 using DosinisSDK.Core;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DosinisSDK.UI
 {
-    public class UIManager : BehaviourModule, IUIManager
+    public class UIManager : ManagedSingleton, IUIManager
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
-        public override void Init(IApp app)
+        public override void Init(ISceneManager sceneManager)
         {
             foreach (Window win in GetComponentsInChildren<Window>(true))
             {
@@ -39,7 +40,7 @@ namespace DosinisSDK.UI
                 }
             }
 
-            LogError($"No Window {typeof(T).Name} is available!");
+            Debug.LogError($"No Window {typeof(T).Name} is available!");
             return default;
         }
     }

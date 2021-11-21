@@ -12,6 +12,7 @@ namespace DosinisSDK.Core
         [SerializeField] private LoadSceneMode loadMode = LoadSceneMode.Single;
 
         private AsyncOperation loadSceneOperation = null;
+        private bool loadedApp = false;
 
         public float NormalizedProgress => loadSceneOperation == null ? 0 : loadSceneOperation.progress / 0.9f;
         public event Action OnMainSceneLoaded = () => { };
@@ -24,6 +25,13 @@ namespace DosinisSDK.Core
 
         private IEnumerator Start()
         {
+            App.InitSignal(() => {
+                loadedApp = true;
+            });
+
+            while (loadedApp == false)
+                yield return null;
+
             yield return new WaitForSeconds(0.5f);
 
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(targetSceneId, loadMode);

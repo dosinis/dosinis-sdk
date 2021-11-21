@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
@@ -12,21 +11,22 @@ namespace DosinisSDK.Core
 
         private List<IProcessable> processables = new List<IProcessable>();
 
-        private int processablesSize = 0;
-
         private static bool initialized = false;
+
+        private static event Action OnAppInitialized;
 
         public event Action<bool> OnAppPaused;
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
-        public static event Action OnAppInitialized;
 
         public ModulesRegistry ModulesRegistry { get; private set; }
+        public AppConfig Config { get; private set; }
 
-        public static App Core;
         public ITimer Timer => GetCachedModule<ITimer>();
         public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
         public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
+
+        public static App Core;
 
         public T GetCachedModule<T>() where T : class, IModule
         {
@@ -60,6 +60,8 @@ namespace DosinisSDK.Core
                 return;
             }
 
+            cachedModules.Add(mType, module);
+
             try
             {
                 module.Init(this);
@@ -68,13 +70,10 @@ namespace DosinisSDK.Core
             {
                 Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}");
             }
-
-            cachedModules.Add(mType, module);
-
+            
             if (module is IProcessable)
             {
                 processables.Add(module as IProcessable);
-                processablesSize++;
             }
 
             Debug.Log($"Registered {mType.Name} successfully");
@@ -88,7 +87,7 @@ namespace DosinisSDK.Core
         public static void InitSignal(Action onInit)
         {
             if (initialized)
-            { 
+            {
                 onInit();
             }
             else
@@ -107,11 +106,17 @@ namespace DosinisSDK.Core
             RegisterModule(module);
         }
 
-        private void Awake()
+        public static void Create(AppConfig config)
+        {
+            var app = new App();
+            app.Init(config);
+        }
+
+        private void Init(AppConfig config)
         {
             if (Core)
             {
-                Debug.LogWarning($"Tried to create more than one {nameof(App)} instance. " +
+                Debug.LogWarning($"{nameof(App)} already exists. " +
                     $"Make sure there's only one instance of the {nameof(App)}");
 
                 Destroy(this);
@@ -160,16 +165,44 @@ namespace DosinisSDK.Core
                 RegisterModule(module);
             }
 
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
+            {
+                Debug.Log($"Scene was changed from {oldScene.name} to {newScene.name}");
+
+                if (cachedModules.ContainsKey(typeof(ISceneManager)))
+                {
+                    cachedModules.Remove(typeof(ISceneManager));
+                }
+
+                if (cachedModules.ContainsKey(typeof(SceneManager)))
+                {
+                    cachedModules.Remove(typeof(SceneManager));
+                }
+
+                var newSceneManager = FindObjectOfType<SceneManager>() as ISceneManager;
+
+                if (newSceneManager != null)
+                {
+                    RegisterModule(newSceneManager);
+                }
+                else
+                {
+                    Debug.LogWarning($"{newScene.name} doesn't have {nameof(SceneManager)}");
+                }
+            };
+
             initialized = true;
-            
+
             OnAppInitialized?.Invoke();
+
+            Debug.Log($"{nameof(App)} initialized");
         }
 
         private void Update()
         {
-            for (int i = 0; i < processablesSize; i++)
+            foreach (var processable in processables)
             {
-                processables[i].Process(Time.deltaTime);
+                processable.Process(Time.deltaTime);
             }
         }
 

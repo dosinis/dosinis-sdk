@@ -12,6 +12,7 @@ namespace DosinisSDK.Core
         void Restart();
         ITimer Timer { get; }
         ICoroutineManager Coroutine { get; }
+        ISceneManager SceneManager { get; }
         void CreateBehaviourModule<T>() where T : BehaviourModule;
     }
 }
