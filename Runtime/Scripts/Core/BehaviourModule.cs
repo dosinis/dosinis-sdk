@@ -2,17 +2,20 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
+    public class BehaviourModule : MonoBehaviour, IBehaviourModule
     {
         [SerializeField] private int initOrder = 0;
-        [SerializeField] private bool dontDestroyOnLoad = true;
         [SerializeField] protected ModuleConfig mainConfig;
 
         public int InitOrder => initOrder;
 
-        public abstract void Init(IApp app);
+        public virtual void Init(IApp app, ModuleConfig config)
+        {
+            if (config)
+                mainConfig = config;
+        }
 
-        protected T GetConfigAs<T>() where T : ModuleConfig
+        public T GetConfigAs<T>() where T : ModuleConfig
         {
             return mainConfig as T;
         }
@@ -33,12 +36,6 @@ namespace DosinisSDK.Core
         {
             if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
-        }
-
-        private void Awake()
-        {
-            if (dontDestroyOnLoad)
-                DontDestroyOnLoad(this);
         }
     }
 }

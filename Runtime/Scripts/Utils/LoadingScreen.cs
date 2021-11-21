@@ -4,14 +4,14 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.Utils
 {
-    public class LoadingScreen : MonoBehaviour
+    public class LoadingScreen : Managed
     {
-        [SerializeField] private Ignition ignition;
+        [SerializeField] private IntroManager introManager;
         [SerializeField] private Slider loadingBar;
 
         private void Update()
         {
-            loadingBar.value = ignition.NormalizedProgress;
+            loadingBar.value = introManager.NormalizedProgress;
         }
     }
 }

@@ -10,8 +10,10 @@ namespace DosinisSDK.Core
 
         private readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
 
-        public override void Init(IApp app)
+        public override void Init(IApp app, ModuleConfig config = null)
         {
+            base.Init(app, config);
+
             app.OnAppFocus += OnAppFocus;
             app.OnAppPaused += OnAppPaused;
 

@@ -24,8 +24,10 @@ namespace DosinisSDK.Ads
 
         private bool rewarded = false;
 
-        public override void Init(IApp app)
+        public override void Init(IApp app, ModuleConfig config = null)
         {
+            base.Init(app, config);
+
             MobileAds.Initialize(initStatus =>
             {
                 Log("Admob adapters initialized");

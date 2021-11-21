@@ -9,8 +9,10 @@ namespace DosinisSDK.Core
         protected readonly List<Managed> managedElements = new List<Managed>();
         private readonly Dictionary<Type, ManagedSingleton> singletons = new Dictionary<Type, ManagedSingleton>();
 
-        public override void Init(IApp app)
+        public override void Init(IApp app, ModuleConfig config = null)
         {
+            base.Init(app, config);
+
             foreach (var ge in GetComponentsInChildren<Managed>(true)) // TODO: Make it check whole scene instead of children components
             {
                 ge.Init(this);

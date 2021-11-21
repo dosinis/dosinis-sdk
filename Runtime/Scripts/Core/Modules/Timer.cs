@@ -9,8 +9,10 @@ namespace DosinisSDK.Core
         private WaitForEndOfFrame skipFrame = new WaitForEndOfFrame();
         private ICoroutineManager coroutineManager;
 
-        public override void Init(IApp app)
+        public override void Init(IApp app, ModuleConfig config = null)
         {
+            base.Init(app, config);
+
             coroutineManager = app.Coroutine;
         }
 

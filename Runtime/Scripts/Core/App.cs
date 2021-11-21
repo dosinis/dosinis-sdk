@@ -50,7 +50,7 @@ namespace DosinisSDK.Core
             return default;
         }
 
-        public void RegisterModule(IModule module)
+        public void RegisterModule(IModule module, ModuleConfig config = null)
         {
             var mType = module.GetType();
 
@@ -64,7 +64,7 @@ namespace DosinisSDK.Core
 
             try
             {
-                module.Init(this);
+                module.Init(this, config);
             }
             catch (Exception ex)
             {
