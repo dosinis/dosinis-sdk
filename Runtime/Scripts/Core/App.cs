@@ -58,8 +58,6 @@ namespace DosinisSDK.Core
                 return;
             }
 
-            cachedModules.Add(mType, module);
-
             if (config.safeMode)
             {
                 try
@@ -76,7 +74,9 @@ namespace DosinisSDK.Core
             {
                 module.Init(this, mConfig);
             }
-            
+
+            cachedModules.Add(mType, module);
+
             if (module is IProcessable)
             {
                 processables.Add(module as IProcessable);

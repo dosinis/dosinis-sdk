@@ -45,6 +45,11 @@ namespace DosinisSDK.Core
             }
         }
 
+        public T As<T>() where T : class, ISceneManager
+        {
+            return this as T;
+        }
+
         protected Managed CreateGameElement(Managed managed, Vector3 position, Transform parent)
         {
             var instance = Instantiate(managed, parent);
@@ -106,11 +111,6 @@ namespace DosinisSDK.Core
 
             LogError($"No Singleton {typeof(T).Name} is found!");
             return default;
-        }
-
-        T ISceneManager.As<T>()
-        {
-            return this as T;
         }
     }
 }
