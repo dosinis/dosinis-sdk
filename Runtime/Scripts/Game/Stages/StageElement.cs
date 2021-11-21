@@ -1,4 +1,4 @@
-using UnityEngine;
+using DosinisSDK.Core;
 
 namespace DosinisSDK.Game
 {

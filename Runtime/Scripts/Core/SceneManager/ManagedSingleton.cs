@@ -1,4 +1,4 @@
-namespace DosinisSDK.Game
+namespace DosinisSDK.Core
 {
     public class ManagedSingleton : Managed
     {

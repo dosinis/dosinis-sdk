@@ -26,6 +26,7 @@ namespace DosinisSDK.Core
         public static App Core;
         public ITimer Timer => GetCachedModule<ITimer>();
         public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
+        public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
 
         public T GetCachedModule<T>() where T : class, IModule
         {
@@ -81,7 +82,7 @@ namespace DosinisSDK.Core
 
         public void Restart()
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
         }
 
         public static void InitSignal(Action onInit)

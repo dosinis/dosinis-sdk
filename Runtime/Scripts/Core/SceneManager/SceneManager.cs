@@ -1,9 +1,8 @@
-using DosinisSDK.Core;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK.Game
+namespace DosinisSDK.Core
 {
     public class SceneManager : BehaviourModule, ISceneManager, IProcessable
     {

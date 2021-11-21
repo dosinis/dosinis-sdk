@@ -1,7 +1,7 @@
 using DosinisSDK.Core;
 using UnityEngine;
 
-namespace DosinisSDK.Game
+namespace DosinisSDK.Core
 {
     public interface ISceneManager : IBehaviourModule
     {

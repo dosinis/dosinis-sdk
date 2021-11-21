@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DosinisSDK.Game
+namespace DosinisSDK.Core
 {
     public class Managed : MonoBehaviour
     {

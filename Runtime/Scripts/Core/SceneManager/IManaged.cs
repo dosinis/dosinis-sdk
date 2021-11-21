@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK.Game
+namespace DosinisSDK.Core
 {
     public interface IManaged
     {

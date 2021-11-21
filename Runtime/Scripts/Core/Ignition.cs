@@ -26,7 +26,7 @@ namespace DosinisSDK.Core
         {
             yield return new WaitForSeconds(0.5f);
 
-            loadSceneOperation = SceneManager.LoadSceneAsync(targetSceneId, loadMode);
+            loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(targetSceneId, loadMode);
 
             while (!loadSceneOperation.isDone)
             {
