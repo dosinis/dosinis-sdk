@@ -10,6 +10,8 @@ namespace DosinisSDK.Core
 
         private List<IProcessable> processables = new List<IProcessable>();
 
+        private AppConfig config;
+
         private static bool initialized = false;
 
         private static event Action OnAppInitialized;
@@ -46,7 +48,7 @@ namespace DosinisSDK.Core
             return default;
         }
 
-        public void RegisterModule(IModule module, ModuleConfig config = null)
+        public void RegisterModule(IModule module, ModuleConfig mConfig = null)
         {
             var mType = module.GetType();
 
@@ -58,13 +60,21 @@ namespace DosinisSDK.Core
 
             cachedModules.Add(mType, module);
 
-            try
+            if (config.safeMode)
             {
-                module.Init(this, config);
+                try
+                {
+                    module.Init(this, mConfig);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. " +
+                        $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in AppConfig</color></i>");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}");
+                module.Init(this, mConfig);
             }
             
             if (module is IProcessable)
@@ -117,11 +127,15 @@ namespace DosinisSDK.Core
                 Debug.LogWarning($"{nameof(App)} already exists. " +
                     $"Make sure there's only one instance of the {nameof(App)}");
 
-                Destroy(this);
+                if (this != Core)
+                    Destroy(this);
+
                 return;
             }
 
             Core = this;
+
+            this.config = config;
 
             DontDestroyOnLoad(this);
 
@@ -153,6 +167,7 @@ namespace DosinisSDK.Core
             foreach (var module in behaviourModules)
             {
                 var moduleInstance = Instantiate(module);
+                moduleInstance.transform.parent = transform;
 
                 RegisterModule(moduleInstance);
             }
