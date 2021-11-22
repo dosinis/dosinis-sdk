@@ -5,9 +5,11 @@ using UnityEngine;
 
 namespace DosinisSDK.UI
 {
-    public class UIManager : ManagedSingleton, IUIManager
+    public class UIManager : Managed, IUIManager
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
+
+        public ISceneManager SceneManager => sceneManager;
 
         public override void Init(ISceneManager sceneManager)
         {

@@ -7,7 +7,6 @@ namespace DosinisSDK.Core
     public class SceneManager : BehaviourModule, ISceneManager, IProcessable
     {
         protected readonly List<Managed> managedElements = new List<Managed>();
-        private readonly Dictionary<Type, ManagedSingleton> singletons = new Dictionary<Type, ManagedSingleton>();
 
         public override void Init(IApp app, ModuleConfig config = null)
         {
@@ -18,19 +17,6 @@ namespace DosinisSDK.Core
                 managed.Init(this);
 
                 managedElements.Add(managed);
-
-                if (managed is ManagedSingleton singleton)
-                {
-                    var sType = singleton.GetType();
-
-                    if (singletons.ContainsKey(sType))
-                    {
-                        LogError($"Found more than one {sType.Name} singleton. Make sure you only have one such element per Scene");
-                        continue;
-                    }
-
-                    singletons.Add(sType, singleton);
-                }
             }
         }
 
@@ -100,17 +86,6 @@ namespace DosinisSDK.Core
 
             managedElements.Remove(managed);
             managed.Destruct();
-        }
-
-        public T GetSingletonOfType<T>() where T : ManagedSingleton // Make it IManagedSingleton
-        {
-            if (singletons.TryGetValue(typeof(T), out ManagedSingleton element))
-            {
-                return (T) element;
-            }
-
-            LogError($"No Singleton {typeof(T).Name} is found!");
-            return default;
         }
     }
 }

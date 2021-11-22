@@ -4,13 +4,13 @@ namespace DosinisSDK.Core
 {
     public class Managed : MonoBehaviour
     {
-        protected ISceneManager scene;
+        protected ISceneManager sceneManager;
 
         public bool Alive { get; private set; }
 
         public virtual void Init(ISceneManager scene)
         {
-            this.scene = scene;
+            this.sceneManager = scene;
             Alive = true;
         }
 
