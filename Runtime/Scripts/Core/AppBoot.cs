@@ -31,6 +31,6 @@ namespace DosinisSDK.Core
 
             App.Create(config);
         }
-    }
 #endif
+    }
 }
