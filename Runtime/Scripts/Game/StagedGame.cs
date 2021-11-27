@@ -6,125 +6,75 @@ using Random = UnityEngine.Random;
 
 namespace DosinisSDK.Game
 {
-    public class StagedGame : MonoBehaviour//, IStagedGame // inherit from Managed
+    public class StagedGame : Managed, IStagedGame
     {
-        //private StagedGameConfig config;
+        [SerializeField] private StagedGameConfig config;
 
-        //private StagedGameData data;
+        private StagedGameData data;
 
-        //private bool interrupted = false;
+        private bool interrupted = false;
 
-        //public Stage CurrentStage { get; private set; }
-        //public int CurrentStageId => data.stageId;
+        // Properties
 
-        //public event Action<Stage> OnStageLoaded = stage => { };
+        public Stage CurrentStage { get; private set; }
+        public int CurrentStageId => data.stageId;
 
-        //public event Action<Stage> OnStageCompleted = stage => { };
+        // Events
 
-        //public event Action<Stage> OnStageFailed = stage => { };
+        public event Action<Stage> OnStageLoaded;
 
-        //public override void Init(IApp app)
-        //{
-        //    base.Init(app);
+        public event Action<Stage> OnStageCompleted;
 
-        //    config = GetConfigAs<StagedGameConfig>();
+        public event Action<Stage> OnStageFailed;
 
-        //    data = app.GetCachedModule<IDataManager>().LoadAndRegisterData<StagedGameData>();
+        public override void OnInit()
+        {
+            data = App.Core.GetCachedModule<IDataManager>().LoadAndRegisterData<StagedGameData>();
 
-        //    LoadStage(data.stageId);
-        //}
+            LoadStage(data.stageId);
+        }
 
-        //public override void Process(float delta)
-        //{
-        //    if (interrupted)
-        //        return;
+        public override void Process(float delta)
+        {
+            if (interrupted)
+                return;
+        }
 
-        //    base.Process(delta);
-        //}
+        public void LoadStage(int id)
+        {
+            if (CurrentStage)
+            {
+                Destroy(CurrentStage);
+            }
 
-        //public void LoadStage(int id)
-        //{
-        //    if (CurrentStage)
-        //    {
-        //        CleanupCurrentStage();
-        //        DestroyGameElement(CurrentStage);
-        //    }
+            if (config.stages.Length <= id)
+            {
+                id = Random.Range(Mathf.FloorToInt(config.stages.Length / 2), config.stages.Length);
+            }
 
-        //    if (config.stages.Length <= id)
-        //    {
-        //        id = Random.Range(Mathf.FloorToInt(config.stages.Length / 2), config.stages.Length);
-        //    }
+            CurrentStage = Instantiate(config.stages[id], transform);
+            CurrentStage.transform.position = Vector3.zero;
 
-        //    CurrentStage = CreateGameElement(config.stages[id], Vector3.zero) as Stage;
+            OnStageLoaded(CurrentStage);
+        }
 
-        //    OnStageLoaded(CurrentStage);
-        //}
+        public void LoadStage()
+        {
+            LoadStage(data.stageId);
+            interrupted = false;
+        }
 
-        //public void LoadStage()
-        //{
-        //    LoadStage(data.stageId);
-        //    interrupted = false;
-        //}
+        public virtual void CompleteStage()
+        {
+            interrupted = true;
+            data.stageId++;
+            OnStageCompleted(CurrentStage);
+        }
 
-        //public virtual void CompleteStage()
-        //{
-        //    interrupted = true;
-        //    data.stageId++;
-        //    OnStageCompleted(CurrentStage);
-        //}
-
-        //public virtual void FailStage()
-        //{
-        //    interrupted = true;
-        //    OnStageFailed(CurrentStage);
-        //}
-
-        //public StageElement CreateStageElement(StageElement gameElement, Vector3 position)
-        //{
-        //    if (gameElement == null)
-        //    {
-        //        LogError("Trying to create StageElement which source is null");
-        //        return null;
-        //    }
-
-        //    return CreateGameElement(gameElement, position, CurrentStage.transform) as StageElement;
-        //}
-
-        //public StageElement CreateStageElement(GameObject source, Vector3 position)
-        //{
-        //    if (source == null)
-        //    {
-        //        LogError("Trying to create GameElement which source is null");
-        //        return null;
-        //    }
-
-        //    var gameElement = source.GetComponent<StageElement>();
-
-        //    if (gameElement)
-        //    {
-        //        return CreateStageElement(gameElement, position);
-        //    }
-
-        //    LogError($"Source {source.name} doesn't have StageElement! Have you forgot to assign it?");
-        //    return null;
-        //}
-
-        //private void CleanupCurrentStage()
-        //{
-        //    var stageElement = new List<StageElement>();
-
-        //    foreach (var gameElement in gameElements)
-        //    {
-        //        if (gameElement is StageElement)
-        //        {
-        //            stageElement.Add(gameElement as StageElement);
-        //        }
-        //    }
-
-        //    foreach (var se in stageElement)
-        //    {
-        //        DestroyGameElement(se);
-        //    }
-        //}
+        public virtual void FailStage()
+        {
+            interrupted = true;
+            OnStageFailed(CurrentStage);
+        }
     }
 }

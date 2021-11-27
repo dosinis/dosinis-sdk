@@ -3,18 +3,16 @@ using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public class Stage : Managed
+    public class Stage : MonoBehaviour
     {
         [SerializeField] protected StageConfig mainConfig;
 
         public IStagedGame stagedGame { get; private set; }
         public int Index { get; private set; }
 
-        public override void OnInit()
+        public void Init()
         {
-            //stagedGame = SceneManager as IStagedGame;
 
-            //Index = stagedGame.CurrentStageId;
         }
     }
 }

@@ -1,9 +1,10 @@
+using DosinisSDK.Core;
 using System;
 using UnityEngine;
 
 namespace DosinisSDK.Game
 {
-    public interface IStagedGame //: IGame
+    public interface IStagedGame : IManaged
     {
         void LoadStage(int id);
         void LoadStage();
@@ -14,7 +15,5 @@ namespace DosinisSDK.Game
         event Action<Stage> OnStageFailed;
         Stage CurrentStage { get; }
         int CurrentStageId { get; }
-        StageElement CreateStageElement(StageElement gameElement, Vector3 position);
-        StageElement CreateStageElement(GameObject source, Vector3 position);
     }
 }
