@@ -10,12 +10,11 @@ namespace DosinisSDK.Game
         public IStagedGame stagedGame { get; private set; }
         public int Index { get; private set; }
 
-        public override void Init(ISceneManager game)
+        public override void OnInit()
         {
-            base.Init(game);
+            //stagedGame = SceneManager as IStagedGame;
 
-            stagedGame = game as IStagedGame;
-            Index = stagedGame.CurrentStageId;
+            //Index = stagedGame.CurrentStageId;
         }
     }
 }

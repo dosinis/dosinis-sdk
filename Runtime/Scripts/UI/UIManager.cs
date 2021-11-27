@@ -9,9 +9,7 @@ namespace DosinisSDK.UI
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
-        public ISceneManager SceneManager => sceneManager;
-
-        public override void Init(ISceneManager sceneManager)
+        public override void OnInit()
         {
             foreach (Window win in GetComponentsInChildren<Window>(true))
             {

@@ -2,17 +2,19 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Managed : MonoBehaviour
+    public abstract class Managed : MonoBehaviour, IManaged
     {
-        protected ISceneManager sceneManager;
+        public ISceneManager SceneManager { get; private set; }
 
         public bool Alive { get; private set; }
 
-        public virtual void Init(ISceneManager scene)
+        public void Init(ISceneManager sceneManager)
         {
-            this.sceneManager = scene;
+            SceneManager = sceneManager;
             Alive = true;
         }
+
+        public abstract void OnInit();
 
         public virtual void Process(float delta)
         {

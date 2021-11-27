@@ -12,7 +12,6 @@ namespace DosinisSDK.Ads
 
     public abstract class AdManager : BehaviourModule, IAdManager
     {
-
         [SerializeField] protected string rewardedId = "";
         [SerializeField] protected string interstitialId = "";
         [SerializeField] protected string bannerId = "";
@@ -29,7 +28,6 @@ namespace DosinisSDK.Ads
         protected abstract void LoadInterstitialAds();
         protected abstract void LoadBanner();
         protected abstract void InitializeRewardedAds();
-
     }
 }
 

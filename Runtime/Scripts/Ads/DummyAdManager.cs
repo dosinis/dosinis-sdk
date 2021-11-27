@@ -5,9 +5,9 @@ namespace DosinisSDK.Ads
 {
     public class DummyAdManager : AdManager
     {
-        public override void Init(IApp app, ModuleConfig config = null)
+        public override void OnInit(IApp app)
         {
-            base.Init(app, config);
+            
         }
 
         public override void ShowBanner(string placement = "")

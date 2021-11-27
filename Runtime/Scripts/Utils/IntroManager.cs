@@ -17,14 +17,12 @@ namespace DosinisSDK.Utils
         public float NormalizedProgress => loadSceneOperation == null ? 0 : loadSceneOperation.progress / 0.9f;
         public event Action OnMainSceneLoaded = () => { };
 
-        public override void Init(IApp app, ModuleConfig config = null)
+        public override void OnInit(IApp app)
         {
-            base.Init(app, config);
-
             if (prewarmShaders)
                 Shader.WarmupAllShaders();
 
-            base.Init(app);
+            base.OnInit(app);
 
             StartCoroutine(LoadScene());
         }

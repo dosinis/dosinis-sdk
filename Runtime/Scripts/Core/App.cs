@@ -12,17 +12,22 @@ namespace DosinisSDK.Core
 
         private AppConfig config;
 
-        private static bool initialized = false;
-
-        private static event Action OnAppInitialized;
+        // Events
 
         public event Action<bool> OnAppPaused;
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
 
+        // Modules
+
         public ITimer Timer => GetCachedModule<ITimer>();
         public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
         public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
+
+        // Static
+
+        public static bool Initialized { get; private set; }
+        private static Action OnAppInitialized;
 
         public static App Core;
 
@@ -82,6 +87,8 @@ namespace DosinisSDK.Core
                 processables.Add(module as IProcessable);
             }
 
+            module.OnInit(this);
+
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
@@ -102,13 +109,13 @@ namespace DosinisSDK.Core
 
         public static void InitSignal(Action onInit)
         {
-            if (initialized)
+            if (Initialized)
             {
                 onInit();
             }
             else
             {
-                OnAppInitialized += onInit;
+                OnAppInitialized = onInit;
             }
         }
 
@@ -188,11 +195,14 @@ namespace DosinisSDK.Core
                 }
             }
 
-            // This might not be needed after all
-            // setupSceneManager(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            setupSceneManager(activeScene);
 
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
             {
+                if (newScene == activeScene)
+                    return;
+
                 Debug.Log($"Scene was changed to {newScene.name}");
 
                 Type activeSceneManager = null;
@@ -213,7 +223,7 @@ namespace DosinisSDK.Core
                 setupSceneManager(newScene);
             };
 
-            initialized = true;
+            Initialized = true;
 
             OnAppInitialized?.Invoke();
 

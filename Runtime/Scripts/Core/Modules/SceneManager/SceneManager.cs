@@ -6,17 +6,17 @@ namespace DosinisSDK.Core
 {
     public class SceneManager : BehaviourModule, ISceneManager, IProcessable
     {
-        protected readonly List<Managed> managedElements = new List<Managed>();
+        protected readonly Dictionary<Type, Managed> managedElements = new Dictionary<Type, Managed>();
 
-        public override void Init(IApp app, ModuleConfig config = null)
+        public override void OnInit(IApp app)
         {
-            base.Init(app, config);
-
             foreach (var managed in FindObjectsOfType<Managed>(true))
             {
                 managed.Init(this);
 
-                managedElements.Add(managed);
+                managedElements.Add(managed.GetType(), managed);
+
+                managed.OnInit();
             }
         }
 
@@ -24,9 +24,9 @@ namespace DosinisSDK.Core
         {
             foreach(var managed in managedElements)
             {
-                if (managed.Alive)
+                if (managed.Value.Alive)
                 {
-                    managed.Process(delta);
+                    managed.Value.Process(delta);
                 }
             }
         }
@@ -36,12 +36,46 @@ namespace DosinisSDK.Core
             return this as T;
         }
 
+        public T GetManaged<T>() where T : class, IManaged
+        {
+            var type = typeof(T);
+
+            managedElements.TryGetValue(type, out Managed managed);
+
+            if (managed)
+            {
+                return managed as T;
+            }
+
+            foreach (var element in managedElements)
+            {
+                if (element.Value is T val)
+                {
+                    managedElements.Add(type, element.Value);
+                    return val;
+                }
+            }
+
+            LogError($"Managed of type {typeof(T).Name} is not found! Maybe it's not ready yet?");
+
+            return default;
+        }
+
         protected Managed CreateGameElement(Managed managed, Vector3 position, Transform parent)
         {
+            var type = managed.GetType();
+
+            if (managedElements.ContainsKey(type))
+            {
+                Debug.LogError($"Managed of type {type.Name} already exists");
+                return null;
+            }
+
             var instance = Instantiate(managed, parent);
             instance.gameObject.transform.position = position;
             instance.Init(this);
-            managedElements.Add(instance);
+
+            managedElements.Add(type, instance);
 
             return instance;
         }
@@ -84,7 +118,7 @@ namespace DosinisSDK.Core
                 return;
             }
 
-            managedElements.Remove(managed);
+            managedElements.Remove(managed.GetType());
             managed.Destruct();
         }
     }

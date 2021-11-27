@@ -5,9 +5,9 @@ namespace DosinisSDK.Core
 {
     public class CoroutineManager : BehaviourModule, ICoroutineManager
     {
-        public override void Init(IApp app, ModuleConfig config = null)
+        public override void OnInit(IApp app)
         {
-            base.Init(app, config);
+            
         }
 
         public Coroutine Begin(IEnumerator coroutine)

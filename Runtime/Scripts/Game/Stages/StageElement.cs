@@ -6,13 +6,11 @@ namespace DosinisSDK.Game
     {
         protected Stage stage;
 
-        public override void Init(ISceneManager game)
+        public override void OnInit()
         {
-            base.Init(game);
+            //var stagedGame = game as IStagedGame;
 
-            var stagedGame = game as IStagedGame;
-
-            stage = stagedGame.CurrentStage;
+            //stage = stagedGame.CurrentStage;
         }
     }
 }

@@ -12,9 +12,9 @@ namespace DosinisSDK.UI
         private IAdManager adManager;
         private bool adIsBeingLoaded = false;
 
-        public override void Init(ISceneManager sceneManager)
+        public override void OnInit()
         {
-            base.Init(sceneManager);
+            base.OnInit();
             adManager = App.Core.GetCachedModule<IAdManager>();
         }
 

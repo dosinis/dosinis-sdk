@@ -16,7 +16,7 @@ namespace DosinisSDK.Ads
 
         private InterstitialAd interstitial;
 
-        private event Action<bool> OnRewardedAdFinished = b => { };
+        private Action<bool> OnRewardedAdFinished;
 
         private const string intesrtitialTestId = "ca-app-pub-3940256099942544/1033173712";
         private const string bannerTestId = "ca-app-pub-3940256099942544/6300978111";
@@ -24,10 +24,8 @@ namespace DosinisSDK.Ads
 
         private bool rewarded = false;
 
-        public override void Init(IApp app, ModuleConfig config = null)
+        public override void OnInit(IApp app)
         {
-            base.Init(app, config);
-
             MobileAds.Initialize(initStatus =>
             {
                 Log("Admob adapters initialized");
@@ -111,13 +109,7 @@ namespace DosinisSDK.Ads
         {
             Log($"Showing rewarded ad {placement}");
 
-            void CallBack(bool success)
-            {
-                callBack(success);
-                OnRewardedAdFinished -= CallBack;
-            }
-
-            OnRewardedAdFinished += CallBack;
+            OnRewardedAdFinished = callBack;
 
             foreach (RewardedAd ad in rewardedAds)
             {
@@ -164,14 +156,14 @@ namespace DosinisSDK.Ads
 
         private void HandleRewardedAdClosed(object sender, EventArgs e)
         {
-            Log("AdManager : Rewarded ad closed");
-
             Dispatcher.RunOnMainThread(() =>
             {
-                OnRewardedAdFinished(rewarded);
+                OnRewardedAdFinished?.Invoke(rewarded);
                 rewarded = false;
                 LoadRewardedAds();
             });
+
+            Log("AdManager : Rewarded ad closed");
         }
 
         private void HandleUserEarnedReward(object sender, Reward e)
@@ -182,7 +174,11 @@ namespace DosinisSDK.Ads
 
         private void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs e)
         {
-            OnRewardedAdFinished(false);
+            Dispatcher.RunOnMainThread(() =>
+            {
+                OnRewardedAdFinished?.Invoke(false);
+            });
+
             Log($"AdManager :{e.AdError.GetMessage()}");
         }
 

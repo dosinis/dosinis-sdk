@@ -2,16 +2,18 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Module : IModule
+    public abstract class Module : IModule
     {
         protected ModuleConfig mainConfig;
 
-        public virtual void Init(IApp app, ModuleConfig config = null)
+        public void Init(IApp app, ModuleConfig config = null)
         {
             if (config)
                 mainConfig = config;
         }
 
+        public abstract void OnInit(IApp app);
+        
         public T GetConfigAs<T>() where T : ModuleConfig
         {
             return mainConfig as T;
