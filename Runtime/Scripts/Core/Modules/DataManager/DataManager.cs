@@ -14,6 +14,7 @@ namespace DosinisSDK.Core
         {
             app.OnAppFocus += OnAppFocus;
             app.OnAppPaused += OnAppPaused;
+            app.OnAppQuit += OnAppQuit;
 
 #if UNITY_EDITOR
 
@@ -38,6 +39,11 @@ namespace DosinisSDK.Core
             {
                 SaveAll();
             }
+        }
+
+        private void OnAppQuit()
+        {
+            SaveAll();
         }
 
         public void SaveAll()
