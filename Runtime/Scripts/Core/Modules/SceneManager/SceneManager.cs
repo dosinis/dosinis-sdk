@@ -16,7 +16,8 @@ namespace DosinisSDK.Core
 
                 managedElements.Add(managed.GetType(), managed);
 
-                managed.OnInit();
+                if (managed.AutoInit)
+                    managed.OnInit();
             }
         }
 

@@ -4,9 +4,11 @@ namespace DosinisSDK.Core
 {
     public abstract class Managed : MonoBehaviour, IManaged
     {
-        public ISceneManager SceneManager { get; private set; }
+        [SerializeField] private bool autoInit = false;
 
+        public ISceneManager SceneManager { get; private set; }
         public bool Alive { get; private set; }
+        public bool AutoInit => autoInit;
 
         public void Init(ISceneManager sceneManager)
         {

@@ -6,6 +6,7 @@ namespace DosinisSDK.Core
 {
     public interface IManaged
     {
+        void OnInit();
         ISceneManager SceneManager { get; }
     }
 }

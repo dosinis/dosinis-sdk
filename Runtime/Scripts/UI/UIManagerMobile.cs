@@ -29,7 +29,9 @@ namespace DosinisSDK.UI
                 if (success)
                 {
                     adIsBeingLoaded = false;
-                    messageWindow.Hide();
+
+                    if (messageWindow.isActiveAndEnabled)
+                        messageWindow.Hide();
                 }
 
                 callback(success);
@@ -43,6 +45,9 @@ namespace DosinisSDK.UI
             yield return new WaitForSeconds(0.1f);
 
             float timer = 10f;
+
+            if (adIsBeingLoaded == false)
+                yield break;
 
             messageWindow.Show("One moment!", "Ad is loading...");
             messageWindow.SetCloseButtonEnabled(false);
