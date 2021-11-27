@@ -19,23 +19,24 @@ namespace DosinisSDK.UI.Utils
 
         protected override void Awake()
         {
-            base.Awake();
             startScale = transform.localScale;
 
-            App.InitSignal(() => 
+            if (clickSfx && audioManager == null)
             {
-                if (clickSfx)
+                App.InitSignal(() =>
                 {
                     audioManager = App.Core.GetCachedModule<IAudioManager>();
-                }
-            });
+                });
+            }
+
+            base.Awake();
         }
 
         public override void OnPointerDown(PointerEventData eventData)
         {
             base.OnPointerDown(eventData);
             StartCoroutine(PressAnimationRoutine());
-            
+           
             if (clickSfx && audioManager != null)
             {
                 audioManager.PlayOneShot(clickSfx);

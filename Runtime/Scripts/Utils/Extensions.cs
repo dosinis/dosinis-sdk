@@ -94,7 +94,22 @@ namespace DosinisSDK.Utils
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
         }
 
+        // Color
+
+        public static Color SetAlpha(ref this Color color, float alpha)
+        {
+            color = new Color(color.r, color.g, color.b, alpha);
+
+            return color;
+        }
+
         // Images
+
+        public static void SetAlpha(this Image image, float alpha)
+        {
+            var color = image.color;
+            image.color = color.SetAlpha(alpha);
+        }
 
         public static void PreserveAspectRatio(this RawImage image, float padding = 0)
         {

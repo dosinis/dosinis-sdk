@@ -115,7 +115,7 @@ namespace DosinisSDK.Core
             }
             else
             {
-                OnAppInitialized = onInit;
+                OnAppInitialized += onInit;
             }
         }
 

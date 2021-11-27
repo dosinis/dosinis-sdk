@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,9 +9,9 @@ namespace DosinisSDK.UI.Elements
         [SerializeField] private Element element;
         [SerializeField] private Transform root;
 
-        public int Size => spawnedElements.Count;
-
         private readonly List<Element> spawnedElements = new List<Element>();
+
+        public int Size => spawnedElements.Count;
 
         private void SetupElement<T>(Element element, T arg)
         {
@@ -38,6 +39,24 @@ namespace DosinisSDK.UI.Elements
             }
 
             return spawnedElements[index];
+        }
+
+        public List<Element> CollectElements(Predicate<Element> predicate = null)
+        {
+            if (predicate == null)
+                return new List<Element>(spawnedElements);
+
+            var collected = new List<Element>();
+
+            foreach (var element in spawnedElements)
+            {
+                if (predicate(element))
+                {
+                    collected.Add(element);
+                }
+            }
+
+            return collected;
         }
 
         public void Setup<T>(List<T> args)

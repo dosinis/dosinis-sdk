@@ -9,8 +9,8 @@ namespace DosinisSDK.UI
         [SerializeField] protected Button closeButton;
         [SerializeField] protected bool ignoreSafeArea = false;
 
-        public event Action OnWindowShown = () => { };
-        public event Action OnWindowHidden = () => { };
+        public event Action OnWindowShown;
+        public event Action OnWindowHidden;
 
         public bool IsShown { get; private set; }
 
@@ -51,12 +51,12 @@ namespace DosinisSDK.UI
 
         public virtual void OnShown()
         {
-            OnWindowShown();
+            OnWindowShown?.Invoke();
         }
 
         public virtual void OnHidden()
         {
-            OnWindowHidden();
+            OnWindowHidden?.Invoke();
         }
 
         private void ApplySafeArea()
