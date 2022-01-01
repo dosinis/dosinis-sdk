@@ -1,12 +1,11 @@
 using DosinisSDK.Core;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace DosinisSDK.Game
 {
-    public class StagedGame : Managed, IStagedGame
+    public class StagedGame : MonoBehaviour, IStagedGame
     {
         [SerializeField] private StagedGameConfig config;
 
@@ -27,18 +26,18 @@ namespace DosinisSDK.Game
 
         public event Action<Stage> OnStageFailed;
 
-        public override void OnInit()
-        {
-            data = App.Core.GetCachedModule<IDataManager>().LoadAndRegisterData<StagedGameData>();
+        //public override void OnInit()
+        //{
+        //    data = App.Core.GetCachedModule<IDataManager>().RetrieveOrCreateData<StagedGameData>();
 
-            LoadStage(data.stageId);
-        }
+        //    LoadStage(data.stageId);
+        //}
 
-        public override void Process(float delta)
-        {
-            if (interrupted)
-                return;
-        }
+        //public override void Process(float delta)
+        //{
+        //    if (interrupted)
+        //        return;
+        //}
 
         public void LoadStage(int id)
         {

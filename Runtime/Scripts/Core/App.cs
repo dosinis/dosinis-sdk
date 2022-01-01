@@ -87,8 +87,6 @@ namespace DosinisSDK.Core
                 processables.Add(module as IProcessable);
             }
 
-            module.OnInit(this);
-
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
@@ -118,15 +116,6 @@ namespace DosinisSDK.Core
                 OnAppInitialized += onInit;
             }
         }
-
-        public static void Create(AppConfig config)
-        {
-            var appObject = new GameObject();
-            appObject.name = nameof(App);
-
-            appObject.AddComponent<App>().Init(config);
-        }
-
         private void Init(AppConfig config)
         {
             if (Core)
@@ -158,25 +147,6 @@ namespace DosinisSDK.Core
             else
             {
                 Debug.LogWarning($"{nameof(ModulesRegistry)} is null. Did you forget to assign it to {nameof(AppConfig)}?");
-            }
-
-            Debug.Log("Registering Behaviour Modules...");
-
-            BehaviourModule[] behaviourModules = new BehaviourModule[config.behaviourModules.Length];
-
-            Array.Copy(config.behaviourModules, behaviourModules, config.behaviourModules.Length);
-
-            Array.Sort(behaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
-            {
-                return x.InitOrder.CompareTo(y.InitOrder);
-            });
-
-            foreach (var module in behaviourModules)
-            {
-                var moduleInstance = Instantiate(module);
-                moduleInstance.transform.parent = transform;
-
-                RegisterModule(moduleInstance);
             }
 
             Debug.Log("Setting up scene manager...");
@@ -228,6 +198,24 @@ namespace DosinisSDK.Core
             OnAppInitialized?.Invoke();
 
             Debug.Log($"{nameof(App)} initialized");
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void BootUp()
+        {
+            if (Initialized)
+                return;
+
+            var config = Resources.Load<AppConfig>("AppConfig");
+
+            if (config == null)
+            {
+                Debug.LogError($"App failed to boot up! Couldn't find {nameof(AppConfig)} in the Resources folder root");
+                return;
+            }
+
+            var appObject = new GameObject(nameof(App)).AddComponent<App>();
+            appObject.Init(config);
         }
 
         private void Update()

@@ -22,7 +22,7 @@ namespace DosinisSDK.UI.Utils
 
         public static void Pop(string message, float duration = 1f)
         {
-            App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<Popup>().Show(message, duration);
+           // App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<Popup>().Show(message, duration);
         }
     }
 }

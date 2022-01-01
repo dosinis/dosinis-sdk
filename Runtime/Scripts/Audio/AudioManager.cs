@@ -19,9 +19,9 @@ namespace DosinisSDK.Audio
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
-            data = app.GetCachedModule<IDataManager>().LoadAndRegisterData<AudioData>();
+            data = app.GetCachedModule<IDataManager>().RetrieveOrCreateData<AudioData>();
 
             for (int i = 0; i < POOL_SIZE; i++)
             {

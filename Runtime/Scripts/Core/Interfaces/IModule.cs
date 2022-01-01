@@ -2,8 +2,7 @@ namespace DosinisSDK.Core
 {
     public interface IModule
     {
-        void OnInit(IApp app);
-        void Init(IApp app, ModuleConfig config = null);
+        void Init(IApp app, ModuleConfig config);
         T GetConfigAs<T>() where T : ModuleConfig;
     }
 }

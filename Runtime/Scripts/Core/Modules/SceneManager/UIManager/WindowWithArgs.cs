@@ -1,4 +1,4 @@
-namespace DosinisSDK.UI
+namespace DosinisSDK.Core
 {
     public class WindowWithArgs<T> : Window
     {

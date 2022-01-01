@@ -11,10 +11,10 @@ namespace DosinisSDK.RateUs
         public bool IsRated => data.rated;
         public event Action OnInitRating = () => { };
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             var dataManager = app.GetCachedModule<IDataManager>();
-            data = dataManager.LoadAndRegisterData<RateUsData>();
+            data = dataManager.RetrieveOrCreateData<RateUsData>();
         }
 
         public void Rate(bool dummyRate = false)

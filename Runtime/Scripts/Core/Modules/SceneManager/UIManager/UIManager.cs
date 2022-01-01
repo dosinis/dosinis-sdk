@@ -1,15 +1,14 @@
-using DosinisSDK.Core;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.Core
 {
-    public class UIManager : Managed, IUIManager
+    public class UIManager : MonoBehaviour
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
-        public override void OnInit()
+        public virtual void Init(ISceneManager sceneManager)
         {
             foreach (Window win in GetComponentsInChildren<Window>(true))
             {

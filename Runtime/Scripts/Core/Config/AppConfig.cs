@@ -6,7 +6,6 @@ namespace DosinisSDK.Core
     public sealed class AppConfig : ScriptableObject
     {
         public bool safeMode = true;
-        public BehaviourModule[] behaviourModules;
         public ModulesRegistry modulesRegistry;
     }
 }

@@ -9,7 +9,7 @@ namespace DosinisSDK.UI.Utils
         [SerializeField] private SoundToggle soundToggle;
         [SerializeField] private MusicToggle musicToggle;
 
-        public override void Init(IUIManager uIManager)
+        public override void Init(UIManager uIManager)
         {
             base.Init(uIManager);
 

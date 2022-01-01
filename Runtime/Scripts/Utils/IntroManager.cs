@@ -17,7 +17,7 @@ namespace DosinisSDK.Utils
         public float NormalizedProgress => loadSceneOperation == null ? 0 : loadSceneOperation.progress / 0.9f;
         public event Action OnMainSceneLoaded = () => { };
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             if (prewarmShaders)
                 Shader.WarmupAllShaders();
@@ -29,13 +29,6 @@ namespace DosinisSDK.Utils
 
         private IEnumerator LoadScene()
         {
-            //App.InitSignal(() => {
-            //    loadedApp = true;
-            //});
-
-            //while (loadedApp == false)
-            //    yield return null;
-
             yield return new WaitForSeconds(0.5f);
 
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(targetSceneId, loadMode);

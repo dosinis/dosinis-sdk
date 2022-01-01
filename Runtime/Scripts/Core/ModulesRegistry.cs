@@ -12,6 +12,10 @@ namespace DosinisSDK.Core
         public virtual void Init(IApp app)
         {
             app.RegisterModule(new DataManager());
+
+            // Behaviour module creation example:
+
+            // app.CreateBehaviourModule<BehaviourModule>();
         }
     }
 }

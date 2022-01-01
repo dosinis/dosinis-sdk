@@ -14,40 +14,40 @@ namespace DosinisSDK.UI
 
             overlayQueue.Enqueue(caller);
 
-            var overlay = App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<OverlayWindow>();
+            //var overlay = App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<OverlayWindow>();
 
-            var callerSiblingId = caller.transform.GetSiblingIndex();
+            //var callerSiblingId = caller.transform.GetSiblingIndex();
 
-            if (overlay.isActiveAndEnabled == false)
-            {
-                overlay.transform.SetSiblingIndex(callerSiblingId - 1);
-                overlay.Show();
-            }
+            //if (overlay.isActiveAndEnabled == false)
+            //{
+            //    overlay.transform.SetSiblingIndex(callerSiblingId - 1);
+            //    overlay.Show();
+            //}
         }
 
         public static void HideOverlay()
         {
-            var overlay = App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<OverlayWindow>();
+            //var overlay = App.Core.SceneManager.GetManaged<IUIManager>().GetWindow<OverlayWindow>();
 
-            overlayQueue.Dequeue();
+            //overlayQueue.Dequeue();
 
-            App.Core.Timer.SkipFrame(() =>
-            {
-                if (overlayQueue.Count > 0)
-                {
-                    overlay.transform.SetSiblingIndex(overlayQueue.Peek().transform.GetSiblingIndex() - 1);
-                }
-                else
-                {
-                    if (overlay.isActiveAndEnabled)
-                    {
-                        overlay.Hide(() =>
-                        {
-                            overlay.transform.SetAsFirstSibling();
-                        });
-                    }
-                }
-            });
+            //App.Core.Timer.SkipFrame(() =>
+            //{
+            //    if (overlayQueue.Count > 0)
+            //    {
+            //        overlay.transform.SetSiblingIndex(overlayQueue.Peek().transform.GetSiblingIndex() - 1);
+            //    }
+            //    else
+            //    {
+            //        if (overlay.isActiveAndEnabled)
+            //        {
+            //            overlay.Hide(() =>
+            //            {
+            //                overlay.transform.SetAsFirstSibling();
+            //            });
+            //        }
+            //    }
+            //});
         }
     }
 }

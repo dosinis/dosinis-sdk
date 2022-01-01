@@ -1,3 +1,4 @@
+using DosinisSDK.Core;
 using System;
 using TMPro;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace DosinisSDK.UI.Utils
 
         private event Action<bool> OnProceed = b => { };
 
-        public override void Init(IUIManager uIManager)
+        public override void Init(UIManager uIManager)
         {
             base.Init(uIManager);
             ok.onClick.AddListener(OkClick);

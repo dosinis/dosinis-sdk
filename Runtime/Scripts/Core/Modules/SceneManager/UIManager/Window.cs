@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UI; // DONT USE IT IN CORE?
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.Core
 {
     public class Window : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace DosinisSDK.UI
 
         private RectTransform rect;
 
-        public virtual void Init(IUIManager uiManager)
+        public virtual void Init(UIManager uiManager)
         {
             if (closeButton != null)
             {

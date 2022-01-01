@@ -4,18 +4,17 @@ namespace DosinisSDK.Core
 {
     public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
     {
-        [SerializeField] private int initOrder = 0;
         [SerializeField] protected ModuleConfig mainConfig;
-
-        public int InitOrder => initOrder;
 
         public void Init(IApp app, ModuleConfig config)
         {
             if (config)
                 mainConfig = config;
+
+            OnInit(app);
         }
 
-        public abstract void OnInit(IApp app);
+        protected abstract void OnInit(IApp app);
 
         public T GetConfigAs<T>() where T : ModuleConfig
         {

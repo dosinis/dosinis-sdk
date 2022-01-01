@@ -13,7 +13,7 @@ namespace DosinisSDK.RateUs
 
         private IRateUsManager rateUsManager;
 
-        public override void Init(IUIManager uIManager)
+        public override void Init(UIManager uIManager)
         {
             base.Init(uIManager);
 
