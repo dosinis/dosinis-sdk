@@ -7,16 +7,22 @@ namespace DosinisSDK.Core
     {
         [SerializeField] protected bool ignoreSafeArea = false;
 
+        private IWindowTransition transition;
+
         public event Action OnWindowShown;
         public event Action OnWindowHidden;
 
-        public bool IsShown { get; private set; }
+        public bool IsShown => gameObject.activeSelf;
 
         private RectTransform rect;
 
-        public virtual void Init(UIManager uiManager)
+        public virtual void Init(IUIManager uiManager)
         {
-            IsShown = gameObject.activeSelf;
+            if (TryGetComponent(out IWindowTransition t))
+            {
+                transition = t;
+                transition.Init();
+            }
 
             rect = GetComponent<RectTransform>();
             
@@ -24,32 +30,58 @@ namespace DosinisSDK.Core
                 ApplySafeArea();
         }
 
-        public virtual void Show(Action done = null)
+        public void Show(Action done = null)
         {
             gameObject.SetActive(true);
-            IsShown = true;
-            OnShown();
 
-            done?.Invoke();
+            if (transition != null)
+            {
+                transition.ShowTransition(() =>
+                {
+                    OnShown();
+                    OnWindowShown?.Invoke();
+
+                    done?.Invoke();
+                });
+            }
+            else
+            {
+                OnShown();
+                OnWindowShown?.Invoke();
+
+                done?.Invoke();
+            }           
         }
 
-        public virtual void Hide(Action done = null)
+        public void Hide(Action done = null)
         {
-            gameObject.SetActive(false);
-            IsShown = false;
-            OnHidden();
+            if (transition != null)
+            {
+                transition.HideTransition(() =>
+                {
+                    gameObject.SetActive(false);
+                    OnHidden();
+                    OnWindowHidden?.Invoke();
 
-            done?.Invoke();
+                    done?.Invoke();
+                });
+            }
+            else
+            {
+                gameObject.SetActive(false);
+                OnHidden();
+                OnWindowHidden?.Invoke();
+
+                done?.Invoke();
+            }
         }
 
         public virtual void OnShown()
         {
-            OnWindowShown?.Invoke();
         }
 
         public virtual void OnHidden()
         {
-            OnWindowHidden?.Invoke();
         }
 
         private void ApplySafeArea()

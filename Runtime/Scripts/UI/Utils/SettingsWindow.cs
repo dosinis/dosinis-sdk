@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class SettingsWindow : AnimatedWindow
+    public class SettingsWindow : Window
     {
         [SerializeField] private SoundToggle soundToggle;
         [SerializeField] private MusicToggle musicToggle;
 
-        public override void Init(UIManager uIManager)
+        public override void Init(IUIManager uiManager)
         {
-            base.Init(uIManager);
+            base.Init(uiManager);
 
             var audioManager = App.Core.GetCachedModule<IAudioManager>();
 

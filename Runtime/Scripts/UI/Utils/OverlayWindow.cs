@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DosinisSDK.UI
 {
-    public class OverlayWindow : AnimatedWindow
+    public class OverlayWindow : Window
     {
         private static Queue<Window> overlayQueue = new Queue<Window>();
 

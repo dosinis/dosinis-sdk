@@ -1,9 +1,10 @@
+using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class MessageWindow : AnimatedWindow
+    public class MessageWindow : Window
     {
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text messageText;

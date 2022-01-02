@@ -5,11 +5,8 @@ using UnityEngine;
 
 namespace DosinisSDK.UI
 {
-    [RequireComponent(typeof(CanvasGroup))]
-    public class AnimatedWindow : Window // TODO: make more generic and customizable - AnimatedWindow
+    public class DefaultWindowTransition : MonoBehaviour, IWindowTransition
     {
-        [SerializeField] private bool showOverlay = false;
-
         [SerializeField] private float fadeDuration = 0.5f;
         [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
@@ -20,58 +17,28 @@ namespace DosinisSDK.UI
         private CanvasGroup canvasGroup;
         private RectTransform rectTransform;
 
-        public override void Init(UIManager uIManager)
+        public void Init()
         {
-            base.Init(uIManager);
             canvasGroup = GetComponent<CanvasGroup>();
             rectTransform = GetComponent<RectTransform>();
         }
 
-        public sealed override void Show(Action done = null)
+        public void ShowTransition(Action done)
         {
-            OnBeforeShow();
-
             if (useScale)
                 rectTransform.localScale = Vector3.zero;
 
             canvasGroup.alpha = 0;
 
-            if (showOverlay && !(this is OverlayWindow))
-            {
-                transform.SetAsLastSibling();
-                OverlayWindow.ShowOverlay(this);
-            }
-
-            base.Show(done);
-            StartCoroutine(FadeInRoutine());
+            StartCoroutine(FadeInRoutine(done));
         }
 
-        public sealed override void Hide(Action done = null)
+        public void HideTransition(Action done)
         {
-            OnBeforeHide();
-
-            if (showOverlay && !(this is OverlayWindow))
-            {
-                OverlayWindow.HideOverlay();
-            }
-
-            StartCoroutine(FadeOutRoutine(() =>
-            {
-                base.Hide(done);
-            }));
+            StartCoroutine(FadeOutRoutine(done));
         }
 
-        public virtual void OnBeforeShow() 
-        { 
-
-        }
-
-        public virtual void OnBeforeHide() 
-        { 
-
-        }
-
-        private IEnumerator FadeInRoutine()
+        private IEnumerator FadeInRoutine(Action done)
         {
             float timer = 0;
 
@@ -89,6 +56,8 @@ namespace DosinisSDK.UI
 
                 yield return null;
             }
+
+            done?.Invoke();
         }
 
         private IEnumerator FadeOutRoutine(Action done)
@@ -110,7 +79,7 @@ namespace DosinisSDK.UI
                 yield return null;
             }
 
-            done();
+            done?.Invoke();
         }
     }
 }

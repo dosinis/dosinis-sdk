@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.UI.Utils
 {
-    public class NotifyWindow : AnimatedWindow
+    public class NotifyWindow : Window
     {
         [SerializeField] private Button ok;
         [SerializeField] private Button cancel;
@@ -14,9 +14,9 @@ namespace DosinisSDK.UI.Utils
 
         private event Action<bool> OnProceed = b => { };
 
-        public override void Init(UIManager uIManager)
+        public override void Init(IUIManager uiManager)
         {
-            base.Init(uIManager);
+            base.Init(uiManager);
             ok.onClick.AddListener(OkClick);
             cancel.onClick.AddListener(CancelClick);
         }

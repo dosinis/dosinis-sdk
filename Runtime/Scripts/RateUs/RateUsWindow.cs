@@ -1,19 +1,18 @@
 using DosinisSDK.Core;
-using DosinisSDK.UI;
 using DosinisSDK.UI.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace DosinisSDK.RateUs
 {
-    public class RateUsWindow : AnimatedWindow
+    public class RateUsWindow : Window
     {
         [SerializeField] private Button[] rateButtons;
         [SerializeField] private Button[] lowRateButtons;
 
         private IRateUsManager rateUsManager;
 
-        public override void Init(UIManager uIManager)
+        public override void Init(IUIManager uIManager)
         {
             base.Init(uIManager);
 
