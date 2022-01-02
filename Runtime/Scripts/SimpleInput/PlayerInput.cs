@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace DosinisSDK.Utils
+namespace DosinisSDK.SimpleInput
 {
     public class PlayerInput : MonoBehaviour
     {
