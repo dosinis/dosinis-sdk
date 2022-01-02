@@ -18,11 +18,12 @@ namespace DosinisSDK.Core
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
 
-        // Modules
+        // Core Modules
 
         public ITimer Timer => GetCachedModule<ITimer>();
         public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
         public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
+        public IUIManager UIManager => GetCachedModule<IUIManager>();
 
         // Static
 
@@ -151,9 +152,10 @@ namespace DosinisSDK.Core
 
             Debug.Log("Setting up scene manager...");
 
-            void setupSceneManager(UnityEngine.SceneManagement.Scene scene)
+            void setupScene(UnityEngine.SceneManagement.Scene scene)
             {
                 var newSceneManager = FindObjectOfType<SceneManager>() as ISceneManager;
+                var newUIManager = FindObjectOfType<UIManager>() as IUIManager;
 
                 if (newSceneManager != null)
                 {
@@ -161,36 +163,36 @@ namespace DosinisSDK.Core
                 }
                 else
                 {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}");
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}. Ignore if it's intended");
+                }
+
+                if (newUIManager != null)
+                {
+                    RegisterModule(newUIManager);
+                }
+                else
+                {
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
                 }
             }
 
             var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            setupSceneManager(activeScene);
 
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
             {
-                if (newScene == activeScene)
-                    return;
-
                 Debug.Log($"Scene was changed to {newScene.name}");
 
-                Type activeSceneManager = null;
-
-                foreach (var module in cachedModules)
+                if (cachedModules.ContainsKey(typeof(ISceneManager)))
                 {
-                    if (module.Value is ISceneManager value)
-                    {
-                        activeSceneManager = module.Key;
-                    }
+                    cachedModules.Remove(typeof(ISceneManager));
                 }
 
-                if (activeSceneManager != null && cachedModules.ContainsKey(activeSceneManager))
+                if (cachedModules.ContainsKey(typeof(IUIManager)))
                 {
-                    cachedModules.Remove(activeSceneManager);
+                    cachedModules.Remove(typeof(IUIManager));
                 }
 
-                setupSceneManager(newScene);
+                setupScene(newScene);
             };
 
             Initialized = true;

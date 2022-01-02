@@ -23,7 +23,7 @@ namespace DosinisSDK.UI.Utils
 
         public void SetCloseButtonEnabled(bool value)
         {
-            closeButton.gameObject.SetActive(value);
+            //closeButton.gameObject.SetActive(value);
         }
     }
 }

@@ -1,12 +1,10 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI; // DONT USE IT IN CORE?
 
 namespace DosinisSDK.Core
 {
     public class Window : MonoBehaviour
     {
-        [SerializeField] protected Button closeButton;
         [SerializeField] protected bool ignoreSafeArea = false;
 
         public event Action OnWindowShown;
@@ -18,11 +16,6 @@ namespace DosinisSDK.Core
 
         public virtual void Init(UIManager uiManager)
         {
-            if (closeButton != null)
-            {
-                closeButton.onClick.AddListener(() => Hide());
-            }
-
             IsShown = gameObject.activeSelf;
 
             rect = GetComponent<RectTransform>();

@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class UIManager : MonoBehaviour
+    public class UIManager : BehaviourModule, IUIManager
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
-        public virtual void Init(ISceneManager sceneManager)
+        protected override void OnInit(IApp app)
         {
             foreach (Window win in GetComponentsInChildren<Window>(true))
             {
@@ -39,8 +38,18 @@ namespace DosinisSDK.Core
                 }
             }
 
-            Debug.LogError($"No Window {typeof(T).Name} is available!");
+            LogError($"No Window {typeof(T).Name} is available!");
             return default;
+        }
+
+        public void ShowWindow<T>(Action callBack = null) where T : Window
+        {
+            GetWindow<T>().Show(callBack);
+        }
+
+        public void HideWindow<T>(Action callBack = null) where T : Window
+        {
+            GetWindow<T>().Hide(callBack);
         }
     }
 }
