@@ -84,6 +84,7 @@ namespace DosinisSDK.Core
         {
         }
 
+        // This applies safe area wrongly on Game view (it work on DeviceSimulator though)
         private void ApplySafeArea()
         {
             var rootCanvas = GetComponentInParent<Canvas>();

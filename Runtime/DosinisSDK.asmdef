@@ -1,11 +1,8 @@
 {
-    "name": "DosinisSDK.Core",
+    "name": "DosinisSDK",
     "rootNamespace": "",
     "references": [
-        "Unity.TextMeshPro",
-        "Unity.Addressables",
-        "Unity.ResourceManager",
-        "DosinisSDK.Core.Core"
+        "DosinisSDK.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
