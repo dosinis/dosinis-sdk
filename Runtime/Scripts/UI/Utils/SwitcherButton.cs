@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace DosinisSDK.UI.Utils
 {
@@ -26,7 +25,7 @@ namespace DosinisSDK.UI.Utils
 
             isEnabled = value;
             UpdateSwitcherState();
-            GetComponent<Button>().onClick.AddListener(OnClick);
+            GetComponent<Button>().OnClick += OnClick;
             initialized = true;
         }
 
