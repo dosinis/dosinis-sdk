@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using DosinisSDK.Core;
 
 namespace DosinisSDK.RateUs
 {
     [System.Serializable]
-    public class RateUsData
+    public class RateUsData : ModuleData
     {
         public bool rated = false;
         public int starsClicked;

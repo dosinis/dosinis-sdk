@@ -12,7 +12,7 @@ namespace DosinisSDK.Utils
 
         protected override void OnInit(IApp app)
         {
-            dataManager = App.Core.GetCachedModule<IDataManager>();
+            dataManager = App.Core.GetModule<IDataManager>();
 
             StartCoroutine(AutoSaveCoroutine());
         }

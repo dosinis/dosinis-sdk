@@ -13,7 +13,7 @@ namespace DosinisSDK.RateUs
 
         protected override void OnInit(IApp app)
         {
-            var dataManager = app.GetCachedModule<IDataManager>();
+            var dataManager = app.GetModule<IDataManager>();
             data = dataManager.RetrieveOrCreateData<RateUsData>();
         }
 

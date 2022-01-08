@@ -12,7 +12,7 @@ namespace DosinisSDK.UI.Utils
         [SerializeField] private Button cancel;
         [SerializeField] private TMP_Text messageText;
 
-        private event Action<bool> OnProceed = b => { };
+        private event Action<bool> OnProceed;
 
         public override void Init(IUIManager uiManager)
         {
@@ -25,26 +25,26 @@ namespace DosinisSDK.UI.Utils
         {
             messageText.text = message;
 
-            void CallBack(bool success)
+            void callBack(bool success)
             {
                 onProceed(success);
-                OnProceed -= CallBack;
+                OnProceed -= callBack;
             }
 
-            OnProceed += CallBack;
+            OnProceed += callBack;
 
             Show();
         }
 
         private void OkClick()
         {
-            OnProceed(true);
+            OnProceed?.Invoke(true);
             Hide();
         }
 
         private void CancelClick()
         {
-            OnProceed(false);
+            OnProceed?.Invoke(false);
             Hide();
         }
     }

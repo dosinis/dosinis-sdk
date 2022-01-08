@@ -8,7 +8,7 @@ namespace DosinisSDK.UI.Utils
         protected override void OnClick()
         {
             base.OnClick();
-            var audioModule = App.Core.GetCachedModule<IAudioManager>();
+            var audioModule = App.Core.GetModule<IAudioManager>();
 
             audioModule.SetMusicEnabled(!audioModule.IsMusicEnabled);
         }

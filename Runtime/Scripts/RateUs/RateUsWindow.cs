@@ -16,7 +16,7 @@ namespace DosinisSDK.RateUs
         {
             base.Init(uIManager);
 
-            rateUsManager = App.Core.GetCachedModule<IRateUsManager>();
+            rateUsManager = App.Core.GetModule<IRateUsManager>();
 
             rateUsManager.OnInitRating += () => Show();
 

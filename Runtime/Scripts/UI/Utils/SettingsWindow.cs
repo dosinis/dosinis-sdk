@@ -13,7 +13,7 @@ namespace DosinisSDK.UI.Utils
         {
             base.Init(uiManager);
 
-            var audioManager = App.Core.GetCachedModule<IAudioManager>();
+            var audioManager = App.Core.GetModule<IAudioManager>();
 
             soundToggle.Init(audioManager.IsSfxEnabled);
             musicToggle.Init(audioManager.IsMusicEnabled);

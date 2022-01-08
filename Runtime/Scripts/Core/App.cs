@@ -20,10 +20,10 @@ namespace DosinisSDK.Core
 
         // Core Modules
 
-        public ITimer Timer => GetCachedModule<ITimer>();
-        public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
-        public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
-        public IUIManager UIManager => GetCachedModule<IUIManager>();
+        public ITimer Timer => GetModule<ITimer>();
+        public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();
+        public ISceneManager SceneManager => GetModule<ISceneManager>();
+        public IUIManager UIManager => GetModule<IUIManager>();
 
         // Static
 
@@ -32,7 +32,7 @@ namespace DosinisSDK.Core
 
         public static App Core;
 
-        public T GetCachedModule<T>() where T : class, IModule
+        public T GetModule<T>() where T : class, IModule
         {
             var mType = typeof(T);
 

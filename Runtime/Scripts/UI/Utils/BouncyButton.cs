@@ -25,7 +25,7 @@ namespace DosinisSDK.UI.Utils
             {
                 App.InitSignal(() =>
                 {
-                    audioManager = App.Core.GetCachedModule<IAudioManager>();
+                    audioManager = App.Core.GetModule<IAudioManager>();
                 });
             }
 
