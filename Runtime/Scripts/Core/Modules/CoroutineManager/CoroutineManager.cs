@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
 {
     public class CoroutineManager : BehaviourModule, ICoroutineManager
     {
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             
         }

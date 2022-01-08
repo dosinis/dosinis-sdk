@@ -5,7 +5,7 @@ namespace DosinisSDK.Ads
 {
     public class DummyAdManager : AdManager
     {
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             
         }

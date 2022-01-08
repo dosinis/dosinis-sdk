@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,14 +5,14 @@ namespace DosinisSDK.Utils
 {
     public class FpsWidget : MonoBehaviour
     {
-        private TextMeshProUGUI text;
+        private Text text;
 
         private float hudRefreshRate = 1;
         private float timer;
 
         private void Awake()
         {
-            text = gameObject.AddComponent<TextMeshProUGUI>();
+            text = gameObject.AddComponent<Text>();
         }
 
         private void Update()

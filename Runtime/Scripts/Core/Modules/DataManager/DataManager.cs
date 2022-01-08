@@ -6,11 +6,11 @@ namespace DosinisSDK.Core
 {
     public class DataManager : Module, IDataManager
     {
-        private Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
 
         private readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             app.OnAppFocus += OnAppFocus;
             app.OnAppPaused += OnAppPaused;
@@ -20,6 +20,7 @@ namespace DosinisSDK.Core
 
             if (Directory.Exists(EDITOR_SAVE_PATH) == false)
             {
+                PlayerPrefs.DeleteAll();
                 Directory.CreateDirectory(EDITOR_SAVE_PATH);
             }
 #endif
@@ -86,21 +87,24 @@ namespace DosinisSDK.Core
             return Path.Combine(EDITOR_SAVE_PATH, key + ".json");
         }
 
-        public T LoadAndRegisterData<T>() where T : class, new()
+        public T RetrieveOrCreateData<T>() where T : class, new()
         {
-            var data = LoadData<T>();
-            RegisterData(data);
+            if (dataRegistry.TryGetValue(typeof(T).Name, out object data) == false)
+            {
+                data = LoadRawData<T>();
+                RegisterData(data);
+            }
 
-            return data;
+            return data as T;
         }
 
         public void RegisterData<T>(T data)
         {
-            dataRegistry.Add(typeof(T).Name, data);
+            dataRegistry.Add(data.GetType().Name, data);
             SaveData(data);
         }
 
-        public T LoadData<T>() where T : class, new()
+        public T LoadRawData<T>() where T : class, new()
         {
             string dataKey = typeof(T).Name;
 
@@ -127,15 +131,13 @@ namespace DosinisSDK.Core
             {
                 return data;
             }
-            else
-            {
-                return new T();
-            }
+
+            return new T();
         }
 
         public void SaveData<T>(T data)
         {
-            SaveRawData(data, typeof(T).Name);
+            SaveRawData(data, data.GetType().Name);
         }
 
         public bool HasData<T>()

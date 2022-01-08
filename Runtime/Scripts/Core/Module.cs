@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -6,13 +7,15 @@ namespace DosinisSDK.Core
     {
         protected ModuleConfig mainConfig;
 
-        public void Init(IApp app, ModuleConfig config = null)
+        public void Init(IApp app, ModuleConfig config)
         {
             if (config)
                 mainConfig = config;
+
+            OnInit(app);
         }
 
-        public abstract void OnInit(IApp app);
+        protected abstract void OnInit(IApp app);
         
         public T GetConfigAs<T>() where T : ModuleConfig
         {

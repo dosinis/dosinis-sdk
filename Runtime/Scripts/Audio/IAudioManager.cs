@@ -1,19 +1,11 @@
 using DosinisSDK.Core;
 using UnityEngine;
-#if ADDRESSABLES
-using UnityEngine.AddressableAssets;
-#endif
 
 namespace DosinisSDK.Audio
 {
     public interface IAudioManager : IBehaviourModule
     {
         public void PlayOneShot(AudioClip clip, float volume = 1);
-
-#if ADDRESSABLES
-        public void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1);
-        public void PlayMusicAsync(AssetReferenceT<AudioClip> clipRef);
-#endif
         public void StopMusic();
         public void PlayMusic(AudioClip clip);
         public void PlayLoop(AudioClip clip);

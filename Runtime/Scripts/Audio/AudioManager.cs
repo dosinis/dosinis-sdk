@@ -1,9 +1,6 @@
 using DosinisSDK.Core;
 using System.Collections.Generic;
 using UnityEngine;
-#if ADDRESSABLES
-using UnityEngine.AddressableAssets;
-#endif
 
 namespace DosinisSDK.Audio
 {
@@ -19,9 +16,9 @@ namespace DosinisSDK.Audio
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
-            data = app.GetCachedModule<IDataManager>().LoadAndRegisterData<AudioData>();
+            data = app.GetModule<IDataManager>().RetrieveOrCreateData<AudioData>();
 
             for (int i = 0; i < POOL_SIZE; i++)
             {
@@ -113,19 +110,5 @@ namespace DosinisSDK.Audio
 
             musicSource.volume = value ? 1 : 0;
         }
-
-#if ADDRESSABLES
-        public async void PlayOneShotAsync(AssetReferenceT<AudioClip> clipRef, float volume = 1)
-        {
-            var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
-            PlayOneShot(clip, volume);
-        }
-
-        public async void PlayMusicAsync(AssetReferenceT<AudioClip> clipRef)
-        {
-            var clip = await Addressables.LoadAssetAsync<AudioClip>(clipRef).Task;
-            PlayMusic(clip);
-        }
-#endif
     }
 }

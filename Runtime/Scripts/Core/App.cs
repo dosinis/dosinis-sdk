@@ -18,11 +18,12 @@ namespace DosinisSDK.Core
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
 
-        // Modules
+        // Core Modules
 
-        public ITimer Timer => GetCachedModule<ITimer>();
-        public ICoroutineManager Coroutine => GetCachedModule<ICoroutineManager>();
-        public ISceneManager SceneManager => GetCachedModule<ISceneManager>();
+        public ITimer Timer => GetModule<ITimer>();
+        public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();
+        public ISceneManager SceneManager => GetModule<ISceneManager>();
+        public IUIManager UIManager => GetModule<IUIManager>();
 
         // Static
 
@@ -31,7 +32,7 @@ namespace DosinisSDK.Core
 
         public static App Core;
 
-        public T GetCachedModule<T>() where T : class, IModule
+        public T GetModule<T>() where T : class, IModule
         {
             var mType = typeof(T);
 
@@ -87,8 +88,6 @@ namespace DosinisSDK.Core
                 processables.Add(module as IProcessable);
             }
 
-            module.OnInit(this);
-
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
@@ -118,15 +117,6 @@ namespace DosinisSDK.Core
                 OnAppInitialized += onInit;
             }
         }
-
-        public static void Create(AppConfig config)
-        {
-            var appObject = new GameObject();
-            appObject.name = nameof(App);
-
-            appObject.AddComponent<App>().Init(config);
-        }
-
         private void Init(AppConfig config)
         {
             if (Core)
@@ -160,30 +150,12 @@ namespace DosinisSDK.Core
                 Debug.LogWarning($"{nameof(ModulesRegistry)} is null. Did you forget to assign it to {nameof(AppConfig)}?");
             }
 
-            Debug.Log("Registering Behaviour Modules...");
-
-            BehaviourModule[] behaviourModules = new BehaviourModule[config.behaviourModules.Length];
-
-            Array.Copy(config.behaviourModules, behaviourModules, config.behaviourModules.Length);
-
-            Array.Sort(behaviourModules, (IBehaviourModule x, IBehaviourModule y) =>
-            {
-                return x.InitOrder.CompareTo(y.InitOrder);
-            });
-
-            foreach (var module in behaviourModules)
-            {
-                var moduleInstance = Instantiate(module);
-                moduleInstance.transform.parent = transform;
-
-                RegisterModule(moduleInstance);
-            }
-
             Debug.Log("Setting up scene manager...");
 
-            void setupSceneManager(UnityEngine.SceneManagement.Scene scene)
+            void setupScene(UnityEngine.SceneManagement.Scene scene)
             {
                 var newSceneManager = FindObjectOfType<SceneManager>() as ISceneManager;
+                var newUIManager = FindObjectOfType<UIManager>() as IUIManager;
 
                 if (newSceneManager != null)
                 {
@@ -191,36 +163,36 @@ namespace DosinisSDK.Core
                 }
                 else
                 {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}");
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}. Ignore if it's intended");
+                }
+
+                if (newUIManager != null)
+                {
+                    RegisterModule(newUIManager);
+                }
+                else
+                {
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
                 }
             }
 
             var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            setupSceneManager(activeScene);
 
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
             {
-                if (newScene == activeScene)
-                    return;
-
                 Debug.Log($"Scene was changed to {newScene.name}");
 
-                Type activeSceneManager = null;
-
-                foreach (var module in cachedModules)
+                if (cachedModules.ContainsKey(typeof(ISceneManager)))
                 {
-                    if (module.Value is ISceneManager value)
-                    {
-                        activeSceneManager = module.Key;
-                    }
+                    cachedModules.Remove(typeof(ISceneManager));
                 }
 
-                if (activeSceneManager != null && cachedModules.ContainsKey(activeSceneManager))
+                if (cachedModules.ContainsKey(typeof(IUIManager)))
                 {
-                    cachedModules.Remove(activeSceneManager);
+                    cachedModules.Remove(typeof(IUIManager));
                 }
 
-                setupSceneManager(newScene);
+                setupScene(newScene);
             };
 
             Initialized = true;
@@ -228,6 +200,24 @@ namespace DosinisSDK.Core
             OnAppInitialized?.Invoke();
 
             Debug.Log($"{nameof(App)} initialized");
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void BootUp()
+        {
+            if (Initialized)
+                return;
+
+            var config = Resources.Load<AppConfig>("AppConfig");
+
+            if (config == null)
+            {
+                Debug.LogError($"App failed to boot up! Couldn't find {nameof(AppConfig)} in the Resources folder root");
+                return;
+            }
+
+            var appObject = new GameObject(nameof(App)).AddComponent<App>();
+            appObject.Init(config);
         }
 
         private void Update()
