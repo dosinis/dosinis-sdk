@@ -5,8 +5,8 @@ namespace DosinisSDK.Wallet
     public class WalletBase : Module
     {
         // NOTE: Wallet data currencies list is mirrored by config currencies.
-        // So in order to add new currency simply add new currency in config
-        // and use it like this in your custom wallet:
+        // So in order to add new currency simply add new currency in config.
+        // And use it like this in your custom wallet:
         // public Currency Coins => data.currencies[0];
 
         protected WalletData data;
