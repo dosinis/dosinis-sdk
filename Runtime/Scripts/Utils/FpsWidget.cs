@@ -12,7 +12,14 @@ namespace DosinisSDK.Utils
 
         private void Awake()
         {
-            text = gameObject.AddComponent<Text>();
+            if (gameObject.TryGetComponent(out Text text))
+            {
+                this.text = text;
+            }
+            else
+            {
+                this.text = gameObject.AddComponent<Text>();
+            }
         }
 
         private void Update()
