@@ -16,7 +16,7 @@ namespace DosinisSDK.Core
 
         private RectTransform rect;
 
-        public virtual void Init(IUIManager uiManager)
+        public void Init(IUIManager uiManager)
         {
             if (TryGetComponent(out IWindowTransition t))
             {
@@ -28,6 +28,13 @@ namespace DosinisSDK.Core
             
             if (ignoreSafeArea == false)
                 ApplySafeArea();
+
+            OnInit();
+        }
+        
+        protected virtual void OnInit()
+        {
+
         }
 
         public void Show(Action done = null)
