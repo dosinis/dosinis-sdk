@@ -42,6 +42,7 @@ namespace DosinisSDK.Pool
         private void SetSource(T pooled)
         {
             sourceObject = pooled;
+            sourceObject.gameObject.SetActive(false);
         }
 
         public static Pool<T> Create(T source)
