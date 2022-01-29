@@ -98,6 +98,23 @@ namespace DosinisSDK.Utils
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
         }
 
+        // Transforms
+
+        public static void SetPosX(this Transform transform, float value)
+        {
+            transform.position = new Vector3(value, transform.position.y, transform.position.z);
+        }
+
+        public static void SetPosY(this Transform transform, float value)
+        {
+            transform.position = new Vector3(transform.position.x, value, transform.position.z);
+        }
+
+        public static void SetPosZ(this Transform transform, float value)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, value);
+        }
+
         // Color
 
         public static Color SetAlpha(ref this Color color, float alpha)

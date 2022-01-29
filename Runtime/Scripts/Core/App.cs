@@ -117,6 +117,7 @@ namespace DosinisSDK.Core
                 OnAppInitialized += onInit;
             }
         }
+
         private void Init(AppConfig config)
         {
             if (Core)
