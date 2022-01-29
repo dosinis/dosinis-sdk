@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace DosinisSDK.UI
 {
-    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler
+    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IDragHandler
     {
         public bool interactable = true;
 
@@ -60,7 +60,6 @@ namespace DosinisSDK.UI
                 {
                     ClickPerformed();
                 }
-
             }
         }
 
@@ -86,6 +85,10 @@ namespace DosinisSDK.UI
                 mouseOverObject = true;
             }
         }
+        public void OnDrag(PointerEventData eventData)
+        {
+            // Needed, because OnPointerUp doesn't work well without this
+        }
 
         private void Awake()
         {
@@ -95,6 +98,6 @@ namespace DosinisSDK.UI
             {
                 buttonAnimation.Init();
             }
-        }
+        }    
     }
 }

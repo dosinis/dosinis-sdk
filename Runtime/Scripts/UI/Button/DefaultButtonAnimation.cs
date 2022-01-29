@@ -8,10 +8,11 @@ namespace DosinisSDK.UI
 {
     public class DefaultButtonAnimation : MonoBehaviour, IButtonAnimation
     {
-        public float scaleRatio = 0.95f;
-        public float animationDuration = 0.1f;
+        [SerializeField] private float scaleRatio = 0.9f;
+        [SerializeField] private float animationDuration = 0.1f;
 
-        public AudioClip clickSfx;
+        [SerializeField] private AudioClip clickSfx;
+
         private Vector3 startScale;
 
         private IAudioManager audioManager;
@@ -50,7 +51,7 @@ namespace DosinisSDK.UI
 
             while (t < 1)
             {
-                transform.localScale = Vector3.Lerp(startScale * scaleRatio, startScale, t);
+                transform.localScale = Vector3.Lerp(transform.localScale, startScale, t);
                 t += Time.deltaTime / animationDuration;
                 yield return null;
             }
