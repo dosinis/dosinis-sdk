@@ -34,10 +34,14 @@ namespace DosinisSDK.Core
         
         protected virtual void OnInit()
         {
-
         }
 
-        public void Show(Action done = null)
+        public void Show()
+        {
+            Show(() => { });
+        }
+
+        public void Show(Action done)
         {
             gameObject.SetActive(true);
 
@@ -60,7 +64,12 @@ namespace DosinisSDK.Core
             }           
         }
 
-        public void Hide(Action done = null)
+        public void Hide()
+        {
+            Hide(() => { });
+        }
+
+        public void Hide(Action done)
         {
             if (transition != null)
             {
