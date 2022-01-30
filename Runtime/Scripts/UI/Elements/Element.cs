@@ -17,7 +17,6 @@ namespace DosinisSDK.UI.Elements
 
         protected virtual void OnInit()
         {
-
         }
 
         public void Show()
@@ -32,7 +31,6 @@ namespace DosinisSDK.UI.Elements
 
         public virtual void Process(float delta)
         {
-
         }
     }
 }
