@@ -92,11 +92,11 @@ namespace DosinisSDK.Core
             }
         }
 
-        public virtual void OnShown()
+        protected virtual void OnShown()
         {
         }
 
-        public virtual void OnHidden()
+        protected virtual void OnHidden()
         {
         }
 

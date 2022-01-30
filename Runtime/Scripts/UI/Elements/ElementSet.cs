@@ -24,10 +24,6 @@ namespace DosinisSDK.UI.Elements
                 elementFor.Setup(arg);
                 elementFor.Show();
             }
-            else
-            {
-                elementFor.Hide();
-            }
         }
 
         public Element GetElement(int index)
