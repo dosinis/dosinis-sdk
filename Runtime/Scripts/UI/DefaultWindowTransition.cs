@@ -5,9 +5,10 @@ using UnityEngine;
 
 namespace DosinisSDK.UI
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public class DefaultWindowTransition : MonoBehaviour, IWindowTransition
     {
-        [SerializeField] private float fadeDuration = 0.5f;
+        [SerializeField] private float fadeDuration = 0.25f;
         [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
         [SerializeField] private bool useScale = false;
