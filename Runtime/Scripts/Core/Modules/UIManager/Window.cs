@@ -45,6 +45,8 @@ namespace DosinisSDK.Core
         {
             gameObject.SetActive(true);
 
+            OnBeforeShown();
+
             if (transition != null)
             {
                 transition.ShowTransition(() =>
@@ -71,6 +73,8 @@ namespace DosinisSDK.Core
 
         public void Hide(Action done)
         {
+            OnBeforeHidden();
+
             if (transition != null)
             {
                 transition.HideTransition(() =>
@@ -90,6 +94,14 @@ namespace DosinisSDK.Core
 
                 done?.Invoke();
             }
+        }
+
+        protected virtual void OnBeforeShown()
+        {
+        }
+
+        protected virtual void OnBeforeHidden()
+        {
         }
 
         protected virtual void OnShown()
