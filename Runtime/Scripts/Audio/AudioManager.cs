@@ -1,4 +1,6 @@
 using DosinisSDK.Core;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +15,11 @@ namespace DosinisSDK.Audio
         private AudioSource musicSource;
 
         private AudioData data;
+
+        private float musicVolume;
+
+        private bool silencingMusic = false;
+
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
 
@@ -28,12 +35,19 @@ namespace DosinisSDK.Audio
                 sources.Add(source.AddComponent<AudioSource>());
             }
 
-            var mSource = new GameObject();
-            mSource.transform.SetParent(transform);
-            mSource.name = "MusicSource";
+            musicSource = GetComponentInChildren<AudioSource>();
 
-            musicSource = mSource.AddComponent<AudioSource>();
-            musicSource.loop = true;
+            if (musicSource == null)
+            {
+                var mSource = new GameObject();
+                mSource.transform.SetParent(transform);
+                mSource.name = "MusicSource";
+
+                musicSource = mSource.AddComponent<AudioSource>();
+                musicSource.loop = true;
+            }
+
+            musicVolume = musicSource.volume;
 
             SetMusicEnabled(data.isMusicEnabled);
             SetSfxEnabled(data.isSfxEnabled);
@@ -76,14 +90,57 @@ namespace DosinisSDK.Audio
             }
         }
 
-        public void PlayOneShot(AudioClip clip, float volume = 1)
+        private IEnumerator MusicSilentCoroutine(float effectDuration, Action onSilent)
         {
-            foreach (AudioSource src in sources)
+            silencingMusic = true;
+
+            var duration = 0.2f;
+
+            float t = 0f;
+
+            while (t < 1)
             {
-                if (src.isPlaying == false)
+                musicSource.volume = Mathf.Lerp(musicSource.volume, musicVolume / 2f, t);
+                t += Time.deltaTime / duration;
+                yield return null;
+            }
+
+            onSilent?.Invoke();
+
+            yield return new WaitForSeconds(effectDuration);
+
+            t = 0;
+
+            while (t < 1)
+            {
+                musicSource.volume = Mathf.Lerp(musicSource.volume, musicVolume, t);
+                t += Time.deltaTime / duration;
+                yield return null;
+            }
+
+            silencingMusic = false;
+        }
+
+        public void PlayOneShot(AudioClip clip, float volume = 1, bool silentMusic = false)
+        {
+            if (silentMusic && silencingMusic == false)
+            {
+                StartCoroutine(MusicSilentCoroutine(clip.length, play));
+            }
+            else
+            {
+                play();
+            }
+
+            void play()
+            {
+                foreach (AudioSource src in sources)
                 {
-                    src.PlayOneShot(clip, volume);
-                    break;
+                    if (src.isPlaying == false)
+                    {
+                        src.PlayOneShot(clip, volume);
+                        break;
+                    }
                 }
             }
         }
@@ -108,7 +165,12 @@ namespace DosinisSDK.Audio
         {
             data.isMusicEnabled = value;
 
-            musicSource.volume = value ? 1 : 0;
+            musicSource.volume = value? musicVolume : 0;
+        }
+
+        public void SetMusicPitch(float value)
+        {
+            musicSource.pitch = value;
         }
     }
 }

@@ -5,11 +5,12 @@ namespace DosinisSDK.Audio
 {
     public interface IAudioManager : IBehaviourModule
     {
-        public void PlayOneShot(AudioClip clip, float volume = 1);
+        public void PlayOneShot(AudioClip clip, float volume = 1, bool silentMusic = false);
         public void StopMusic();
         public void PlayMusic(AudioClip clip);
         public void PlayLoop(AudioClip clip);
         public void StopLoop(AudioClip clip);
+        public void SetMusicPitch(float value);
         public void SetSfxEnabled(bool value);
         public void SetMusicEnabled(bool value);
         public void SetVolume(float volume);
