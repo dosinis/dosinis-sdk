@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace DosinisSDK.Core
 {
@@ -9,7 +10,7 @@ namespace DosinisSDK.Core
         event Action OnAppQuit;
         T GetModule<T>() where T : class, IModule;
         void RegisterModule(IModule module, ModuleConfig config = null);
-        void CreateBehaviourModule<T>() where T : BehaviourModule;
+        void CreateBehaviourModule<T>(GameObject source = null) where T : BehaviourModule;
         void Restart();
         ITimer Timer { get; }
         ICoroutineManager Coroutine { get; }

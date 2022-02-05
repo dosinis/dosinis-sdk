@@ -91,14 +91,30 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
-        public void CreateBehaviourModule<T>() where T : BehaviourModule
+        public void CreateBehaviourModule<T>(GameObject source = null) where T : BehaviourModule
         {
-            var moduleObject = new GameObject();
-            moduleObject.transform.parent = transform;
-            moduleObject.name = typeof(T).Name;
-            T module = moduleObject.AddComponent<T>();
+            if (source == null)
+            {
+                var moduleObject = new GameObject();
+                moduleObject.transform.parent = transform;
+                moduleObject.name = typeof(T).Name;
+                T module = moduleObject.AddComponent<T>();
 
-            RegisterModule(module);
+                RegisterModule(module);
+            }
+            else
+            {
+                var moduleObj = Instantiate(source, transform);
+
+                if (moduleObj.TryGetComponent(out T module))
+                {
+                    RegisterModule(module);
+                }
+                else
+                {
+                    Debug.LogError($"{source.name} doesn't contain {typeof(T).Name} component attached");
+                }
+            }
         }
 
         public void Restart()
