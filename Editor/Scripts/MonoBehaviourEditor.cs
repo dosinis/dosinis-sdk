@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Editor
 {
-    [CustomEditor(typeof(MonoBehaviour), true)]
+    [CustomEditor(typeof(MonoBehaviour), true), CanEditMultipleObjects]
     public class MonoBehaviourEditor : UnityEditor.Editor
     {
         private MonoBehaviour targetObject;

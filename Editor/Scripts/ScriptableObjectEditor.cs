@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Editor
 {
-    [CustomEditor(typeof(ScriptableObject), true)]
+    [CustomEditor(typeof(ScriptableObject), true), CanEditMultipleObjects]
     public class ScriptableObjectEditor : UnityEditor.Editor
     {
         private ScriptableObject targetObject;
