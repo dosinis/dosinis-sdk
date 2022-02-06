@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
@@ -10,8 +11,9 @@ namespace DosinisSDK.Core
         event Action OnAppQuit;
         T GetModule<T>() where T : class, IModule;
         void RegisterModule(IModule module, ModuleConfig config = null);
-        void CreateBehaviourModule<T>(GameObject source = null) where T : BehaviourModule;
+        void CreateBehaviourModule<T>(BehaviourModule source = null) where T : BehaviourModule;
         void Restart();
+        void LoadScene(int sceneIndex, Action done = null, LoadSceneMode mode = LoadSceneMode.Single);
         ITimer Timer { get; }
         ICoroutineManager Coroutine { get; }
         ISceneManager SceneManager { get; }
