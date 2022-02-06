@@ -7,6 +7,8 @@ namespace DosinisSDK.Core
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
+        private readonly List<IProcessable> processedWindows = new List<IProcessable>();
+
         protected override void OnInit(IApp app)
         {
             foreach (Window win in GetComponentsInChildren<Window>(true))
@@ -17,6 +19,11 @@ namespace DosinisSDK.Core
             foreach (var win in windows)
             {
                 win.Value.Init(this);
+
+                if (win.Value is IProcessable proc)
+                {
+                    processedWindows.Add(proc);
+                }
             }
         }
 
@@ -50,6 +57,14 @@ namespace DosinisSDK.Core
         public void HideWindow<T>(Action callBack = null) where T : Window
         {
             GetWindow<T>().Hide(callBack);
+        }
+
+        public void Process(float delta)
+        {
+            foreach (var processed in processedWindows)
+            {
+                processed.Process(delta);
+            }
         }
     }
 }
