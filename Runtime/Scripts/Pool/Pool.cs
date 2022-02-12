@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,13 +6,19 @@ namespace DosinisSDK.Pool
 {
     public class Pool<T> where T : class, IPooled
     {
-        private static readonly List<Pool<T>> pools = new List<Pool<T>>();
+        private static readonly Dictionary<Type, Pool<T>> pools = new Dictionary<Type, Pool<T>>();
 
-        private readonly List<T> pooledObjects = new List<T>();
+        private readonly List<IPooled> pooledObjects = new List<IPooled>();
 
-        private T sourceObject;
+        private IPooled sourceObject;
 
         private const int CAPACITY = 100;
+
+        private Pool(IPooled pooled)
+        {
+            sourceObject = pooled;
+            sourceObject.gameObject.SetActive(false);
+        }
 
         public T Take()
         {
@@ -27,10 +34,10 @@ namespace DosinisSDK.Pool
             if (pooledObjects.Count + 1 >= CAPACITY)
             {
                 Debug.LogWarning($"Reached {typeof(T).Name} Pool capacity");
-                return pooledObjects[0];
+                return pooledObjects[0] as T;
             }
                 
-            T newObj = Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent).GetComponent<T>();
+            T newObj = UnityEngine.Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent).GetComponent<T>();
 
             newObj.gameObject.SetActive(true);
 
@@ -39,24 +46,17 @@ namespace DosinisSDK.Pool
             return newObj;
         }
         
-        private void SetSource(T pooled)
+        public static Pool<T> Create(IPooled source)
         {
-            sourceObject = pooled;
-            sourceObject.gameObject.SetActive(false);
-        }
+            var pool = new Pool<T>(source);
 
-        public static Pool<T> Create(T source)
-        {
-            var pool = new Pool<T>();
-            pool.SetSource(source);
-
-            pools.Add(pool);
+            pools.Add(source.GetType(), pool);
             return pool;
         }
 
         public static void Dispose(Pool<T> pool)
         {
-            pools.Remove(pool);
+            pools.Remove(pool.sourceObject.GetType());
             //pool.Dispose();
         }
 
@@ -64,13 +64,13 @@ namespace DosinisSDK.Pool
         {
             foreach (var pool in pools)
             {
-                if (pool is Pool<T>)
+                if (pool.Value.sourceObject is T)
                 {
-                    return pool;
+                    return pool.Value;
                 }
             }
 
-            Debug.LogError($"Couldn't find pool {typeof(T).Name}");
+            Debug.LogError($"Couldn't find pool of type {typeof(T).Name}. Did you forget to create it?");
 
             return default;
         }
