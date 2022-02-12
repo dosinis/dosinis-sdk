@@ -76,6 +76,30 @@ namespace DosinisSDK.Utils
             return path;
         }
 
+        // Long
+
+        public static string ToTimeString(this long time)
+        {
+            if (time < 60) // Seconds
+            {
+                return $"{time}s";
+            }
+
+            if (time < 3600) // Minutes Seconds
+            {
+                return $"{time / 60}m {time % 60}s";
+            }
+
+            if (time < 86400) // Hours Minutes
+            {
+                return $"{time / 3600}h {time / 60 % 60}m";
+            }
+
+            // Days
+
+            return $"{time / 86400}d";
+        }
+
         // RectTransform
 
         public static void SetLeft(this RectTransform rt, float left)
