@@ -9,9 +9,11 @@ namespace DosinisSDK.Core
 
         private IWindowTransition transition;
 
-        public event Action OnWindowShown;
-        public event Action OnWindowHidden;
-
+        public event Action OnShown;
+        public event Action OnHidden;
+        public event Action OnBeforeShow;
+        public event Action OnBeforeHide;
+        
         public bool IsShown => gameObject.activeSelf;
 
         private RectTransform rect;
@@ -29,6 +31,11 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 
+            foreach (var widget in GetComponentsInChildren<Widget>())
+            {
+                widget.Init(this);
+            }
+
             OnInit();
         }
         
@@ -45,22 +52,23 @@ namespace DosinisSDK.Core
         {
             gameObject.SetActive(true);
 
-            OnBeforeShown();
+            OnBeforeShow();
+            BeforeShown();
 
             if (transition != null)
             {
                 transition.ShowTransition(() =>
                 {
-                    OnShown();
-                    OnWindowShown?.Invoke();
+                    Shown();
+                    OnShown?.Invoke();
 
                     done?.Invoke();
                 });
             }
             else
             {
-                OnShown();
-                OnWindowShown?.Invoke();
+                Shown();
+                OnShown?.Invoke();
 
                 done?.Invoke();
             }           
@@ -73,15 +81,16 @@ namespace DosinisSDK.Core
 
         public void Hide(Action done)
         {
-            OnBeforeHidden();
+            OnBeforeHide();
+            BeforeHidden();
 
             if (transition != null)
             {
                 transition.HideTransition(() =>
                 {
                     gameObject.SetActive(false);
-                    OnHidden();
-                    OnWindowHidden?.Invoke();
+                    Hidden();
+                    OnHidden?.Invoke();
 
                     done?.Invoke();
                 });
@@ -89,26 +98,26 @@ namespace DosinisSDK.Core
             else
             {
                 gameObject.SetActive(false);
-                OnHidden();
-                OnWindowHidden?.Invoke();
+                Hidden();
+                OnHidden?.Invoke();
 
                 done?.Invoke();
             }
         }
 
-        protected virtual void OnBeforeShown()
+        protected virtual void BeforeShown()
         {
         }
 
-        protected virtual void OnBeforeHidden()
+        protected virtual void BeforeHidden()
         {
         }
 
-        protected virtual void OnShown()
+        protected virtual void Shown()
         {
         }
 
-        protected virtual void OnHidden()
+        protected virtual void Hidden()
         {
         }
 
