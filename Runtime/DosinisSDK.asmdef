@@ -1,6 +1,6 @@
 {
     "name": "DosinisSDK",
-    "rootNamespace": "",
+    "rootNamespace": "DosinisSDK",
     "references": [
         "DosinisSDK.Core"
     ],

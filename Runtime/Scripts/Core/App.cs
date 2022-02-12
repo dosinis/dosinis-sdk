@@ -101,7 +101,7 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
-        public void CreateBehaviourModule<T>(BehaviourModule source = null) where T : BehaviourModule
+        public void CreateBehaviourModule<T>(T source = null) where T : BehaviourModule
         {
             if (source == null)
             {

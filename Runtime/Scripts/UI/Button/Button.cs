@@ -21,54 +21,60 @@ namespace DosinisSDK.UI
 
         // Button
 
-        private void ClickPerformed()
+        protected virtual void ClickPerformed()
         {
+            if (interactable == false)
+                return;
+
             OnClick?.Invoke();
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (interactable)
-            {
-                heldDown = true;
+            if (interactable == false)
+                return;
+            
+            heldDown = true;
 
-                if (buttonAnimation != null)
-                {
-                    buttonAnimation.PressAnimation(OnImpressed);
-                }
-                else
-                {
-                    OnImpressed?.Invoke();
-                }
+            if (buttonAnimation != null)
+            {
+                buttonAnimation.PressAnimation(OnImpressed);
+            }
+            else
+            {
+                OnImpressed?.Invoke();
             }
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
-            if (interactable)
-            {
-                if (buttonAnimation != null)
-                {
-                    buttonAnimation.ReleaseAnimation(OnReleased);
-                }
-                else
-                {
-                    OnReleased?.Invoke();
-                }
+            if (interactable == false)
+                return;
 
-                if (mouseOverObject && heldDown)
-                {
-                    ClickPerformed();
-                }
+            if (buttonAnimation != null)
+            {
+                buttonAnimation.ReleaseAnimation(OnReleased);
+            }
+            else
+            {
+                OnReleased?.Invoke();
+            }
+
+            if (mouseOverObject && heldDown)
+            {
+                ClickPerformed();
             }
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (interactable == false)
+                return;
+
             mouseOverObject = false;
             heldDown = false;
 
-            if (interactable && buttonAnimation != null)
+            if (buttonAnimation != null)
             {
                 buttonAnimation.ReleaseAnimation(OnReleased);
             }
@@ -80,17 +86,17 @@ namespace DosinisSDK.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (interactable)
-            {
-                mouseOverObject = true;
-            }
+            if (interactable == false)
+                return;
+
+            mouseOverObject = true;
         }
         public void OnDrag(PointerEventData eventData)
         {
             // Needed, because OnPointerUp doesn't work well without this
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             buttonAnimation = GetComponent<IButtonAnimation>();
 

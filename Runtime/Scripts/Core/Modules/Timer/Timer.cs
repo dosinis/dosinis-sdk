@@ -26,7 +26,7 @@ namespace DosinisSDK.Core
 
         private IEnumerator DelayCoroutine(float delay, Action done)
         {
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSecondsRealtime(delay);
             done();
         }
 

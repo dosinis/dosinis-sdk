@@ -24,7 +24,7 @@ namespace DosinisSDK.Ads
 
         private bool rewarded = false;
 
-        public override void OnInit(IApp app)
+        protected override void OnInit(IApp app)
         {
             MobileAds.Initialize(initStatus =>
             {
@@ -41,16 +41,36 @@ namespace DosinisSDK.Ads
             }
         }
 
-        protected override void InitializeRewardedAds()
-        {
-
-        }
+        // Banner
 
         protected override void LoadBanner()
         {
             AdRequest request = new AdRequest.Builder().Build();
             bannerView.LoadAd(request);
         }
+
+        public override void ShowBanner(string placement = "")
+        {
+            Log($"Showing banner ad {placement}");
+
+            string id = bannerId;
+
+            if (useTestAds)
+            {
+                id = bannerTestId;
+            }
+
+            if (bannerPosition == BannerPosition.Bottom)
+            {
+                bannerView = new BannerView(id, AdSize.Banner, AdPosition.Bottom);
+            }
+            else
+            {
+                bannerView = new BannerView(id, AdSize.Banner, AdPosition.Top);
+            }
+        }
+
+        // Interstitial
 
         protected override void LoadInterstitialAds()
         {
@@ -69,6 +89,18 @@ namespace DosinisSDK.Ads
             interstitial.LoadAd(request);
         }
 
+        public override void ShowInterstitial(string placement = "")
+        {
+            Log($"Showing interstitial ad {placement}");
+
+            if (interstitial.IsLoaded())
+            {
+                interstitial.Show();
+            }
+        }
+
+        // Rewarded
+
         private RewardedAd CreateAndLoadRewardedAd(string adUnitId)
         {
             RewardedAd rewardedAd = new RewardedAd(adUnitId);
@@ -83,6 +115,17 @@ namespace DosinisSDK.Ads
             AdRequest request = new AdRequest.Builder().Build();
             rewardedAd.LoadAd(request);
             return rewardedAd;
+        }
+
+        public override bool IsRewardAdReady()
+        {
+            foreach (var ad in rewardedAds)
+            {
+                if (ad.IsLoaded())
+                    return true;
+            }
+
+            return false;
         }
 
         protected override void LoadRewardedAds()
@@ -121,38 +164,7 @@ namespace DosinisSDK.Ads
             }
         }
 
-        public override void ShowBanner(string placement = "")
-        {
-            Log($"Showing banner ad {placement}");
-
-            string id = bannerId;
-
-            if (useTestAds)
-            {
-                id = bannerTestId;
-            }
-
-            if (bannerPosition == BannerPosition.Bottom)
-            {
-                bannerView = new BannerView(id, AdSize.Banner, AdPosition.Bottom);
-            }
-            else
-            {
-                bannerView = new BannerView(id, AdSize.Banner, AdPosition.Top);
-            }
-        }
-
-        public override void ShowInterstitial(string placement = "")
-        {
-            Log($"Showing interstitial ad {placement}");
-
-            if (interstitial.IsLoaded())
-            {
-                interstitial.Show();
-            }
-        }
-
-        // Rewarded Ads
+        // RewardedAd Callbacks
 
         private void HandleRewardedAdClosed(object sender, EventArgs e)
         {
@@ -197,7 +209,7 @@ namespace DosinisSDK.Ads
             Log("AdManager : Rewarded Ad is Loaded");
         }
 
-        // Interstitial
+        // Interstitial Callbacks
 
         private void HandleInterstitialClosed(object sender, EventArgs e)
         {

@@ -11,7 +11,7 @@ namespace DosinisSDK.Core
         event Action OnAppQuit;
         T GetModule<T>() where T : class, IModule;
         void RegisterModule(IModule module, ModuleConfig config = null);
-        void CreateBehaviourModule<T>(BehaviourModule source = null) where T : BehaviourModule;
+        void CreateBehaviourModule<T>(T source = null) where T : BehaviourModule;
         void Restart();
         void LoadScene(int sceneIndex, Action done = null, LoadSceneMode mode = LoadSceneMode.Single);
         ITimer Timer { get; }
