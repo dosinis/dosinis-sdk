@@ -1,6 +1,5 @@
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -30,9 +29,9 @@ namespace DosinisSDK.UI
             }
         }
 
-        public void PressAnimation(Action callback)
+        public void PressAnimation()
         {
-            StartCoroutine(PressAnimationRoutine(callback));
+            StartCoroutine(PressAnimationRoutine());
 
             if (clickSfx && audioManager != null)
             {
@@ -40,12 +39,12 @@ namespace DosinisSDK.UI
             }
         }
 
-        public void ReleaseAnimation(Action callback)
+        public void ReleaseAnimation()
         {
-            StartCoroutine(BounceAnimationRoutine(callback));
+            StartCoroutine(BounceAnimationRoutine());
         }
 
-        private IEnumerator BounceAnimationRoutine(Action callback)
+        private IEnumerator BounceAnimationRoutine()
         {
             float t = 0f;
 
@@ -57,11 +56,9 @@ namespace DosinisSDK.UI
             }
 
             transform.localScale = startScale;
-
-            callback?.Invoke();
         }
 
-        private IEnumerator PressAnimationRoutine(Action callback)
+        private IEnumerator PressAnimationRoutine()
         {
             float t = 0f;
 
@@ -71,8 +68,6 @@ namespace DosinisSDK.UI
                 t += Time.deltaTime / animationDuration;
                 yield return null;
             }
-
-            callback?.Invoke();
         }
     }
 }

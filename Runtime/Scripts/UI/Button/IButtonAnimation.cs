@@ -6,8 +6,8 @@ namespace DosinisSDK.UI
     {
         void Init();
 
-        void PressAnimation(Action callback);
+        void PressAnimation();
 
-        void ReleaseAnimation(Action callback);
+        void ReleaseAnimation();
     }
 }

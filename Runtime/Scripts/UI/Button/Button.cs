@@ -15,8 +15,6 @@ namespace DosinisSDK.UI
 
         // Events
 
-        public event Action OnImpressed;
-        public event Action OnReleased;
         public event Action OnClick;
 
         // Button
@@ -38,11 +36,7 @@ namespace DosinisSDK.UI
 
             if (buttonAnimation != null)
             {
-                buttonAnimation.PressAnimation(OnImpressed);
-            }
-            else
-            {
-                OnImpressed?.Invoke();
+                buttonAnimation.PressAnimation();
             }
         }
 
@@ -53,11 +47,7 @@ namespace DosinisSDK.UI
 
             if (buttonAnimation != null)
             {
-                buttonAnimation.ReleaseAnimation(OnReleased);
-            }
-            else
-            {
-                OnReleased?.Invoke();
+                buttonAnimation.ReleaseAnimation();
             }
 
             if (mouseOverObject && heldDown)
@@ -76,11 +66,7 @@ namespace DosinisSDK.UI
 
             if (buttonAnimation != null)
             {
-                buttonAnimation.ReleaseAnimation(OnReleased);
-            }
-            else
-            {
-                OnReleased?.Invoke();
+                buttonAnimation.ReleaseAnimation();
             }
         }
 
