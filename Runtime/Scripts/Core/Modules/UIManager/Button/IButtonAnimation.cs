@@ -1,6 +1,6 @@
 using System;
 
-namespace DosinisSDK.UI
+namespace DosinisSDK.Core
 {
     public interface IButtonAnimation
     {

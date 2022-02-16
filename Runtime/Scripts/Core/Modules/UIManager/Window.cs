@@ -6,6 +6,7 @@ namespace DosinisSDK.Core
     public class Window : MonoBehaviour
     {
         [SerializeField] protected bool ignoreSafeArea = false;
+        [SerializeField] private Button closeButton;
 
         private IWindowTransition transition;
 
@@ -35,6 +36,9 @@ namespace DosinisSDK.Core
             {
                 widget.Init(this);
             }
+
+            if (closeButton) 
+                closeButton.OnClick += Hide;
 
             OnInit();
         }
