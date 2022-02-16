@@ -55,6 +55,35 @@ namespace DosinisSDK.UI.Elements
             return collected;
         }
 
+        public void Setup<T>(T[] args)
+        {
+            element.Hide();
+
+            int reusedElements = 0;
+
+            for (int i = 0; i < spawnedElements.Count; i++)
+            {
+                if (args.Length <= i)
+                {
+                    spawnedElements[i].Hide();
+                }
+                else
+                {
+                    SetupElement(spawnedElements[i], args[i]);
+                    reusedElements++;
+                }
+            }
+
+            for (int i = reusedElements; i < args.Length; i++)
+            {
+                Element instance = Instantiate(element, root);
+
+                SetupElement(instance, args[i]);
+
+                spawnedElements.Add(instance);
+            }
+        }
+
         public void Setup<T>(List<T> args)
         {
             element.Hide();
