@@ -21,7 +21,26 @@ namespace DosinisSDK.Utils
 
         public static T Random<T>(this List<T> list)
         {
+            if (list.Count == 0)
+                return default;
+
             return list[UnityRandom.Range(0, list.Count)];
+        }
+
+        public static T Last<T>(this T[] array)
+        {
+            if (array.Length == 0)
+                return default;
+
+            return array[array.Length - 1];
+        }
+
+        public static T Last<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[list.Count - 1];
         }
 
         public static int CountFast(this IEnumerable list)
@@ -46,7 +65,7 @@ namespace DosinisSDK.Utils
         {
             vector.Set(vector.x, newY, vector.z);
         }
-        
+
         public static void SetZ(this Vector3 vector, float newZ)
         {
             vector.Set(vector.x, vector.y, newZ);
