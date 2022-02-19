@@ -207,5 +207,13 @@ namespace DosinisSDK.Utils
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, w);
             imageTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, h);
         }
+
+        // Text
+
+        public static void SetAlpha(this Text text, float alpha)
+        {
+            var color = text.color;
+            text.color = color.SetAlpha(alpha);
+        }
     }
 }
