@@ -7,13 +7,15 @@ namespace DosinisSDK.Core
 {
     public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IDragHandler
     {
-        public Image Image { get; private set; }
+        public Image Image => image ? image : GetComponent<Image>();
+
         public bool interactable = true;
 
         private IButtonAnimation buttonAnimation;
 
         private bool heldDown = false;
         private bool mouseOverObject = false;
+        private Image image;
 
         // Events
 
@@ -87,7 +89,7 @@ namespace DosinisSDK.Core
         protected virtual void Awake()
         {
             buttonAnimation = GetComponent<IButtonAnimation>();
-            Image = GetComponent<Image>();
+            image = GetComponent<Image>();
 
             if (buttonAnimation != null)
             {
