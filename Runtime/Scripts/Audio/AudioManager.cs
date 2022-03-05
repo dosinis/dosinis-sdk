@@ -8,6 +8,8 @@ namespace DosinisSDK.Audio
 {
     public class AudioManager : BehaviourModule, IAudioManager
     {
+        [SerializeField] private float musicVolume = 1f;
+
         private const int POOL_SIZE = 10;
 
         private List<AudioSource> sources = new List<AudioSource>();
@@ -15,8 +17,6 @@ namespace DosinisSDK.Audio
         private AudioSource musicSource;
 
         private AudioData data;
-
-        private float musicVolume;
 
         private bool silencingMusic = false;
 
@@ -35,19 +35,12 @@ namespace DosinisSDK.Audio
                 sources.Add(source.AddComponent<AudioSource>());
             }
 
-            musicSource = GetComponentInChildren<AudioSource>();
+            var mSource = new GameObject();
+            mSource.transform.SetParent(transform);
+            mSource.name = "MusicSource";
 
-            if (musicSource == null)
-            {
-                var mSource = new GameObject();
-                mSource.transform.SetParent(transform);
-                mSource.name = "MusicSource";
-
-                musicSource = mSource.AddComponent<AudioSource>();
-                musicSource.loop = true;
-            }
-
-            musicVolume = musicSource.volume;
+            musicSource = mSource.AddComponent<AudioSource>();
+            musicSource.loop = true;
 
             SetMusicEnabled(data.isMusicEnabled);
             SetSfxEnabled(data.isSfxEnabled);
@@ -98,9 +91,11 @@ namespace DosinisSDK.Audio
 
             float t = 0f;
 
+            var currentVolume = musicSource.volume;
+
             while (t < 1)
             {
-                musicSource.volume = Mathf.Lerp(musicSource.volume, musicVolume / 2f, t);
+                musicSource.volume = Mathf.Lerp(musicSource.volume, currentVolume / 2f, t);
                 t += Time.deltaTime / duration;
                 yield return null;
             }
@@ -113,7 +108,7 @@ namespace DosinisSDK.Audio
 
             while (t < 1)
             {
-                musicSource.volume = Mathf.Lerp(musicSource.volume, musicVolume, t);
+                musicSource.volume = Mathf.Lerp(musicSource.volume, currentVolume, t);
                 t += Time.deltaTime / duration;
                 yield return null;
             }
@@ -165,7 +160,7 @@ namespace DosinisSDK.Audio
         {
             data.isMusicEnabled = value;
 
-            musicSource.volume = value? musicVolume : 0;
+            musicSource.volume = value ? musicVolume : 0;
         }
 
         public void SetMusicPitch(float value)
