@@ -4,21 +4,11 @@ using UnityEngine;
 
 namespace DosinisSDK.Utils
 {
-    public class AutoSaver : MonoBehaviour
+    public class AutoSaver : ManagedBehaviour
     {
         [SerializeField] private int autoSaveInterval = 30;
 
         private IDataManager dataManager;
-
-        private void Awake()
-        {
-            App.InitSignal(() => 
-            {
-                dataManager = App.Core.GetModule<IDataManager>();
-
-                StartCoroutine(AutoSaveCoroutine());
-            });      
-        }
 
         private IEnumerator AutoSaveCoroutine()
         {
@@ -27,6 +17,13 @@ namespace DosinisSDK.Utils
                 yield return new WaitForSeconds(autoSaveInterval);
                 dataManager.SaveAll();
             }
+        }
+
+        protected override void Init()
+        {
+            dataManager = App.Core.GetModule<IDataManager>();
+
+            StartCoroutine(AutoSaveCoroutine());
         }
     }
 }
