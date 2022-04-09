@@ -119,6 +119,13 @@ namespace DosinisSDK.Utils
             return $"{time / 86400}d";
         }
 
+        // Float
+
+        public static string ToTimerString(this float time)
+        {
+            return $"{time:F2}s";
+        }
+
         // RectTransform
 
         public static void SetLeft(this RectTransform rt, float left)
