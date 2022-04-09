@@ -148,6 +148,13 @@ namespace DosinisSDK.Utils
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
         }
 
+        // Rect
+
+        public static Vector2 GetRandomPointInside(this Rect rect)
+        {
+            return new Vector2(UnityRandom.Range(rect.min.x, rect.max.x), UnityRandom.Range(rect.min.y, rect.max.y));
+        }
+
         // Transforms
 
         public static void SetPosX(this Transform transform, float value)
