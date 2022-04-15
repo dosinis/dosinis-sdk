@@ -150,6 +150,11 @@ namespace DosinisSDK.Utils
 
         // Rect
 
+        /// <summary>
+        /// Utility to set RectTransform.achoredPosition to a random
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
         public static Vector2 GetRandomPointInside(this Rect rect)
         {
             return new Vector2(UnityRandom.Range(rect.min.x, rect.max.x), UnityRandom.Range(rect.min.y, rect.max.y));
