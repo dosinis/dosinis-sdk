@@ -2,7 +2,8 @@
     "name": "DosinisSDK",
     "rootNamespace": "DosinisSDK",
     "references": [
-        "DosinisSDK.Core"
+        "DosinisSDK.Core",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
