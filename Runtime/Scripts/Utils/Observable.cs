@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DosinisSDK
 {
-    [Serializable]
-	public class Observable<T>
+	[Serializable]
+    public class Observable<T>
 	{
-		private T value;
+		[SerializeField] private T value;
 
 		public T Value
 		{
