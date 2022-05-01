@@ -3,7 +3,7 @@ using UnityEngine;
 namespace DosinisSDK.Core
 {
     /// NOTE: by default ModulesRegistry registers modules before SceneManager or UIManager
-    public class ModulesRegistry : MonoBehaviour // Should be ScriptableObject or even part of AppConfig? Name idea: ModulesBootstrapper?
+    public class ModulesRegistry : ScriptableObject
     {
         /// <summary>
         /// Add desired modules in override of this method.
