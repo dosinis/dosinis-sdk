@@ -58,6 +58,8 @@ namespace DosinisSDK.Core
             {
                 ClickPerformed();
             }
+
+            heldDown = false;
         }
 
         public void OnPointerExit(PointerEventData eventData)
