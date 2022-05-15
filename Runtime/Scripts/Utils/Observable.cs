@@ -18,7 +18,7 @@ namespace DosinisSDK
 				if (EqualityComparer<T>.Default.Equals(this.value, value) == false)
 				{
 					this.value = value;
-					OnValueChanged?.Invoke(value);
+					OnValueChanged?.Invoke(this.value);
 				}
 			}
 		}
