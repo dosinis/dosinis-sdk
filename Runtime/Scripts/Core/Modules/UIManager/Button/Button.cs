@@ -97,6 +97,12 @@ namespace DosinisSDK.Core
             {
                 buttonAnimation.Init();
             }
-        }    
+        }
+
+        private void OnEnable()
+        {
+            if (buttonAnimation != null)
+                buttonAnimation.ReleaseAnimation();
+        }
     }
 }
