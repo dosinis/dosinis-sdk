@@ -21,6 +21,8 @@ namespace DosinisSDK.Ads
 
         [SerializeField] protected bool useTestAds;
 
+        public abstract event Action OnBannerLoaded;
+
         public abstract bool IsRewardAdReady();
         protected abstract void LoadRewardedAds();
         public abstract void ShowRewardedAd(string placement, Action<bool> callBack);

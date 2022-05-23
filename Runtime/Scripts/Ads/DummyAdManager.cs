@@ -12,6 +12,8 @@ namespace DosinisSDK.Ads
 
         private Canvas canvas;
 
+        public override event Action OnBannerLoaded;
+
         protected override void OnInit(IApp app)
         {
             LoadRewardedAds();
@@ -77,6 +79,11 @@ namespace DosinisSDK.Ads
         protected override void LoadBanner()
         {
             Log("Loading banner ads");
+
+            App.Core.Timer.Delay(3f, () =>
+            {
+                OnBannerLoaded?.Invoke();
+            });
         }
 
         protected override void LoadInterstitialAds()
@@ -87,7 +94,7 @@ namespace DosinisSDK.Ads
         protected override void LoadRewardedAds()
         {
             Log("Loading rewarded ads");
-            App.Core.Timer.Delay(3, () =>
+            App.Core.Timer.Delay(3f, () =>
             {
                 Log("Loaded rewarded ads");
                 rewardAdReady = true;
