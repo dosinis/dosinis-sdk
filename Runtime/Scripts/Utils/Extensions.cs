@@ -119,6 +119,13 @@ namespace DosinisSDK.Utils
             return $"{time / 86400}d";
         }
 
+        // Int
+
+        public static string ToTimeString(this int time)
+        {
+            return ((long)time).ToTimeString();
+        }
+
         // Float
 
         public static string ToTimerString(this float time)
