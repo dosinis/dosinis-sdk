@@ -43,7 +43,7 @@ namespace DosinisSDK.Utils
             return list[list.Count - 1];
         }
 
-        public static int CountFast(this IEnumerable list)
+        public static int Count(this IEnumerable list)
         {
             int amount = 0;
             foreach (var element in list)
