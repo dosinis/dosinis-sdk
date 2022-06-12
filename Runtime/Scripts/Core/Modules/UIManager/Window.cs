@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     public class Window : MonoBehaviour
     {
         [SerializeField] protected bool ignoreSafeArea = false;
-        [SerializeField] private Button closeButton;
+        [SerializeField] protected Button closeButton;
 
         private IWindowTransition transition;
 
