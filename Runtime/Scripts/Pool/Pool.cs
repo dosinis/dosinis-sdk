@@ -57,7 +57,6 @@ namespace DosinisSDK.Pool
         public static void Dispose(Pool<T> pool)
         {
             pools.Remove(pool.sourceObject.GetType());
-            //pool.Dispose();
         }
 
         public static Pool<T> GetPool()

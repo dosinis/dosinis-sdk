@@ -14,8 +14,6 @@ namespace DosinisSDK.Core
 
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
 
-        private List<IProcessable> processables = new List<IProcessable>();
-
         private AppConfig config;
 
         // Events
@@ -92,11 +90,6 @@ namespace DosinisSDK.Core
             }
 
             cachedModules.Add(mType, module);
-
-            if (module is IProcessable)
-            {
-                processables.Add(module as IProcessable);
-            }
 
             Debug.Log($"Registered {mType.Name} successfully");
         }
@@ -255,12 +248,22 @@ namespace DosinisSDK.Core
                     }
                 }
 
+                var modulesToRemove = new List<Type>();
+
                 foreach (var module in duplicateModules)
                 {
-                    if (cachedModules.ContainsKey(module.GetType()))
+                    foreach (var cache in cachedModules)
                     {
-                        cachedModules.Remove(module.GetType());
+                        if (cache.Value == module)
+                        {
+                            modulesToRemove.Add(cache.Key);
+                        }
                     }
+                }      
+                
+                foreach (var module in modulesToRemove)
+                {
+                    cachedModules.Remove(module);
                 }
 
                 setupScene(newScene);
@@ -293,9 +296,12 @@ namespace DosinisSDK.Core
 
         private void Update()
         {
-            foreach (var processable in processables)
+            foreach (var module in cachedModules)
             {
-                processable.Process(Time.deltaTime);
+                if (module.Value is IProcessable processable)
+                {
+                    processable.Process(Time.deltaTime);
+                }
             }
         }
 
