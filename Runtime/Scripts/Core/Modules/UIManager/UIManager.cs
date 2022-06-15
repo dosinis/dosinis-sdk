@@ -27,6 +27,14 @@ namespace DosinisSDK.Core
             }
         }
 
+        private void OnDestroy()
+        {
+            foreach (var win in windows)
+            {
+                win.Value.Dispose();
+            }
+        }
+
         public T GetWindow<T>() where T : Window
         {
             var wType = typeof(T);

@@ -17,7 +17,16 @@ namespace DosinisSDK.Core
             OnInit();
         }
 
+        public void Dispose()
+        {
+            OnDispose();
+        }
+
         protected virtual void OnInit()
+        {
+        }
+
+        protected virtual void OnDispose()
         {
         }
 

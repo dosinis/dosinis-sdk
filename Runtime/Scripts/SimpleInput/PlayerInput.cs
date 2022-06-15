@@ -6,7 +6,7 @@ namespace DosinisSDK.SimpleInput
 {
     public class PlayerInput : MonoBehaviour
     {
-        public static event Action<Vector2> OnClickHappened = pos => { };
+        public static event Action<Vector2> OnClickHappened;
 
         [SerializeField] private Camera cam;
 
@@ -23,7 +23,7 @@ namespace DosinisSDK.SimpleInput
             if (Input.GetMouseButtonDown(0) && IsPointerOverUI() == false)
             {
                 var pos = cam.ScreenToWorldPoint(Input.mousePosition);
-                OnClickHappened(pos);
+                OnClickHappened?.Invoke(pos);
             }
         }
         

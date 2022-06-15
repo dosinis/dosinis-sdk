@@ -9,6 +9,7 @@ namespace DosinisSDK.Core
         [SerializeField] protected Button closeButton;
 
         private IWindowTransition transition;
+        private Widget[] widgets = { };
 
         public event Action OnShown;
         public event Action OnHidden;
@@ -32,7 +33,9 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 
-            foreach (var widget in GetComponentsInChildren<Widget>())
+            widgets = GetComponentsInChildren<Widget>(true);
+
+            foreach (var widget in widgets)
             {
                 widget.Init(this);
             }
@@ -43,7 +46,21 @@ namespace DosinisSDK.Core
             OnInit();
         }
         
+        public void Dispose()
+        {
+            OnDispose();
+
+            foreach (var widget in widgets)
+            {
+                widget.Dispose();
+            }
+        }
+
         protected virtual void OnInit()
+        {
+        }
+
+        protected virtual void OnDispose()
         {
         }
 
