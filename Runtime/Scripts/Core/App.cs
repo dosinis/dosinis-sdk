@@ -13,6 +13,7 @@ namespace DosinisSDK.Core
         // Private
 
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
+        private readonly List<IProcessable> processables = new List<IProcessable>();
 
         private AppConfig config;
 
@@ -90,6 +91,15 @@ namespace DosinisSDK.Core
             }
 
             cachedModules.Add(mType, module);
+
+            if (module is IProcessable processabe)
+            {
+                if (processables.Contains(processabe)== false)
+                {
+                    processables.Add(processabe);
+                }
+            }
+           
 
             Debug.Log($"Registered {mType.Name} successfully");
         }
@@ -257,6 +267,12 @@ namespace DosinisSDK.Core
                         if (cache.Value == module)
                         {
                             modulesToRemove.Add(cache.Key);
+
+                            if (module is IProcessable processable)
+                            {
+                                if (processables.Contains(processable))
+                                    processables.Remove(processable);
+                            }
                         }
                     }
                 }      
@@ -296,12 +312,9 @@ namespace DosinisSDK.Core
 
         private void Update()
         {
-            foreach (var module in cachedModules)
+            foreach (var processable in processables)
             {
-                if (module.Value is IProcessable processable)
-                {
-                    processable.Process(Time.deltaTime);
-                }
+                processable.Process(Time.deltaTime);
             }
         }
 
