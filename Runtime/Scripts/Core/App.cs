@@ -161,7 +161,7 @@ namespace DosinisSDK.Core
             done?.Invoke();
         }
 
-        public static void InitSignal(Action onInit)
+        public static void ModulesReady(Action onInit)
         {
             if (Initialized)
             {

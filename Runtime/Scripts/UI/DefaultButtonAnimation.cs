@@ -22,7 +22,7 @@ namespace DosinisSDK.UI
 
             if (clickSfx && audioManager == null)
             {
-                App.InitSignal(() =>
+                App.ModulesReady(() =>
                 {
                     audioManager = App.Core.GetModule<IAudioManager>();
                 });
