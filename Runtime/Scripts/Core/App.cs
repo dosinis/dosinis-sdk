@@ -99,7 +99,6 @@ namespace DosinisSDK.Core
                     processables.Add(processabe);
                 }
             }
-           
 
             Debug.Log($"Registered {mType.Name} successfully");
         }

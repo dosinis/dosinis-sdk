@@ -31,11 +31,17 @@ namespace DosinisSDK.UI
 
             canvasGroup.alpha = 0;
 
+            if(gameObject.activeInHierarchy == false)
+                gameObject.SetActive(true);
+
             StartCoroutine(FadeInRoutine(done));
         }
 
         public void HideTransition(Action done)
         {
+            if (gameObject.activeInHierarchy == false)
+                gameObject.SetActive(true);
+
             StartCoroutine(FadeOutRoutine(done));
         }
 
