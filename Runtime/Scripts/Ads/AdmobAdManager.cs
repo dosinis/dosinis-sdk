@@ -24,6 +24,8 @@ namespace DosinisSDK.Ads
 
         private bool rewarded = false;
 
+        public override event Action OnBannerLoaded;
+        
         protected override void OnInit(IApp app)
         {
             MobileAds.Initialize(initStatus =>
@@ -68,6 +70,8 @@ namespace DosinisSDK.Ads
             {
                 bannerView = new BannerView(id, AdSize.Banner, AdPosition.Top);
             }
+            
+            OnBannerLoaded?.Invoke();
         }
 
         // Interstitial
@@ -213,10 +217,7 @@ namespace DosinisSDK.Ads
 
         private void HandleInterstitialClosed(object sender, EventArgs e)
         {
-            Dispatcher.RunOnMainThread(() =>
-            {
-                LoadInterstitialAds();
-            });
+            Dispatcher.RunOnMainThread(LoadInterstitialAds);
         }
     }
 }
