@@ -87,7 +87,7 @@ namespace DosinisSDK.Core
             return Path.Combine(EDITOR_SAVE_PATH, key + ".json");
         }
 
-        public T RetrieveOrCreateData<T>() where T : class, new()
+        public T RetrieveOrCreateData<T>() where T : class, IData, new()
         {
             if (dataRegistry.TryGetValue(typeof(T).Name, out object data) == false)
             {
@@ -104,7 +104,7 @@ namespace DosinisSDK.Core
             SaveData(data);
         }
 
-        public T LoadRawData<T>() where T : class, new()
+        public T LoadRawData<T>() where T : class, IData, new()
         {
             string dataKey = typeof(T).Name;
 
@@ -125,14 +125,7 @@ namespace DosinisSDK.Core
                 return new T();
             }
 #endif
-            T data = JsonUtility.FromJson<T>(json);
-
-            if (data != null)
-            {
-                return data;
-            }
-
-            return new T();
+            return JsonUtility.FromJson<T>(json) ?? new T();
         }
 
         public void SaveData<T>(T data)
@@ -145,7 +138,7 @@ namespace DosinisSDK.Core
             return PlayerPrefs.HasKey(typeof(T).Name);
         }
 
-        public void DeleteData<T>() where T : class, new()
+        public void DeleteData<T>() where T : class, IData, new()
         {
             DeleteRawData(typeof(T).Name);
         }

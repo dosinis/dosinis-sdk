@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,7 +82,7 @@ namespace DosinisSDK.Utils
 
         // Strings
 
-        public static string RemovePathExtention(this string path)
+        public static string RemovePathExtension(this string path)
         {
             string ext = System.IO.Path.GetExtension(path);
 
