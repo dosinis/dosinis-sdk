@@ -3,24 +3,29 @@ using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using GoogleMobileAds.Api;
 using System;
+using UnityEngine;
 
 namespace DosinisSDK.Ads
 {
     public class AdmobAdManager : AdManager
     {
+        [SerializeField] private string rewardedId_iOs = "";
+        [SerializeField] private string interstitialId_iOs = "";
+        [SerializeField] private string bannerId_iOs = "";
+            
         private const int ADS_SIZE = 3;
 
-        private RewardedAd[] rewardedAds = new RewardedAd[ADS_SIZE];
+        private readonly RewardedAd[] rewardedAds = new RewardedAd[ADS_SIZE];
 
         private BannerView bannerView;
 
         private InterstitialAd interstitial;
 
-        private Action<bool> OnRewardedAdFinished;
+        private Action<bool> onRewardedAdFinished;
 
-        private const string intesrtitialTestId = "ca-app-pub-3940256099942544/1033173712";
-        private const string bannerTestId = "ca-app-pub-3940256099942544/6300978111";
-        private const string rewardedTestId = "ca-app-pub-3940256099942544/5224354917";
+        private const string INTESRTITIAL_TEST_ID = "ca-app-pub-3940256099942544/1033173712";
+        private const string BANNER_TEST_ID = "ca-app-pub-3940256099942544/6300978111";
+        private const string REWARDED_TEST_ID = "ca-app-pub-3940256099942544/5224354917";
 
         private bool rewarded = false;
 
@@ -57,9 +62,12 @@ namespace DosinisSDK.Ads
 
             string id = bannerId;
 
+#if UNITY_IOS
+            id = bannerId_iOs;
+#endif
             if (useTestAds)
             {
-                id = bannerTestId;
+                id = BANNER_TEST_ID;
             }
 
             if (bannerPosition == BannerPosition.Bottom)
@@ -80,9 +88,13 @@ namespace DosinisSDK.Ads
         {
             string id = interstitialId;
 
+#if UNITY_IOS
+            id = interstitialId_iOs;
+#endif
+            
             if (useTestAds)
             {
-                id = intesrtitialTestId;
+                id = INTESRTITIAL_TEST_ID;
             }
 
             interstitial = new InterstitialAd(id);
@@ -138,9 +150,13 @@ namespace DosinisSDK.Ads
 
             string id = rewardedId;
 
+#if UNITY_IOS
+            id = rewardedId_iOs;
+#endif
+            
             if (useTestAds)
             {
-                id = rewardedTestId;
+                id = REWARDED_TEST_ID;
             }
 
             for (int i = 0; i < ADS_SIZE; i++)
@@ -156,7 +172,7 @@ namespace DosinisSDK.Ads
         {
             Log($"Showing rewarded ad {placement}");
 
-            OnRewardedAdFinished = callBack;
+            onRewardedAdFinished = callBack;
 
             foreach (RewardedAd ad in rewardedAds)
             {
@@ -174,7 +190,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
-                OnRewardedAdFinished?.Invoke(rewarded);
+                onRewardedAdFinished?.Invoke(rewarded);
                 rewarded = false;
                 LoadRewardedAds();
             });
@@ -192,7 +208,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
-                OnRewardedAdFinished?.Invoke(false);
+                onRewardedAdFinished?.Invoke(false);
             });
 
             Log($"AdManager :{e.AdError.GetMessage()}");
