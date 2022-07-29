@@ -22,6 +22,7 @@ namespace DosinisSDK.Ads
         [SerializeField] protected bool useTestAds;
 
         public abstract event Action OnBannerLoaded;
+        public bool IsBannerDisplayed { get; set; }
 
         public abstract bool IsRewardAdReady();
         protected abstract void LoadRewardedAds();

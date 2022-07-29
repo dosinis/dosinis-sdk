@@ -82,6 +82,7 @@ namespace DosinisSDK.Ads
 
             App.Core.Timer.Delay(3f, () =>
             {
+                IsBannerDisplayed = true;
                 OnBannerLoaded?.Invoke();
             });
         }

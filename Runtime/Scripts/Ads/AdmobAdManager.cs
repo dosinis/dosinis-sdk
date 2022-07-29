@@ -48,10 +48,19 @@ namespace DosinisSDK.Ads
             }
         }
 
+        private void PauseIOSStuff(bool value)
+        {
+#if UNITY_IOS
+            Time.timeScale = value ? 0 : 1;
+            AudioListener.pause = value;
+#endif
+        }
+
         // Banner
 
         protected override void LoadBanner()
         {
+            IsBannerDisplayed = false;
             AdRequest request = new AdRequest.Builder().Build();
             bannerView.LoadAd(request);
         }
@@ -79,7 +88,11 @@ namespace DosinisSDK.Ads
                 bannerView = new BannerView(id, AdSize.Banner, AdPosition.Top);
             }
             
-            OnBannerLoaded?.Invoke();
+            bannerView.OnAdOpening += (sender,e) =>
+            {
+                IsBannerDisplayed = true;
+                OnBannerLoaded?.Invoke();
+            };
         }
 
         // Interstitial
@@ -101,6 +114,8 @@ namespace DosinisSDK.Ads
             AdRequest request = new AdRequest.Builder().Build();
 
             interstitial.OnAdClosed += HandleInterstitialClosed;
+            interstitial.OnAdOpening += HandleInterstitialOpening;
+            interstitial.OnAdFailedToShow += HandleInterstitialFailedToShow;
 
             interstitial.LoadAd(request);
         }
@@ -192,6 +207,7 @@ namespace DosinisSDK.Ads
             {
                 onRewardedAdFinished?.Invoke(rewarded);
                 rewarded = false;
+                PauseIOSStuff(false);
                 LoadRewardedAds();
             });
 
@@ -208,6 +224,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
+                PauseIOSStuff(false);
                 onRewardedAdFinished?.Invoke(false);
             });
 
@@ -217,6 +234,7 @@ namespace DosinisSDK.Ads
         private void HandleRewardedAdOpening(object sender, EventArgs e)
         {
             Log("AdManager : Rewarded Ad is opening");
+            PauseIOSStuff(true);
         }
 
         private void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
@@ -233,7 +251,27 @@ namespace DosinisSDK.Ads
 
         private void HandleInterstitialClosed(object sender, EventArgs e)
         {
-            Dispatcher.RunOnMainThread(LoadInterstitialAds);
+            Dispatcher.RunOnMainThread(()=>
+            {
+                 PauseIOSStuff(false);
+                 LoadInterstitialAds();
+            });
+        }
+        
+        private void HandleInterstitialOpening(object sender, EventArgs e)
+        {
+            Dispatcher.RunOnMainThread(() =>
+            {
+                PauseIOSStuff(true);
+            });
+        }
+        
+        private void HandleInterstitialFailedToShow(object sender, EventArgs e)
+        {
+            Dispatcher.RunOnMainThread(() =>
+            {
+                PauseIOSStuff(false);
+            });
         }
     }
 }
