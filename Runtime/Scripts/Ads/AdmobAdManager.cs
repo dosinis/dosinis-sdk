@@ -9,10 +9,11 @@ namespace DosinisSDK.Ads
 {
     public class AdmobAdManager : AdManager
     {
+#if UNITY_IOS
         [SerializeField] private string rewardedId_iOs = "";
         [SerializeField] private string interstitialId_iOs = "";
         [SerializeField] private string bannerId_iOs = "";
-            
+#endif
         private const int ADS_SIZE = 3;
 
         private readonly RewardedAd[] rewardedAds = new RewardedAd[ADS_SIZE];
