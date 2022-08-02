@@ -17,6 +17,8 @@ namespace DosinisSDK.Core
 
         private AppConfig config;
 
+        private AsyncOperation loadSceneOperation;
+        
         // Events
 
         public event Action<bool> OnAppPaused;
@@ -62,6 +64,30 @@ namespace DosinisSDK.Core
 
             Debug.LogError($"Cached Module {typeof(T).Name} is not found! Maybe it's not ready yet?");
             return default;
+        }
+        
+        public bool TryGetModule<T>(out T module) where T : class, IModule
+        {
+            var mType = typeof(T);
+
+            if (cachedModules.TryGetValue(mType, out IModule m))
+            {
+                module = (T)m;
+                return true;
+            }
+
+            foreach (var mKeyValue in cachedModules)
+            {
+                if (mKeyValue.Value is T value)
+                {
+                    cachedModules.Add(mType, mKeyValue.Value);
+                    module = value;
+                    return true;
+                }
+            }
+            
+            module = null;
+            return false;
         }
 
         public void RegisterModule(IModule module, ModuleConfig mConfig = null)
@@ -135,19 +161,26 @@ namespace DosinisSDK.Core
             LoadScene(0);
         }
 
-        public void LoadScene(int sceneIndex, Action done = null, LoadSceneMode mode = LoadSceneMode.Single)
+        public void SwitchLoadedScene()
         {
-            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, done));
+            loadSceneOperation.allowSceneActivation = true;
         }
 
-        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, Action done)
+        public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, Action done = null)
+        {
+            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, done));
+        }
+
+        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, Action done)
         {
             SceneLoadProgress = 0;
 
             yield return new WaitForSeconds(0.5f);
 
-            var loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
+            loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
 
+            loadSceneOperation.allowSceneActivation = switchLoadedScene;
+            
             while (!loadSceneOperation.isDone)
             {
                 yield return null;
