@@ -25,10 +25,10 @@ namespace DosinisSDK.Core
 
         // Core Modules
 
+        public CoroutineManager Coroutine => GetModule<CoroutineManager>();
         public ITimer Timer => GetModule<ITimer>();
-        public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();
         public ISceneManager SceneManager => GetModule<ISceneManager>();
-        public IUIManager UIManager => GetModule<IUIManager>();
+        public UIManager UIManager => GetModule<UIManager>();
 
         // Properties
 
@@ -36,11 +36,12 @@ namespace DosinisSDK.Core
 
         // Static
 
+        private static Action onAppInitialized;
         public static bool Initialized { get; private set; }
-        private static Action OnAppInitialized;
+        public static App Core { get; private set; }
 
-        public static App Core;
-
+        // App
+        
         public T GetModule<T>() where T : class, IModule
         {
             var mType = typeof(T);
@@ -168,7 +169,7 @@ namespace DosinisSDK.Core
             }
             else
             {
-                OnAppInitialized += onInit;
+                onAppInitialized += onInit;
             }
         }
 
@@ -251,7 +252,7 @@ namespace DosinisSDK.Core
                         duplicateModules.Add(sceneManager);
                     }
 
-                    if (cache.Value is IUIManager uiManager)
+                    if (cache.Value is UIManager uiManager)
                     {
                         duplicateModules.Add(uiManager);
                     }
@@ -286,7 +287,7 @@ namespace DosinisSDK.Core
 
             Initialized = true;
 
-            OnAppInitialized?.Invoke();
+            onAppInitialized?.Invoke();
 
             Debug.Log($"{nameof(App)} initialized");
         }

@@ -15,7 +15,6 @@ namespace DosinisSDK.Core
         void Restart();
         void LoadScene(int sceneIndex, Action done = null, LoadSceneMode mode = LoadSceneMode.Single);
         ITimer Timer { get; }
-        ICoroutineManager Coroutine { get; }
-        ISceneManager SceneManager { get; }
+        CoroutineManager Coroutine { get; }
     }
 }

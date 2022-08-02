@@ -20,7 +20,7 @@ namespace DosinisSDK.Core
 
         private RectTransform rect;
 
-        public void Init(IUIManager uiManager)
+        public void Init()
         {
             if (TryGetComponent(out IWindowTransition t))
             {

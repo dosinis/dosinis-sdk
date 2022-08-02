@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DosinisSDK.Core
 {
-    public class UIManager : BehaviourModule, IUIManager
+    public class UIManager : BehaviourModule
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
@@ -18,7 +18,7 @@ namespace DosinisSDK.Core
 
             foreach (var win in windows)
             {
-                win.Value.Init(this);
+                win.Value.Init();
 
                 if (win.Value is IProcessable proc)
                 {
