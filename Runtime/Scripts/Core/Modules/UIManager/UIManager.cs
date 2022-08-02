@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DosinisSDK.Core
 {
-    public class UIManager : BehaviourModule
+    public class UIManager : BehaviourModule, IProcessable
     {
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
 
