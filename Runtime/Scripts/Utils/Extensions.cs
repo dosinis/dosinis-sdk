@@ -55,27 +55,27 @@ namespace DosinisSDK.Utils
 
         // Vectors
 
-        public static void SetX(this Vector3 vector, float newX)
+        public static void SetX(this ref Vector3 vector, float newX)
         {
             vector.Set(newX, vector.y, vector.z);
         }
 
-        public static void SetY(this Vector3 vector, float newY)
+        public static void SetY(this ref Vector3 vector, float newY)
         {
             vector.Set(vector.x, newY, vector.z);
         }
 
-        public static void SetZ(this Vector3 vector, float newZ)
+        public static void SetZ(this ref Vector3 vector, float newZ)
         {
             vector.Set(vector.x, vector.y, newZ);
         }
 
-        public static void SetX(this Vector2 vector, float newX)
+        public static void SetX(this ref Vector2 vector, float newX)
         {
             vector.Set(newX, vector.y);
         }
 
-        public static void SetY(this Vector2 vector, float newY)
+        public static void SetY(this ref Vector2 vector, float newY)
         {
             vector.Set(vector.x, newY);
         }
