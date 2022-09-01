@@ -100,6 +100,8 @@ namespace DosinisSDK.Core
                 return;
             }
 
+            cachedModules.Add(mType, module);
+            
             if (config.safeMode)
             {
                 try
@@ -116,9 +118,7 @@ namespace DosinisSDK.Core
             {
                 module.Init(this, mConfig);
             }
-
-            cachedModules.Add(mType, module);
-
+            
             if (module is IProcessable processabe)
             {
                 if (processables.Contains(processabe)== false)
@@ -194,15 +194,15 @@ namespace DosinisSDK.Core
             done?.Invoke();
         }
 
-        public static void ModulesReady(Action onInit)
+        public static void ModulesReady(Action onReady)
         {
             if (Initialized)
             {
-                onInit();
+                onReady();
             }
             else
             {
-                onAppInitialized += onInit;
+                onAppInitialized += onReady;
             }
         }
 
