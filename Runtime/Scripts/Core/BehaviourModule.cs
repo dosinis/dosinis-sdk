@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     {
         [SerializeField] protected ModuleConfig mainConfig;
 
-        public void Init(IApp app, ModuleConfig config)
+        void IModule.Init(IApp app, ModuleConfig config)
         {
             if (config)
                 mainConfig = config;
