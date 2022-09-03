@@ -269,9 +269,7 @@ namespace DosinisSDK.Core
                     Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
                 }
             }
-
-            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-
+            
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
             {
                 Debug.Log($"Scene was changed into {newScene.name}");
