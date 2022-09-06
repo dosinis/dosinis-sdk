@@ -117,6 +117,28 @@ namespace DosinisSDK.Utils
 
             return $"{time / 86400}d";
         }
+        
+        public static string ToDurationString(this long time)
+        {
+            if (time < 60) // Seconds
+            {
+                return $"{time:00}";
+            }
+
+            if (time < 3600) // Minutes Seconds
+            {
+                return $"{time / 60:00}:{time % 60:00}";
+            }
+
+            if (time < 86400) // Hours Minutes Seconds
+            {
+                return $"{time / 3600:00}:{time / 60 % 60:00}:{time % 60:00}";
+            }
+
+            // Days
+
+            return $"{time / 86400}d";
+        }
 
         // Int
 
@@ -125,13 +147,28 @@ namespace DosinisSDK.Utils
             return ((long)time).ToTimeString();
         }
 
+        public static string ToDurationString(this int time)
+        {
+            return ((long)time).ToDurationString();
+        }
+
         // Float
 
         public static string ToTimerString(this float time)
         {
-            return $"{time:F2}s";
+            return $"{time:F2}";
         }
 
+        public static string ToTimeString(this float time)
+        {
+            return ((long)time).ToTimeString();
+        }
+        
+        public static string ToDurationString(this float time)
+        {
+            return ((long)time).ToDurationString();
+        }
+        
         // RectTransform
 
         public static void SetLeft(this RectTransform rt, float left)

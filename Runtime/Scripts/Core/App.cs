@@ -16,7 +16,6 @@ namespace DosinisSDK.Core
         private readonly List<IProcessable> processables = new List<IProcessable>();
 
         private AppConfig config;
-
         private AsyncOperation loadSceneOperation;
         
         // Events
@@ -295,15 +294,15 @@ namespace DosinisSDK.Core
                 {
                     foreach (var cache in cachedModules)
                     {
-                        if (cache.Value == module)
-                        {
-                            modulesToRemove.Add(cache.Key);
+                        if (cache.Value != module) 
+                            continue;
+                        
+                        modulesToRemove.Add(cache.Key);
 
-                            if (module is IProcessable processable)
-                            {
-                                if (processables.Contains(processable))
-                                    processables.Remove(processable);
-                            }
+                        if (module is IProcessable processable)
+                        {
+                            if (processables.Contains(processable))
+                                processables.Remove(processable);
                         }
                     }
                 }      
