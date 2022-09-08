@@ -6,6 +6,7 @@ namespace DosinisSDK.Wallet
     [System.Serializable]
     public class WalletData : ModuleData
     {
-        public List<Currency> currencies = new List<Currency>();
+        public Currency softCurrency;
+        public Currency hardCurrency;
     }
 }

@@ -6,7 +6,8 @@ namespace DosinisSDK.Wallet
     [CreateAssetMenu(fileName = "WalletConfig", menuName = "DosinisSDK/Wallet/WalletConfig")]
     public class WalletConfig : ModuleConfig
     {
-        public CurrencyConfig[] currencies;
+        public CurrencyConfig softCurrency;
+        public CurrencyConfig hardCurrency;
     }
 
     [System.Serializable]
