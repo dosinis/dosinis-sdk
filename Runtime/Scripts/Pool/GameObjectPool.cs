@@ -17,6 +17,14 @@ namespace DosinisSDK.Pool
             }
         }
 
+        public void ReturnAll()
+        {
+            foreach (var obj in pool)
+            {
+                obj.gameObject.SetActive(false);
+            }
+        }
+
         public T Take<T>() where T : Component
         {
             foreach (var obj in pool)
