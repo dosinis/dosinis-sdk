@@ -16,11 +16,11 @@ namespace DosinisSDK.Core
         public event Action OnBeforeShow;
         public event Action OnBeforeHide;
         
-        public bool IsShown => gameObject.activeSelf;
+        public bool IsShown { get; private set; }
 
         private RectTransform rect;
 
-        public void Init()
+        internal void Init()
         {
             if (TryGetComponent(out IWindowTransition t))
             {
@@ -46,7 +46,7 @@ namespace DosinisSDK.Core
             OnInit();
         }
         
-        public void Dispose()
+        internal void Dispose()
         {
             OnDispose();
 
@@ -83,6 +83,7 @@ namespace DosinisSDK.Core
                     Shown();
                     OnShown?.Invoke();
 
+                    IsShown = true;
                     done?.Invoke();
                 });
             }
@@ -91,6 +92,7 @@ namespace DosinisSDK.Core
                 Shown();
                 OnShown?.Invoke();
 
+                IsShown = true;
                 done?.Invoke();
             }           
         }
@@ -113,6 +115,7 @@ namespace DosinisSDK.Core
                     Hidden();
                     OnHidden?.Invoke();
 
+                    IsShown = false;
                     done?.Invoke();
                 });
             }
@@ -122,6 +125,7 @@ namespace DosinisSDK.Core
                 Hidden();
                 OnHidden?.Invoke();
 
+                IsShown = false;
                 done?.Invoke();
             }
         }
