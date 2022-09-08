@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -36,6 +37,11 @@ namespace DosinisSDK.SimpleInput.Utils
 
             if (alwaysVisible == false)
                 stickHolder.gameObject.SetActive(false);
+        }
+
+        private void OnEnable()
+        {
+            OnPointerUp(null);
         }
 
         public void OnPointerDown(PointerEventData eventData)
