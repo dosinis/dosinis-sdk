@@ -1,12 +1,17 @@
 using DosinisSDK.Core;
-using System.Collections.Generic;
 
 namespace DosinisSDK.Wallet
 {
     [System.Serializable]
     public class WalletData : ModuleData
     {
-        public Currency softCurrency;
-        public Currency hardCurrency;
+        public CurrencyRef softCurrency = new CurrencyRef();
+        public CurrencyRef hardCurrency = new CurrencyRef();
+    }
+    
+    [System.Serializable]
+    public class CurrencyRef
+    {
+        public int amount;
     }
 }

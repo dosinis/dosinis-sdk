@@ -3,16 +3,18 @@ using System;
 
 namespace DosinisSDK.Wallet
 {
-    [Serializable]
-    public class Currency
+    [CreateAssetMenu(fileName = "Currency", menuName = "DosinisSDK/Wallet/Currency")]
+    public class Currency : ScriptableObject
     {
-        public Sprite Icon { get; set; }
-
         // Serialized
+        
+        public Sprite icon;
+        public string currencyName;
+        public int initAmount;
 
-        public string name;
-
-        [SerializeField] private int amount;
+        // NonSerialized
+        
+        [NonSerialized] private CurrencyRef currencyRef;
 
         // Events
 
@@ -20,16 +22,15 @@ namespace DosinisSDK.Wallet
 
         // Currency
 
-        public Currency(string name, int initialAmount)
-        {
-            this.name = name;
-            this.amount = initialAmount;
-        }
-
         public void Add(int num)
         {
-            amount += num;
-            OnAmountChanged?.Invoke(amount, num);
+            currencyRef.amount += num;
+            OnAmountChanged?.Invoke(currencyRef.amount, num);
+        }
+
+        internal void Set(CurrencyRef currencyRef)
+        {
+            this.currencyRef = currencyRef;
         }
 
         public bool Spend(int num)
@@ -39,26 +40,26 @@ namespace DosinisSDK.Wallet
                 return false;
             }
 
-            amount -= num;
+            currencyRef.amount -= num;
 
-            if (amount < 0)
-                amount = 0;
+            if (currencyRef.amount < 0)
+                currencyRef.amount = 0;
 
-            OnAmountChanged?.Invoke(amount, -num);
+            OnAmountChanged?.Invoke(currencyRef.amount, -num);
 
             return true;
         }
 
         public bool CanAfford(int num)
         {
-            return amount - num >= 0;
+            return currencyRef.amount - num >= 0;
         }
 
         public override string ToString()
         {
-            return amount.ToString();
+            return currencyRef.amount.ToString();
         }
 
-        public static implicit operator int(Currency c) => c.amount;
+        public static implicit operator int(Currency c) => c.currencyRef.amount;
     }
 }

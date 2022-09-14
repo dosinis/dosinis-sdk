@@ -4,8 +4,8 @@ namespace DosinisSDK.Wallet
 {
     public class Wallet : Module
     {
-        public Currency SoftCurrency => data.softCurrency;
-        public Currency HardCurrency => data.hardCurrency;
+        public Currency SoftCurrency { get; private set; }
+        public Currency HardCurrency { get; private set; }
 
         private WalletData data;
         private WalletConfig config;
@@ -13,17 +13,26 @@ namespace DosinisSDK.Wallet
         protected override void OnInit(IApp app)
         {
             config = GetConfigAs<WalletConfig>();
-            data = app.GetModule<IDataManager>().RetrieveOrCreateData<WalletData>();
-
-            data.softCurrency = new Currency(config.softCurrency.name, config.softCurrency.initAmount)
+            
+            var dataManager = app.GetModule<IDataManager>();
+            
+            SoftCurrency = config.softCurrency;
+            HardCurrency = config.hardCurrency;
+            
+            if (dataManager.HasData<WalletData>() == false)
             {
-                Icon = config.softCurrency.icon
-            };
-
-            data.hardCurrency = new Currency(config.hardCurrency.name, config.hardCurrency.initAmount)
+                data = dataManager.RetrieveOrCreateData<WalletData>();
+                
+                data.softCurrency.amount = SoftCurrency.initAmount;
+                data.hardCurrency.amount = HardCurrency.initAmount;
+            }
+            else
             {
-                Icon = config.hardCurrency.icon
-            };
+                data = dataManager.RetrieveOrCreateData<WalletData>();
+            }
+            
+            SoftCurrency.Set(data.softCurrency);
+            HardCurrency.Set(data.hardCurrency);
         }
     }
 }
