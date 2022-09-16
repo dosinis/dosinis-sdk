@@ -42,15 +42,20 @@ namespace DosinisSDK.Utils
             return list[list.Count - 1];
         }
 
-        public static int Count(this IEnumerable list)
+        public static int Count(this IEnumerable collection)
         {
             int amount = 0;
-            foreach (var element in list)
+            foreach (var element in collection)
             {
                 amount++;
             }
 
             return amount;
+        }
+        
+        public static bool Any(this IEnumerable collection)
+        {
+            return collection.Count() > 0;
         }
 
         // Vectors
