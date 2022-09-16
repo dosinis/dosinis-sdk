@@ -16,10 +16,8 @@ namespace DosinisSDK.UI.Elements
         private void SetupElement<T>(Element element, T arg)
         {
             element.Init();
-
-            var elementFor = element as ElementFor<T>;
-
-            if (elementFor)
+            
+            if (element is ElementFor<T> elementFor)
             {
                 elementFor.Setup(arg);
                 elementFor.Show();
@@ -44,11 +42,11 @@ namespace DosinisSDK.UI.Elements
 
             var collected = new List<Element>();
 
-            foreach (var element in spawnedElements)
+            foreach (var e in spawnedElements)
             {
-                if (predicate(element))
+                if (predicate(e))
                 {
-                    collected.Add(element);
+                    collected.Add(e);
                 }
             }
 
