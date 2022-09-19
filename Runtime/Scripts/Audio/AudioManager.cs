@@ -54,9 +54,11 @@ namespace DosinisSDK.Audio
         public void PlayMusic(AudioClip clip, float volume = 1f)
         {
             musicVolume = volume;
-            
             musicSource.clip = clip;
-            musicSource.volume = volume;
+            
+            if (data.isMusicEnabled)
+                musicSource.volume = volume;
+
             musicSource.Play();
         }
 
