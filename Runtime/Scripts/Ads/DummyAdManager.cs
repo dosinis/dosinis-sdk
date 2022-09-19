@@ -13,6 +13,8 @@ namespace DosinisSDK.Ads
         private Canvas canvas;
 
         public override event Action OnBannerLoaded;
+        public override event Action<string> OnInterstitialShown;
+        public override event Action<string> OnRewardedShown;
 
         protected override void OnInit(IApp app)
         {
@@ -37,6 +39,7 @@ namespace DosinisSDK.Ads
 
         public override void ShowInterstitial(string placement = "")
         {
+            OnInterstitialShown?.Invoke(placement);
             Log($"Show interstitial ad {placement}");
         }
 
@@ -62,6 +65,8 @@ namespace DosinisSDK.Ads
             adRect.SetTop(0);
             adRect.SetBottom(0);
 
+            OnRewardedShown?.Invoke(placement);
+            
             Time.timeScale = 0;
 
             App.Core.Timer.Delay(3f, () =>

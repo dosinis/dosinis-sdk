@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Ads
 {
+    // Test ad app id : ca-app-pub-3940256099942544~3347511713
     public class AdmobAdManager : AdManager
     {
 #if UNITY_IOS
@@ -31,7 +32,9 @@ namespace DosinisSDK.Ads
         private bool rewarded = false;
 
         public override event Action OnBannerLoaded;
-        
+        public override event Action<string> OnInterstitialShown;
+        public override event Action<string> OnRewardedShown;
+
         protected override void OnInit(IApp app)
         {
             MobileAds.Initialize(initStatus =>
@@ -49,7 +52,7 @@ namespace DosinisSDK.Ads
             }
         }
 
-        private void PauseIOSStuff(bool value)
+        private void PauseIOSGame(bool value)
         {
 #if UNITY_IOS
             Time.timeScale = value ? 0 : 1;
@@ -127,6 +130,7 @@ namespace DosinisSDK.Ads
 
             if (interstitial.IsLoaded())
             {
+                OnInterstitialShown?.Invoke(placement);
                 interstitial.Show();
             }
         }
@@ -194,6 +198,7 @@ namespace DosinisSDK.Ads
             {
                 if (ad != null && ad.IsLoaded())
                 {
+                    OnRewardedShown?.Invoke(placement);
                     ad.Show();
                     break;
                 }
@@ -208,7 +213,7 @@ namespace DosinisSDK.Ads
             {
                 onRewardedAdFinished?.Invoke(rewarded);
                 rewarded = false;
-                PauseIOSStuff(false);
+                PauseIOSGame(false);
                 LoadRewardedAds();
             });
 
@@ -225,7 +230,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
-                PauseIOSStuff(false);
+                PauseIOSGame(false);
                 onRewardedAdFinished?.Invoke(false);
             });
 
@@ -235,7 +240,7 @@ namespace DosinisSDK.Ads
         private void HandleRewardedAdOpening(object sender, EventArgs e)
         {
             Log("AdManager : Rewarded Ad is opening");
-            PauseIOSStuff(true);
+            PauseIOSGame(true);
         }
 
         private void HandleRewardedAdFailedToLoad(object sender, AdFailedToLoadEventArgs e)
@@ -254,7 +259,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(()=>
             {
-                 PauseIOSStuff(false);
+                 PauseIOSGame(false);
                  LoadInterstitialAds();
             });
         }
@@ -263,7 +268,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
-                PauseIOSStuff(true);
+                PauseIOSGame(true);
             });
         }
         
@@ -271,7 +276,7 @@ namespace DosinisSDK.Ads
         {
             Dispatcher.RunOnMainThread(() =>
             {
-                PauseIOSStuff(false);
+                PauseIOSGame(false);
             });
         }
     }

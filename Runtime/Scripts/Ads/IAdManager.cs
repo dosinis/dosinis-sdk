@@ -6,6 +6,8 @@ namespace DosinisSDK.Ads
     public interface IAdManager : IBehaviourModule
     {
         event Action OnBannerLoaded;
+        event Action<string> OnInterstitialShown;
+        event Action<string> OnRewardedShown;
         bool IsBannerDisplayed { get; set; }
         bool IsRewardAdReady();
         void ShowRewardedAd(string placement, Action<bool> callBack);
