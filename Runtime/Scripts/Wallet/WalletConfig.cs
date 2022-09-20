@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Wallet
 {
-    [CreateAssetMenu(fileName = "WalletConfig", menuName = "DosinisSDK/Wallet/WalletConfig")]
+    [CreateAssetMenu(fileName = "WalletConfig", menuName = "DosinisSDK/Configs/Wallet/WalletConfig")]
     public class WalletConfig : ModuleConfig
     {
         public Currency softCurrency;

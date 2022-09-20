@@ -3,7 +3,7 @@ using System;
 
 namespace DosinisSDK.Wallet
 {
-    [CreateAssetMenu(fileName = "Currency", menuName = "DosinisSDK/Wallet/Currency")]
+    [CreateAssetMenu(fileName = "Currency", menuName = "DosinisSDK/Configs/Wallet/Currency")]
     public class Currency : ScriptableObject
     {
         // Serialized

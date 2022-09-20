@@ -23,6 +23,7 @@ namespace DosinisSDK.Core
         public event Action<bool> OnAppPaused;
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
+        public event Action OnAppRestart;
 
         // Core Modules
 
@@ -157,6 +158,7 @@ namespace DosinisSDK.Core
 
         public void Restart()
         {
+            OnAppRestart?.Invoke();
             LoadScene(0);
         }
 
@@ -193,7 +195,7 @@ namespace DosinisSDK.Core
             done?.Invoke();
         }
 
-        public static void ModulesReady(Action onReady)
+        public static void Ready(Action onReady)
         {
             if (Initialized)
             {

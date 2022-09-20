@@ -7,7 +7,7 @@ namespace DosinisSDK.Utils
     {
         private void Awake()
         {
-            App.ModulesReady(Init);
+            App.Ready(Init);
         }
 
         /// <summary>
