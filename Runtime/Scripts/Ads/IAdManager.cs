@@ -12,7 +12,8 @@ namespace DosinisSDK.Ads
         bool IsRewardAdReady();
         void ShowRewardedAd(string placement, Action<bool> callBack);
         void ShowInterstitial(string placement = "");
-        void ShowBanner(string placement = "");
+        void ShowBanner();
+        void HideBanner();
     }
 }
 

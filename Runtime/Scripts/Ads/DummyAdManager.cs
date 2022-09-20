@@ -1,6 +1,6 @@
+using System;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,8 +23,8 @@ namespace DosinisSDK.Ads
 
             if (showBanner)
             {
-                ShowBanner();
                 LoadBanner();
+                ShowBanner();
             }
 
             canvas = gameObject.AddComponent<Canvas>();
@@ -32,17 +32,21 @@ namespace DosinisSDK.Ads
             canvas.sortingOrder = 999;
         }
 
-        public override void ShowBanner(string placement = "")
-        {
-            Log($"Show banner ad {placement}");
-        }
-
+        // Interstitial
+        
         public override void ShowInterstitial(string placement = "")
         {
             OnInterstitialShown?.Invoke(placement);
             Log($"Show interstitial ad {placement}");
         }
 
+        protected override void LoadInterstitialAds()
+        {
+            Log("Loading interstitial ads");
+        }
+
+        // Rewarded
+        
         public override void ShowRewardedAd(string placement, Action<bool> callBack)
         {
             if (IsRewardAdReady() == false)
@@ -80,23 +84,7 @@ namespace DosinisSDK.Ads
                 callBack(true);
             });
         }
-
-        protected override void LoadBanner()
-        {
-            Log("Loading banner ads");
-
-            App.Core.Timer.Delay(3f, () =>
-            {
-                IsBannerDisplayed = true;
-                OnBannerLoaded?.Invoke();
-            });
-        }
-
-        protected override void LoadInterstitialAds()
-        {
-            Log("Loading interstitial ads");
-        }
-
+        
         protected override void LoadRewardedAds()
         {
             Log("Loading rewarded ads");
@@ -106,10 +94,34 @@ namespace DosinisSDK.Ads
                 rewardAdReady = true;
             });
         }
-
+        
         public override bool IsRewardAdReady()
         {
             return rewardAdReady;
+        }
+
+        // Banner
+        
+        protected override void LoadBanner()
+        {
+            Log("Loading banner ads");
+
+            App.Core.Timer.Delay(3f, () =>
+            {
+                OnBannerLoaded?.Invoke();
+            });
+        }
+        
+        public override void ShowBanner()
+        {
+            Log("Banner ad shown");
+            IsBannerDisplayed = true;
+        }
+
+        public override void HideBanner()
+        {
+            Log("Banner ad hidden");
+            IsBannerDisplayed = false;
         }
     }
 }

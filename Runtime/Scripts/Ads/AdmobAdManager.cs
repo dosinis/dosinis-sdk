@@ -1,9 +1,11 @@
 #if ENABLE_ADMOB
+using System;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using GoogleMobileAds.Api;
-using System;
+#if UNITY_IOS
 using UnityEngine;
+#endif
 
 namespace DosinisSDK.Ads
 {
@@ -25,7 +27,7 @@ namespace DosinisSDK.Ads
 
         private Action<bool> onRewardedAdFinished;
 
-        private const string INTESRTITIAL_TEST_ID = "ca-app-pub-3940256099942544/1033173712";
+        private const string INTERSTITIAL_TEST_ID = "ca-app-pub-3940256099942544/1033173712";
         private const string BANNER_TEST_ID = "ca-app-pub-3940256099942544/6300978111";
         private const string REWARDED_TEST_ID = "ca-app-pub-3940256099942544/5224354917";
 
@@ -47,8 +49,8 @@ namespace DosinisSDK.Ads
 
             if (showBanner)
             {
-                ShowBanner();
                 LoadBanner();
+                ShowBanner();
             }
         }
 
@@ -61,28 +63,45 @@ namespace DosinisSDK.Ads
         }
 
         // Banner
+        
+        public override void ShowBanner()
+        {
+            Log($"Showing banner ad");
+            
+            if (bannerView != null)
+            {
+                bannerView.Show();
+            }
+        }
+
+        public override void HideBanner()
+        {
+            Log($"Hiding banner ad");
+            
+            if (bannerView != null)
+            {
+                bannerView.Hide();
+            }
+        }
 
         protected override void LoadBanner()
         {
+            Log($"Loading banner ad");
+            
             IsBannerDisplayed = false;
             AdRequest request = new AdRequest.Builder().Build();
-            bannerView.LoadAd(request);
-        }
-
-        public override void ShowBanner(string placement = "")
-        {
-            Log($"Showing banner ad {placement}");
-
+            
             string id = bannerId;
 
 #if UNITY_IOS
             id = bannerId_iOs;
 #endif
+            
             if (useTestAds)
             {
                 id = BANNER_TEST_ID;
             }
-
+            
             if (bannerPosition == BannerPosition.Bottom)
             {
                 bannerView = new BannerView(id, AdSize.Banner, AdPosition.Bottom);
@@ -95,8 +114,14 @@ namespace DosinisSDK.Ads
             bannerView.OnAdOpening += (sender,e) =>
             {
                 IsBannerDisplayed = true;
+            };
+            
+            bannerView.OnAdLoaded += (sender, e) =>
+            {
                 OnBannerLoaded?.Invoke();
             };
+
+            bannerView.LoadAd(request);
         }
 
         // Interstitial
@@ -111,7 +136,7 @@ namespace DosinisSDK.Ads
             
             if (useTestAds)
             {
-                id = INTESRTITIAL_TEST_ID;
+                id = INTERSTITIAL_TEST_ID;
             }
 
             interstitial = new InterstitialAd(id);
@@ -134,7 +159,7 @@ namespace DosinisSDK.Ads
                 interstitial.Show();
             }
         }
-
+        
         // Rewarded
 
         private RewardedAd CreateAndLoadRewardedAd(string adUnitId)
