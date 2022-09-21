@@ -66,9 +66,7 @@ namespace DosinisSDK.Utils
             {
                 lock (backlog)
                 {
-                    var tmp = actions;
-                    actions = backlog;
-                    backlog = tmp;
+                    (actions, backlog) = (backlog, actions);
                     queued = false;
                 }
 

@@ -15,7 +15,7 @@ namespace DosinisSDK.Core
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
         private readonly List<IProcessable> processables = new List<IProcessable>();
 
-        private AppConfig config;
+        private AppConfigBase config;
         private AsyncOperation loadSceneOperation;
         
         // Events
@@ -207,7 +207,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void Init(AppConfig config)
+        private void Init(AppConfigBase config)
         {
             if (Core)
             {
@@ -235,15 +235,8 @@ namespace DosinisSDK.Core
 
             CreateBehaviourModule<CoroutineManager>();
             RegisterModule(new Timer());
-
-            if (config.modulesRegistry)
-            {
-                config.modulesRegistry.Init(this);
-            }
-            else
-            {
-                Debug.LogWarning($"{nameof(ModulesRegistry)} is null. Did you forget to assign it to {nameof(AppConfig)}?");
-            }
+            
+            config.CreateUserModules(this);
 
             Debug.Log("Setting up scene manager...");
 
@@ -330,11 +323,11 @@ namespace DosinisSDK.Core
             if (Initialized)
                 return;
 
-            var config = Resources.Load<AppConfig>("AppConfig");
+            var config = Resources.Load<AppConfigBase>("AppConfig");
 
             if (config == null)
             {
-                Debug.LogError($"App failed to boot up! Couldn't find {nameof(AppConfig)} in the Resources folder root");
+                Debug.LogError($"App failed to boot up! Couldn't find {nameof(AppConfigBase)} in the Resources folder root");
                 return;
             }
 
