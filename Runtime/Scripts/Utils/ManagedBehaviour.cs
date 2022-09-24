@@ -5,9 +5,28 @@ namespace DosinisSDK.Utils
 {
     public abstract class ManagedBehaviour : MonoBehaviour
     {
+        [SerializeField] private bool waitForScene;
+
+        protected bool ready;
+        
         private void Awake()
         {
-            App.Ready(Init);
+            App.Ready(()=>
+            {
+                if (waitForScene == false)
+                {
+                    Init();
+                    ready = true;
+                }
+                else
+                {
+                    App.Core.Timer.WaitUntil(() => App.Core.IsModuleReady<ISceneManager>(), () =>
+                    {
+                        Init();
+                        ready = true;
+                    });
+                }
+            });
         }
 
         /// <summary>

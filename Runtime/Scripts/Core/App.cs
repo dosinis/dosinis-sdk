@@ -90,6 +90,27 @@ namespace DosinisSDK.Core
             return false;
         }
 
+        public bool IsModuleReady<T>() where T : class, IModule
+        {
+            var mType = typeof(T);
+
+            if (cachedModules.TryGetValue(mType, out IModule m))
+            {
+                return true;
+            }
+
+            foreach (var mKeyValue in cachedModules)
+            {
+                if (mKeyValue.Value is T value)
+                {
+                    cachedModules.Add(mType, mKeyValue.Value);
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
         public void RegisterModule(IModule module, ModuleConfig mConfig = null)
         {
             var mType = module.GetType();
