@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.Core
 {
-    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IDragHandler
+    [RequireComponent(typeof(Image))]
+    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public Image Image => image ? image : GetComponent<Image>();
 
@@ -13,6 +14,7 @@ namespace DosinisSDK.Core
 
         private IButtonAnimation buttonAnimation;
 
+        private ScrollRect scrollRectParent;
         private bool heldDown = false;
         private bool mouseOverObject = false;
         private Image image;
@@ -83,9 +85,31 @@ namespace DosinisSDK.Core
 
             mouseOverObject = true;
         }
+        
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (scrollRectParent != null)
+            {
+                scrollRectParent.OnBeginDrag(eventData);
+            }
+        }
+        
         public void OnDrag(PointerEventData eventData)
         {
-            // Needed, because OnPointerUp doesn't work well without this
+            if (scrollRectParent != null)
+            {
+                scrollRectParent.OnDrag(eventData);
+            }
+        }
+        
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            OnPointerExit(eventData);
+
+            if (scrollRectParent != null)
+            {
+                scrollRectParent.OnEndDrag(eventData);
+            }
         }
 
         protected virtual void Awake()
@@ -97,6 +121,8 @@ namespace DosinisSDK.Core
             {
                 buttonAnimation.Init();
             }
+            
+            scrollRectParent = GetComponentInParent<ScrollRect>();
         }
 
         private void OnEnable()
