@@ -104,11 +104,10 @@ namespace DosinisSDK.Core
         
         public void OnEndDrag(PointerEventData eventData)
         {
-            OnPointerExit(eventData);
-
             if (scrollRectParent != null)
             {
                 scrollRectParent.OnEndDrag(eventData);
+                OnPointerExit(eventData);
             }
         }
 
