@@ -6,5 +6,6 @@ namespace DosinisSDK.Core
     {
         void Delay(float delay, Action done);
         void SkipFrame(Action done);
+        void WaitUntil(Func<bool> condition, Action onComplete);
     }
 }
