@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DosinisSDK
+namespace DosinisSDK.Utils
 {
 	[Serializable]
     public class Observable<T>
