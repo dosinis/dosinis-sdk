@@ -24,7 +24,11 @@ namespace DosinisSDK.Wallet
                 data = dataManager.RetrieveOrCreateData<WalletData>();
                 
                 data.softCurrency.amount = SoftCurrency.initAmount;
-                data.hardCurrency.amount = HardCurrency.initAmount;
+                
+                if (HardCurrency)
+                {
+                    data.hardCurrency.amount = HardCurrency.initAmount;
+                }
             }
             else
             {
@@ -32,7 +36,11 @@ namespace DosinisSDK.Wallet
             }
             
             SoftCurrency.Set(data.softCurrency);
-            HardCurrency.Set(data.hardCurrency);
+            
+            if (HardCurrency)
+            {
+                HardCurrency.Set(data.hardCurrency);
+            }
         }
     }
 }
