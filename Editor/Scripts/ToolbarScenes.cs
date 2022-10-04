@@ -14,13 +14,12 @@ using UnityEngine.Experimental.UIElements;
 
 namespace DosinisSDK.Editor
 {
-
     [InitializeOnLoad]
     public static class ToolbarScenes
     {
-        private static ScriptableObject _toolbar;
-        private static string[] _scenePaths;
-        private static string[] _sceneNames;
+        private static ScriptableObject toolbar;
+        private static string[] scenePaths;
+        private static string[] sceneNames;
 
         static ToolbarScenes()
         {
@@ -30,42 +29,48 @@ namespace DosinisSDK.Editor
 
         private static void Update()
         {
-            if (_toolbar == null)
+            if (toolbar == null)
             {
                 Assembly editorAssembly = typeof(UnityEditor.Editor).Assembly;
 
-                UnityEngine.Object[] toolbars = UnityEngine.Resources.FindObjectsOfTypeAll(editorAssembly.GetType("UnityEditor.Toolbar"));
-                _toolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
+                UnityEngine.Object[] toolbars = Resources.FindObjectsOfTypeAll(editorAssembly.GetType("UnityEditor.Toolbar"));
+                
+                toolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
 
-                if (_toolbar != null)
+                if (toolbar != null)
                 {
 #if UNITY_2020_1_OR_NEWER
                     var windowBackendPropertyInfo = editorAssembly.GetType("UnityEditor.GUIView")
-                        .GetProperty("windowBackend", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                    var windowBackend = windowBackendPropertyInfo.GetValue(_toolbar);
-                    var visualTreePropertyInfo = windowBackend.GetType().GetProperty("visualTree", BindingFlags.Public | BindingFlags.Instance);
+                        .GetProperty("windowBackend",
+                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    var windowBackend = windowBackendPropertyInfo.GetValue(toolbar);
+                    var visualTreePropertyInfo = windowBackend.GetType()
+                        .GetProperty("visualTree", BindingFlags.Public | BindingFlags.Instance);
                     var visualTree = (VisualElement)visualTreePropertyInfo.GetValue(windowBackend);
 #else
           PropertyInfo  visualTreePropertyInfo =
  editorAssembly.GetType("UnityEditor.GUIView").GetProperty("visualTree", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-          VisualElement visualTree             = (VisualElement)visualTreePropertyInfo.GetValue(_toolbar, null);
+          VisualElement visualTree = (VisualElement)visualTreePropertyInfo.GetValue(_toolbar, null);
 #endif
 
                     IMGUIContainer container = (IMGUIContainer)visualTree[0];
 
                     FieldInfo onGUIHandlerFieldInfo = typeof(IMGUIContainer).GetField("m_OnGUIHandler",
                         BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
                     Action handler = (Action)onGUIHandlerFieldInfo.GetValue(container);
+
                     handler -= OnGUI;
                     handler += OnGUI;
+                    
                     onGUIHandlerFieldInfo.SetValue(container, handler);
                 }
             }
 
-            if (_scenePaths == null || _scenePaths.Length != EditorBuildSettings.scenes.Length)
+            if (scenePaths == null || scenePaths.Length != EditorBuildSettings.scenes.Length)
             {
-                List<string> scenePaths = new List<string>();
-                List<string> sceneNames = new List<string>();
+                var paths = new List<string>();
+                var names = new List<string>();
 
                 foreach (EditorBuildSettingsScene scene in EditorBuildSettings.scenes)
                 {
@@ -74,12 +79,12 @@ namespace DosinisSDK.Editor
 
                     string scenePath = Application.dataPath + scene.path.Substring(6);
 
-                    scenePaths.Add(scenePath);
-                    sceneNames.Add(Path.GetFileNameWithoutExtension(scenePath));
+                    paths.Add(scenePath);
+                    names.Add(Path.GetFileNameWithoutExtension(scenePath));
                 }
 
-                _scenePaths = scenePaths.ToArray();
-                _sceneNames = sceneNames.ToArray();
+                scenePaths = paths.ToArray();
+                sceneNames = names.ToArray();
             }
         }
 
@@ -88,7 +93,7 @@ namespace DosinisSDK.Editor
             using (new EditorGUI.DisabledScope(Application.isPlaying))
             {
                 Rect rect = new Rect(0, 0, Screen.width, Screen.height);
-                rect.xMin = EditorGUIUtility.currentViewWidth * 0.5f + 40.0f;
+                rect.xMin = EditorGUIUtility.currentViewWidth * 0.55f;
                 rect.xMax = EditorGUIUtility.currentViewWidth - 350.0f;
                 rect.y = 7.0f;
 
@@ -97,21 +102,22 @@ namespace DosinisSDK.Editor
                     string sceneName = EditorSceneManager.GetActiveScene().name;
                     int sceneIndex = -1;
 
-                    for (int i = 0; i < _sceneNames.Length; ++i)
+                    for (int i = 0; i < sceneNames.Length; ++i)
                     {
-                        if (sceneName == _sceneNames[i])
+                        if (sceneName == sceneNames[i])
                         {
                             sceneIndex = i;
                             break;
                         }
                     }
 
-                    int newSceneIndex = EditorGUILayout.Popup(sceneIndex, _sceneNames, GUILayout.Width(200.0f));
+                    int newSceneIndex = EditorGUILayout.Popup(sceneIndex, sceneNames, GUILayout.Width(200.0f));
+
                     if (newSceneIndex != sceneIndex)
                     {
                         if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                         {
-                            EditorSceneManager.OpenScene(_scenePaths[newSceneIndex], OpenSceneMode.Single);
+                            EditorSceneManager.OpenScene(scenePaths[newSceneIndex], OpenSceneMode.Single);
                         }
                     }
                 }
