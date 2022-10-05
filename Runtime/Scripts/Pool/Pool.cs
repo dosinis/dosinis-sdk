@@ -10,7 +10,7 @@ namespace DosinisSDK.Pool
 
         private readonly List<IPooled> pooledObjects = new List<IPooled>();
 
-        private IPooled sourceObject;
+        private readonly IPooled sourceObject;
 
         private const int CAPACITY = 100;
 
