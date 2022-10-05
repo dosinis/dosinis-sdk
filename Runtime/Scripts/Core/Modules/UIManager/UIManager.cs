@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DosinisSDK.Core
 {
     public class UIManager : BehaviourModule, IProcessable
     {
+        public Camera Camera { get; private set; }
+        
         private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
-
         private readonly List<IProcessable> processedWindows = new List<IProcessable>();
 
         protected override void OnInit(IApp app)
@@ -25,6 +27,8 @@ namespace DosinisSDK.Core
                     processedWindows.Add(proc);
                 }
             }
+
+            Camera = GetComponentInChildren<Camera>();
         }
 
         private void OnDestroy()
