@@ -8,7 +8,7 @@ namespace DosinisSDK.Core
 {
     public sealed class App : MonoBehaviour, IApp
     {
-        [SerializeField] private bool prewarmShaders = false;
+        [SerializeField] private bool prewarmShaders;
         
         // Private
 
@@ -94,14 +94,14 @@ namespace DosinisSDK.Core
         {
             var mType = typeof(T);
 
-            if (cachedModules.TryGetValue(mType, out IModule m))
+            if (cachedModules.ContainsKey(mType))
             {
                 return true;
             }
 
             foreach (var mKeyValue in cachedModules)
             {
-                if (mKeyValue.Value is T value)
+                if (mKeyValue.Value is T)
                 {
                     cachedModules.Add(mType, mKeyValue.Value);
                     return true;
@@ -209,10 +209,10 @@ namespace DosinisSDK.Core
                 SceneLoadProgress = loadSceneOperation.progress;
             }
 
-            yield return new WaitForSeconds(0.1f);
-
             SceneLoadProgress = 1;
-
+            
+            yield return new WaitForSeconds(0.1f);
+            
             done?.Invoke();
         }
 
