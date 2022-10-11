@@ -9,5 +9,7 @@ namespace DosinisSDK.Core
         void PressAnimation();
 
         void ReleaseAnimation();
+
+        void OnInteractableStateChanged(bool value);
     }
 }

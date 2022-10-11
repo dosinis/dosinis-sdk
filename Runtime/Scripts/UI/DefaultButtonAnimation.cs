@@ -1,6 +1,7 @@
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
 using System.Collections;
+using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.UI
@@ -9,6 +10,7 @@ namespace DosinisSDK.UI
     {
         [SerializeField] private float scaleRatio = 0.9f;
         [SerializeField] private float animationDuration = 0.1f;
+        [SerializeField] private bool interactableAffectsAlpha = false;
 
         [SerializeField] private AudioClip clickSfx;
 
@@ -42,6 +44,14 @@ namespace DosinisSDK.UI
         public void ReleaseAnimation()
         {
             StartCoroutine(BounceAnimationRoutine());
+        }
+
+        public void OnInteractableStateChanged(bool value)
+        {
+            if (interactableAffectsAlpha)
+            {
+                GetComponent<Button>().Image.SetAlpha(value ? 1f : 0.8f);
+            }
         }
 
         private IEnumerator BounceAnimationRoutine()

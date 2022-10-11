@@ -8,12 +8,27 @@ namespace DosinisSDK.Core
     [RequireComponent(typeof(Image))]
     public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
+        // Properties
+        
         public Image Image => image ? image : GetComponent<Image>();
 
-        public bool interactable = true;
+        public bool Interactable
+        {
+            get => interactable;
+            set
+            {
+                buttonAnimation?.OnInteractableStateChanged(value);
+                interactable = value;
+            }
+        }
 
+        // Serialized
+        
+        [SerializeField] private bool interactable = true;
+
+        // Private
+        
         private IButtonAnimation buttonAnimation;
-
         private ScrollRect scrollRectParent;
         private bool heldDown = false;
         private bool mouseOverObject = false;
@@ -39,22 +54,16 @@ namespace DosinisSDK.Core
                 return;
             
             heldDown = true;
-
-            if (buttonAnimation != null)
-            {
-                buttonAnimation.PressAnimation();
-            }
+            
+            buttonAnimation?.PressAnimation();
         }
 
         public void OnPointerUp(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
-
-            if (buttonAnimation != null)
-            {
-                buttonAnimation.ReleaseAnimation();
-            }
+            
+            buttonAnimation?.ReleaseAnimation();
 
             if (mouseOverObject && heldDown)
             {
@@ -71,11 +80,8 @@ namespace DosinisSDK.Core
 
             mouseOverObject = false;
             heldDown = false;
-
-            if (buttonAnimation != null)
-            {
-                buttonAnimation.ReleaseAnimation();
-            }
+            
+            buttonAnimation?.ReleaseAnimation();
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -115,19 +121,17 @@ namespace DosinisSDK.Core
         {
             buttonAnimation = GetComponent<IButtonAnimation>();
             image = GetComponent<Image>();
-
-            if (buttonAnimation != null)
-            {
-                buttonAnimation.Init();
-            }
             
+            buttonAnimation?.Init();
+
             scrollRectParent = GetComponentInParent<ScrollRect>();
+            
+            buttonAnimation?.OnInteractableStateChanged(interactable);
         }
 
         private void OnEnable()
         {
-            if (buttonAnimation != null)
-                buttonAnimation.ReleaseAnimation();
+            buttonAnimation?.ReleaseAnimation();
         }
     }
 }
