@@ -25,11 +25,19 @@ namespace DosinisSDK.Utils
 
 		public event Action<T> OnValueChanged;
 
-		// Construct
-
 		public Observable(T value)
 		{
 			this.value = value;
+		}
+
+		public static implicit operator T(Observable<T> observable)
+		{
+			return observable.Value;
+		}
+		
+		public override string ToString()
+		{
+			return value.ToString();
 		}
 	}
 }
