@@ -19,7 +19,7 @@ namespace DosinisSDK.Utils
             }
         }
 
-        protected override void Init()
+        protected override void OnInit()
         {
             dataManager = App.Core.GetModule<IDataManager>();
 

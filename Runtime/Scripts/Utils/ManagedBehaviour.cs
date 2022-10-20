@@ -15,14 +15,14 @@ namespace DosinisSDK.Utils
             {
                 if (waitForScene == false)
                 {
-                    Init();
+                    OnInit();
                     ready = true;
                 }
                 else
                 {
                     App.Core.Timer.WaitUntil(() => App.Core.IsModuleReady<ISceneManager>(), () =>
                     {
-                        Init();
+                        OnInit();
                         ready = true;
                     });
                 }
@@ -32,6 +32,6 @@ namespace DosinisSDK.Utils
         /// <summary>
         /// Essentially Awake(), but called once/if App is initialized
         /// </summary>
-        protected abstract void Init();
+        protected abstract void OnInit();
     }
 }
