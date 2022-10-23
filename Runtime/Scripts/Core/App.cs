@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -41,6 +42,7 @@ namespace DosinisSDK.Core
         private static Action onAppInitialized;
         public static bool Initialized { get; private set; }
         public static App Core { get; private set; }
+        public const string CONFIG_PATH = "AppConfig";
 
         // App
         
@@ -344,12 +346,11 @@ namespace DosinisSDK.Core
             if (Initialized)
                 return;
 
-            var config = Resources.Load<AppConfigBase>("AppConfig");
+            var config = Resources.Load<AppConfigBase>(CONFIG_PATH);
 
             if (config == null)
             {
-                Debug.LogError($"App failed to boot up! Couldn't find {nameof(AppConfigBase)} in the Resources folder root");
-                return;
+                throw new FileNotFoundException($"App failed to boot up! Couldn't find {CONFIG_PATH} in the Resources folder");
             }
 
             var appObject = new GameObject(nameof(App)).AddComponent<App>();
