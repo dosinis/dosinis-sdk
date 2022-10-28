@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
@@ -14,7 +13,7 @@ namespace DosinisSDK.Core
         bool TryGetModule<T>(out T module) where T : class, IModule;
         bool IsModuleReady<T>() where T : class, IModule;
         void RegisterModule(IModule module, ModuleConfig config = null);
-        void CreateBehaviourModule<T>(T source = null) where T : BehaviourModule;
+        void CreateBehaviourModule<T>(T source = null, ModuleConfig config = null) where T : BehaviourModule;
         void Restart();
         void SwitchLoadedScene();
         void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, 

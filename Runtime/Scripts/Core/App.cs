@@ -153,7 +153,7 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
 
-        public void CreateBehaviourModule<T>(T source = null) where T : BehaviourModule
+        public void CreateBehaviourModule<T>(T source = null, ModuleConfig config = null) where T : BehaviourModule
         {
             if (source == null)
             {
@@ -162,7 +162,7 @@ namespace DosinisSDK.Core
                 moduleObject.name = typeof(T).Name;
                 T module = moduleObject.AddComponent<T>();
 
-                RegisterModule(module);
+                RegisterModule(module, config);
             }
             else
             {
@@ -170,7 +170,7 @@ namespace DosinisSDK.Core
 
                 if (moduleObj is T module)
                 {
-                    RegisterModule(module);
+                    RegisterModule(module, config);
                 }
                 else
                 {
