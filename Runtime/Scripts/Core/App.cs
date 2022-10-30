@@ -358,13 +358,12 @@ namespace DosinisSDK.Core
                     Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
                 }
             }
+
+            await Task.Delay(1); // Tiny delay for scene to be completely loaded (next frame)
             
             setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
-            Timer.SkipFrame(() =>
-            {
-                SetSceneChangedCallback(setupScene);
-            });
+            SetSceneChangedCallback(setupScene);
 
             Initialized = true;
 
