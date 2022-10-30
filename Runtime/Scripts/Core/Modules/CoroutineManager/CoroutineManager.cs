@@ -7,7 +7,6 @@ namespace DosinisSDK.Core
     {
         protected override void OnInit(IApp app)
         {
-            
         }
 
         public Coroutine Begin(IEnumerator coroutine)

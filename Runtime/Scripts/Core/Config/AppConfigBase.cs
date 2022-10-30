@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -9,22 +10,19 @@ namespace DosinisSDK.Core
     {
         public bool safeMode = true;
 
-        internal void CreateUserModules(IApp app)
+        internal async Task CreateUserModules(IApp app)
         {
-            CreateModules(app);
+            await CreateModules(app);
         }
 
         /// <summary>
-        /// Add desired modules in override of this method.
-        /// NOTE: You may also pass Module config argument in app.RegisterModule(new Module(), moduleConfig);
+        /// Add desired modules in override of this method
         /// </summary>
         /// <param name="app"></param>
-        protected virtual void CreateModules(IApp app)
+        protected virtual Task CreateModules(IApp app)
         {
-            app.RegisterModule(new DataManager());
-
-            // Behaviour module creation example:
-            // app.CreateBehaviourModule<BehaviourModule>();
+            app.CreateModule<DataManager>();
+            return Task.CompletedTask;
         }
     }
 }

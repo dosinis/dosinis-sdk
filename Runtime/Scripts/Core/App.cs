@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -113,7 +114,7 @@ namespace DosinisSDK.Core
             return false;
         }
 
-        public void RegisterModule(IModule module, ModuleConfig mConfig = null)
+        private void RegisterModule(IModule module, ModuleConfig mConfig = null)
         {
             var mType = module.GetType();
 
@@ -152,31 +153,53 @@ namespace DosinisSDK.Core
 
             Debug.Log($"Registered {mType.Name} successfully");
         }
-
-        public void CreateBehaviourModule<T>(T source = null, ModuleConfig config = null) where T : BehaviourModule
+        
+        public T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule
         {
-            if (source == null)
+            if (typeof(T).IsSubclassOf(typeof(BehaviourModule)))
             {
-                var moduleObject = new GameObject();
-                moduleObject.transform.parent = transform;
-                moduleObject.name = typeof(T).Name;
-                T module = moduleObject.AddComponent<T>();
+                if (source == null)
+                {  
+                    var moduleObject = new GameObject();
+                    moduleObject.transform.parent = transform;
+                    moduleObject.name = typeof(T).Name;
+                    var module = moduleObject.AddComponent(typeof(T)) as IModule;
 
-                RegisterModule(module, config);
-            }
-            else
-            {
-                BehaviourModule moduleObj = Instantiate(source, transform);
-
-                if (moduleObj is T module)
-                {
                     RegisterModule(module, config);
+
+                    return module as T;
                 }
                 else
-                {
-                    Debug.LogError($"{source.name} doesn't contain {typeof(T).Name} component attached");
+                {   
+                    var moduleObj = Instantiate(source as BehaviourModule, transform);
+
+                    if (moduleObj is T module)
+                    {
+                        RegisterModule(module, config);
+                        return module;
+                    }
+
+                    Debug.LogError($"{moduleObj.name} doesn't contain {typeof(T).Name} component attached");
+                    return default;
                 }
             }
+
+            if (source == null)
+            {
+                var module = (IModule)Activator.CreateInstance(typeof(T));
+                RegisterModule(module, config);
+                return module as T;
+            }
+
+            RegisterModule(source, config);
+            return source;
+        }
+
+        public async Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IModule, IAsyncModule
+        {
+            var module = CreateModule<T>(source, config) as IAsyncModule;
+
+            await module.InitAsync(this, config);
         }
 
         public void Restart()
@@ -230,63 +253,8 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void Init(AppConfigBase config)
+        private void SetSceneChangedCallback(Action<Scene> onSceneChanged)
         {
-            if (Core)
-            {
-                Debug.LogWarning($"{nameof(App)} already exists. " +
-                    $"Make sure there's only one instance of the {nameof(App)}");
-
-                if (this != Core)
-                    Destroy(this);
-
-                return;
-            }
-
-            Debug.Log("Starting App...");
-
-            Core = this;
-
-            this.config = config;
-
-            if (prewarmShaders)
-                Shader.WarmupAllShaders();
-
-            DontDestroyOnLoad(this);
-
-            Debug.Log("Registering Modules...");
-
-            CreateBehaviourModule<CoroutineManager>();
-            RegisterModule(new Timer());
-            
-            config.CreateUserModules(this);
-
-            Debug.Log("Setting up scene manager...");
-
-            void setupScene(Scene scene)
-            {
-                var newSceneManager = FindObjectOfType<SceneManager>();
-                var newUIManager = FindObjectOfType<UIManager>();
-
-                if (newSceneManager != null)
-                {
-                    RegisterModule(newSceneManager);
-                }
-                else
-                {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}. Ignore if it's intended");
-                }
-
-                if (newUIManager != null)
-                {
-                    RegisterModule(newUIManager);
-                }
-                else
-                {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
-                }
-            }
-            
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
             {
                 Debug.Log($"Scene was changed into {newScene.name}");
@@ -329,9 +297,74 @@ namespace DosinisSDK.Core
                 {
                     cachedModules.Remove(module);
                 }
-
-                setupScene(newScene);
+                
+                onSceneChanged?.Invoke(newScene);
             };
+        }
+        
+        private async void Init(AppConfigBase config)
+        {
+            if (Core)
+            {
+                Debug.LogWarning($"{nameof(App)} already exists. " +
+                                 $"Make sure there's only one instance of the {nameof(App)}");
+
+                if (this != Core)
+                    Destroy(this);
+
+                return;
+            }
+
+            Debug.Log("Starting App...");
+
+            Core = this;
+
+            this.config = config;
+
+            if (prewarmShaders)
+                Shader.WarmupAllShaders();
+
+            DontDestroyOnLoad(this);
+
+            Debug.Log("Registering Modules...");
+
+            CreateModule<CoroutineManager>();
+            CreateModule<Timer>();
+            
+            await config.CreateUserModules(this);
+
+            Debug.Log("Setting up scene manager...");
+
+            void setupScene(Scene scene)
+            {
+                var newSceneManager = FindObjectOfType<SceneManager>();
+                var newUIManager = FindObjectOfType<UIManager>();
+
+                if (newSceneManager != null)
+                {
+                    RegisterModule(newSceneManager);
+                }
+                else
+                {
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}. Ignore if it's intended");
+                }
+
+                if (newUIManager != null)
+                {
+                    RegisterModule(newUIManager);
+                }
+                else
+                {
+                    Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
+                }
+            }
+            
+            setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            
+            Timer.SkipFrame(() =>
+            {
+                SetSceneChangedCallback(setupScene);
+            });
 
             Initialized = true;
 
@@ -357,6 +390,8 @@ namespace DosinisSDK.Core
             appObject.Init(config);
         }
 
+        // MonoBehaviour
+        
         private void Update()
         {
             foreach (var processable in processables)

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
@@ -12,8 +13,8 @@ namespace DosinisSDK.Core
         T GetModule<T>() where T : class, IModule;
         bool TryGetModule<T>(out T module) where T : class, IModule;
         bool IsModuleReady<T>() where T : class, IModule;
-        void RegisterModule(IModule module, ModuleConfig config = null);
-        void CreateBehaviourModule<T>(T source = null, ModuleConfig config = null) where T : BehaviourModule;
+        T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule;
+        Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IModule, IAsyncModule;
         void Restart();
         void SwitchLoadedScene();
         void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, 
