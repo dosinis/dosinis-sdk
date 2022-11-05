@@ -7,6 +7,7 @@ namespace DosinisSDK.Core
     public class Timer : Module, ITimer
     {
         private readonly WaitForEndOfFrame skipFrame = new WaitForEndOfFrame();
+        private readonly WaitForFixedUpdate skipFixedUpdate = new WaitForFixedUpdate();
         private CoroutineManager coroutineManager;
 
         protected override void OnInit(IApp app)
@@ -27,6 +28,11 @@ namespace DosinisSDK.Core
         public void SkipFrame(Action done)
         {
             coroutineManager.Begin(SkipFrameCoroutine(done));
+        }
+
+        public void SkipFixedUpdate(Action done)
+        {
+            coroutineManager.Begin(SkipFixedUpdateCoroutine(done));
         }
         
         public void WaitUntil(Func<bool> condition, Action onComplete)
@@ -54,6 +60,12 @@ namespace DosinisSDK.Core
         private IEnumerator SkipFrameCoroutine(Action done)
         {
             yield return skipFrame;
+            done();
+        }
+        
+        private IEnumerator SkipFixedUpdateCoroutine(Action done)
+        {
+            yield return skipFixedUpdate;
             done();
         }
         
