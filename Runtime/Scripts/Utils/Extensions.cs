@@ -101,6 +101,10 @@ namespace DosinisSDK.Utils
 
         // Long
 
+        /// <summary>
+        /// Returns time string in such formats: 59s; 59m 59s; 24h 59m; 30d;
+        /// </summary>
+        /// <returns></returns>
         public static string ToTimeString(this long time)
         {
             if (time < 60) // Seconds
@@ -123,6 +127,10 @@ namespace DosinisSDK.Utils
             return $"{time / 86400}d";
         }
         
+        /// <summary>
+        /// Returns time string in 59; 59:59; 00:59:59; 30d format.
+        /// </summary>
+        /// <returns></returns>
         public static string ToDurationString(this long time)
         {
             if (time < 60) // Seconds

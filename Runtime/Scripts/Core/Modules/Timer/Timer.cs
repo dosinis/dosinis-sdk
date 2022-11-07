@@ -12,23 +12,25 @@ namespace DosinisSDK.Core
 
         protected override void OnInit(IApp app)
         {
-            coroutineManager = app.Coroutine;
+            coroutineManager = app.GetModule<CoroutineManager>();
         }
 
         public void Delay(float delay, Action done)
         {
             coroutineManager.Begin(DelayCoroutine(delay, done));
         }
-
+        
         public void Repeat(float frequency, int times, float initDelay, Action onTick)
         {
             coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, onTick));
         }
+        
 
         public void SkipFrame(Action done)
         {
             coroutineManager.Begin(SkipFrameCoroutine(done));
         }
+        
 
         public void SkipFixedUpdate(Action done)
         {

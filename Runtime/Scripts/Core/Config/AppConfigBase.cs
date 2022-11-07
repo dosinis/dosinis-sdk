@@ -21,7 +21,10 @@ namespace DosinisSDK.Core
         /// <param name="app"></param>
         protected virtual Task CreateModules(IApp app)
         {
+            app.CreateModule<CoroutineManager>();
+            app.CreateModule<Timer>();
             app.CreateModule<DataManager>();
+            app.CreateModule<LocalClock>();
             return Task.CompletedTask;
         }
     }

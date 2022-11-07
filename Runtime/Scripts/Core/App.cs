@@ -30,6 +30,8 @@ namespace DosinisSDK.Core
         // Core Modules
 
         public CoroutineManager Coroutine => GetModule<CoroutineManager>();
+        public IDataManager Data => GetModule<IDataManager>();
+        public IClock Clock => GetModule<IClock>();
         public ITimer Timer => GetModule<ITimer>();
         public ISceneManager SceneManager => GetModule<ISceneManager>();
         public UIManager UIManager => GetModule<UIManager>();
@@ -328,9 +330,6 @@ namespace DosinisSDK.Core
 
             Debug.Log("Registering Modules...");
 
-            CreateModule<CoroutineManager>();
-            CreateModule<Timer>();
-            
             await config.CreateUserModules(this);
 
             Debug.Log("Setting up scene manager...");

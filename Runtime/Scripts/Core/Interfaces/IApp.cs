@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
@@ -16,10 +15,5 @@ namespace DosinisSDK.Core
         T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule;
         Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IModule, IAsyncModule;
         void Restart();
-        void SwitchLoadedScene();
-        void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, 
-            bool switchLoadedScene = true, Action done = null);
-        ITimer Timer { get; }
-        CoroutineManager Coroutine { get; }
     }
 }
