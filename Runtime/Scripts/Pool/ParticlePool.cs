@@ -25,7 +25,7 @@ namespace DosinisSDK.Pool
             }
         }
 
-        public void Play()
+        public ParticleSystem Play()
         {
             foreach (var particleSys in pool)
             {
@@ -33,7 +33,8 @@ namespace DosinisSDK.Pool
                 {
                     particleSys.gameObject.SetActive(true);
                     particleSys.Play();
-                    return;
+
+                    return particleSys;
                 }
             }
 
@@ -42,6 +43,8 @@ namespace DosinisSDK.Pool
 
             newParticleSys.Play();
             newParticleSys.gameObject.SetActive(true);
+
+            return newParticleSys;
         }
     }
 }
