@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -57,7 +58,7 @@ namespace DosinisSDK.Core
 
         private void SaveRawData<T>(T data, string key)
         {
-            string json = JsonUtility.ToJson(data);
+            string json = JsonConvert.SerializeObject(data);
             PlayerPrefs.SetString(key, json);
             PlayerPrefs.Save();
 
@@ -125,7 +126,7 @@ namespace DosinisSDK.Core
                 return new T();
             }
 #endif
-            return JsonUtility.FromJson<T>(json) ?? new T();
+            return JsonConvert.DeserializeObject<T>(json) ?? new T();
         }
 
         public void SaveData<T>(T data)

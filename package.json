@@ -6,6 +6,7 @@
   "keywords": ["Tools", "Framework", "SDK"],
   "description": "Lightweight SDK to help develop games on Unity Engine",
   "dependencies": {
-    "com.unity.textmeshpro": "2.1.6"
+    "com.unity.textmeshpro": "2.1.6",
+	"com.unity.nuget.newtonsoft-json" : "3.0.2"
   }
 }

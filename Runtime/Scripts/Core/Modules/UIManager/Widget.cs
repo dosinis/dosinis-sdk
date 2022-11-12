@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     {
         protected Window parentWindow;
 
-        public void Init(Window parentWindow)
+        internal void Init(Window parentWindow)
         {
             this.parentWindow = parentWindow;
             parentWindow.OnShown += OnWindowShown;
@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
             OnInit();
         }
 
-        public void Dispose()
+        internal void Dispose()
         {
             OnDispose();
         }
@@ -44,6 +44,16 @@ namespace DosinisSDK.Core
 
         protected virtual void OnWindowHidden()
         {
+        }
+    }
+
+    public class WidgetFor<T> : Widget
+    {
+        protected T target;
+
+        public virtual void Setup(T target)
+        {
+            this.target = target;
         }
     }
 }
