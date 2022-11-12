@@ -155,6 +155,29 @@ namespace DosinisSDK.Audio
             }
         }
 
+        public void SetTimeScale(float value, float lerpDuration = 0.1f)
+        {
+            StartCoroutine(LerpTimeScale(value, lerpDuration));
+        }
+
+        private IEnumerator LerpTimeScale(float value, float lerpDuration)
+        {
+            float duration = lerpDuration;
+
+            while (duration > 0)
+            {
+                duration -= Time.deltaTime;
+                
+                SetMusicPitch(Mathf.Lerp(musicSource.pitch, value, lerpDuration / duration));
+                foreach (var src in sources)
+                {
+                    src.pitch = Mathf.Lerp(src.pitch, value, lerpDuration / duration);
+                }
+
+                yield return null;
+            }
+        }
+        
         public void SetVolume(float volume)
         {
             AudioListener.volume = volume;
