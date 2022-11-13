@@ -24,15 +24,15 @@ namespace DosinisSDK.Core
 
         // Serialized
         
-        [SerializeField] private bool interactable = true;
+        [SerializeField] protected bool interactable = true;
 
         // Private
         
         private IButtonAnimation buttonAnimation;
         private ScrollRect scrollRectParent;
-        private bool heldDown = false;
-        private bool mouseOverObject = false;
         private Image image;
+        protected bool heldDown = false;
+        protected bool mouseOverObject = false;
 
         // Events
 
@@ -48,7 +48,7 @@ namespace DosinisSDK.Core
             OnClick?.Invoke();
         }
 
-        public void OnPointerDown(PointerEventData eventData)
+        public virtual void OnPointerDown(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
@@ -58,7 +58,7 @@ namespace DosinisSDK.Core
             buttonAnimation?.PressAnimation();
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public virtual void OnPointerUp(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
@@ -73,7 +73,7 @@ namespace DosinisSDK.Core
             heldDown = false;
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+        public virtual void OnPointerExit(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
@@ -92,7 +92,7 @@ namespace DosinisSDK.Core
             mouseOverObject = true;
         }
         
-        public void OnBeginDrag(PointerEventData eventData)
+        public virtual void OnBeginDrag(PointerEventData eventData)
         {
             if (scrollRectParent != null)
             {
@@ -100,7 +100,7 @@ namespace DosinisSDK.Core
             }
         }
         
-        public void OnDrag(PointerEventData eventData)
+        public virtual void OnDrag(PointerEventData eventData)
         {
             if (scrollRectParent != null)
             {
@@ -108,7 +108,7 @@ namespace DosinisSDK.Core
             }
         }
         
-        public void OnEndDrag(PointerEventData eventData)
+        public virtual void OnEndDrag(PointerEventData eventData)
         {
             if (scrollRectParent != null)
             {
