@@ -25,6 +25,22 @@ namespace DosinisSDK.Utils
 
             return list[UnityRandom.Range(0, list.Count)];
         }
+        
+        public static int RandomIndex<T>(this T[] array)
+        {
+            if (array.Length == 0)
+                return 0;
+
+            return UnityRandom.Range(0, array.Length);
+        }
+        
+        public static int RandomIndex<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+                return 0;
+
+            return UnityRandom.Range(0, list.Count);
+        }
 
         public static T Last<T>(this T[] array)
         {
