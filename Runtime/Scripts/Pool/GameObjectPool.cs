@@ -26,6 +26,14 @@ namespace DosinisSDK.Pool
             }
         }
 
+        public IEnumerable<T> CollectAll<T>() where T : Component
+        {
+            foreach (var obj in pool)
+            {
+                yield return obj as T;
+            }
+        }
+
         public T Take<T>() where T : Component
         {
             foreach (var obj in pool)
