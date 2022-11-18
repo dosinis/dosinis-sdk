@@ -10,7 +10,7 @@ using UnityEngine;
 namespace DosinisSDK.Ads
 {
     // Test ad app id : ca-app-pub-3940256099942544~3347511713
-    public class AdmobAdManager : AdManager
+    public class AdmobAdsManager : AdsManager
     {
 #if UNITY_IOS
         [SerializeField] private string rewardedId_iOs = "";

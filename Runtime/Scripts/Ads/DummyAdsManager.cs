@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.Ads
 {
-    public class DummyAdManager : AdManager
+    public class DummyAdsManager : AdsManager
     {
         private bool rewardAdReady = false;
 

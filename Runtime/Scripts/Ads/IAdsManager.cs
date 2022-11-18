@@ -3,7 +3,7 @@ using System;
 
 namespace DosinisSDK.Ads
 {
-    public interface IAdManager : IBehaviourModule
+    public interface IAdsManager : IBehaviourModule
     {
         event Action OnBannerLoaded;
         event Action<string> OnInterstitialShown;
