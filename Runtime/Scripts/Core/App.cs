@@ -255,6 +255,14 @@ namespace DosinisSDK.Core
             }
         }
 
+        public static async Task Ready()
+        {
+            while (Initialized == false)
+            {
+                await Task.Yield();
+            }
+        }
+
         private void SetSceneChangedCallback(Action<Scene> onSceneChanged)
         {
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>

@@ -24,13 +24,11 @@ namespace DosinisSDK.Core
         {
             coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, onTick));
         }
-        
 
         public void SkipFrame(Action done)
         {
             coroutineManager.Begin(SkipFrameCoroutine(done));
         }
-        
 
         public void SkipFixedUpdate(Action done)
         {
