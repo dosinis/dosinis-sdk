@@ -37,6 +37,8 @@ namespace DosinisSDK.Core
         // Events
 
         public event Action OnClick;
+        public event Action OnPressedIn;
+        public event Action OnReleased;
 
         // Button
 
@@ -54,6 +56,7 @@ namespace DosinisSDK.Core
                 return;
             
             heldDown = true;
+            OnPressedIn?.Invoke();
             
             buttonAnimation?.PressAnimation();
         }
@@ -62,7 +65,8 @@ namespace DosinisSDK.Core
         {
             if (interactable == false)
                 return;
-            
+
+            OnReleased?.Invoke();
             buttonAnimation?.ReleaseAnimation();
 
             if (mouseOverObject && heldDown)
