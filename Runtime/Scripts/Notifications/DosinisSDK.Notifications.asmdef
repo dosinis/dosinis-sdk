@@ -1,0 +1,21 @@
+{
+    "name": "DosinisSDK.Notifications",
+    "rootNamespace": "DosinisSDK.Notifications",
+    "references": [
+        "GUID:ba55aab39d97f8d4d8a552da093e94e4",
+        "GUID:fd2b018fb93129a479a862914b971440",
+        "GUID:ac145e6b8c6034cdbadc8c6e26aedbcf",
+        "GUID:1e8e55397bd004beaba78a667566665f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "ENABLE_NOTIFICATIONS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
