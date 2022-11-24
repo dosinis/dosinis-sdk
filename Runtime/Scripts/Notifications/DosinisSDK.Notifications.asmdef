@@ -14,7 +14,7 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "ENABLE_NOTIFICATIONS"
+        "MOBILE_NOTIFICATIONS"
     ],
     "versionDefines": [],
     "noEngineReferences": false
