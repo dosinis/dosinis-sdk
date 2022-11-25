@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -19,6 +20,8 @@ namespace DosinisSDK.Core
         public bool IsShown { get; private set; }
 
         private RectTransform rect;
+
+        private readonly Dictionary<Type, Action> hideCallbacks = new Dictionary<Type, Action>();
 
         internal void Init()
         {
@@ -69,12 +72,17 @@ namespace DosinisSDK.Core
             Show(() => { });
         }
 
-        public void Show(Action done)
+        public void Show(Action done, Action onHidden = null)
         {
             gameObject.SetActive(true);
 
             OnBeforeShow?.Invoke();
             BeforeShown();
+
+            if (hideCallbacks.ContainsKey(GetType()) == false && onHidden != null)
+            {
+                hideCallbacks.Add(GetType(), onHidden);
+            }
 
             if (transition != null)
             {
@@ -104,6 +112,12 @@ namespace DosinisSDK.Core
 
         public void Hide(Action done)
         {
+            if (hideCallbacks.TryGetValue(GetType(), out Action callback))
+            {
+                callback?.Invoke();
+                hideCallbacks.Remove(GetType());
+            }
+            
             OnBeforeHide?.Invoke();
             BeforeHidden();
 

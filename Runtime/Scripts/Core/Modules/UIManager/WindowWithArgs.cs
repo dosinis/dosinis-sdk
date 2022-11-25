@@ -6,10 +6,10 @@ namespace DosinisSDK.Core
     {
         protected T args;
         
-        public virtual void Show(T args, Action done)
+        public virtual void Show(T args, Action done = null, Action onHidden = null)
         {
             this.args = args;
-            Show(done);
+            Show(done, onHidden);
         }
     }
 }

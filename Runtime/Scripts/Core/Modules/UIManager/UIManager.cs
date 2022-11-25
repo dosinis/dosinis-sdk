@@ -61,15 +61,15 @@ namespace DosinisSDK.Core
             return default;
         }
 
-        public void ShowWindow<T>(Action callBack = null) where T : Window
+        public void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : Window
         {
-            GetWindow<T>().Show(callBack);
+            GetWindow<T>().Show(callBack, onHidden);
         }
         
-        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null) where T : WindowWithArgs<TArgs>
+        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null) where T : WindowWithArgs<TArgs>
         {
             var window = GetWindow<T>() as WindowWithArgs<TArgs>;
-            window.Show(args, callBack);
+            window.Show(args, callBack, onHidden);
         }
 
         public void HideWindow<T>(Action callBack = null) where T : Window
