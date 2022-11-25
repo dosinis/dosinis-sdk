@@ -219,14 +219,59 @@ namespace DosinisSDK.Utils
         {
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
         }
+        
+        public static void SetPosX(this RectTransform rt, float value)
+        {
+            rt.anchoredPosition = new Vector3(value, rt.anchoredPosition.y);
+        }
+
+        public static void SetPosY(this RectTransform rt, float value)
+        {
+            rt.anchoredPosition = new Vector3(rt.anchoredPosition.x, value);
+        }
+        
+        public static float GetPosX(this RectTransform rt)
+        {
+            return rt.anchoredPosition.x;
+        }
+
+        public static float GetPosY(this RectTransform rt)
+        {
+            return rt.anchoredPosition.y;
+        }
+
+        public static void SetWidth(this RectTransform rt, float width)
+        {
+            rt.sizeDelta = new Vector2(width, rt.sizeDelta.x);
+        }
+
+        public static void SetHeight(this RectTransform rt, float height)
+        {
+            rt.sizeDelta = new Vector2(rt.sizeDelta.x, height);
+        }
+        
+        public static float GetWidth(this RectTransform rt)
+        {
+            return rt.sizeDelta.x;
+        }
+
+        public static float GetHeight(this RectTransform rt)
+        {
+            return rt.sizeDelta.y;
+        }
+        
+        public static bool OverflowsVertical(this RectTransform rectTransform)
+        {
+            return LayoutUtility.GetPreferredHeight(rectTransform) > rectTransform.rect.height;
+        }
+    
+        public static bool OverflowsHorizontal(this RectTransform rectTransform)
+        {
+            return LayoutUtility.GetPreferredWidth(rectTransform) > rectTransform.rect.width;
+        }
 
         // Rect
-
-        /// <summary>
-        /// Utility to set RectTransform.achoredPosition to a random
-        /// </summary>
-        /// <param name="rect"></param>
-        /// <returns></returns>
+        
         public static Vector2 GetRandomPointInside(this Rect rect)
         {
             return new Vector2(UnityRandom.Range(rect.min.x, rect.max.x), UnityRandom.Range(rect.min.y, rect.max.y));
