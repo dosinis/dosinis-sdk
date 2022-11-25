@@ -22,7 +22,7 @@ namespace DosinisSDK.Core
 
         private Action hideCallback;
 
-        internal void Init()
+        internal void Init(IApp app)
         {
             if (TryGetComponent(out IWindowTransition t))
             {
@@ -45,7 +45,7 @@ namespace DosinisSDK.Core
             if (closeButton) 
                 closeButton.OnClick += Hide;
 
-            OnInit();
+            OnInit(app);
         }
         
         internal void Dispose()
@@ -58,7 +58,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        protected virtual void OnInit()
+        protected virtual void OnInit(IApp app)
         {
         }
 

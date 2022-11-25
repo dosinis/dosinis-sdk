@@ -20,7 +20,7 @@ namespace DosinisSDK.Core
 
             foreach (var win in windows)
             {
-                win.Value.Init();
+                win.Value.Init(app);
 
                 if (win.Value is IProcessable proc)
                 {

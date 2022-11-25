@@ -73,7 +73,7 @@ namespace DosinisSDK.Ads
             
             Time.timeScale = 0;
 
-            App.Core.Timer.Delay(3f, () =>
+            App.Timer.Delay(3f, () =>
             {
                 Time.timeScale = 1;
                 rewardAdReady = false;
@@ -88,7 +88,7 @@ namespace DosinisSDK.Ads
         protected override void LoadRewardedAds()
         {
             Log("Loading rewarded ads");
-            App.Core.Timer.Delay(3f, () =>
+            App.Timer.Delay(3f, () =>
             {
                 Log("Loaded rewarded ads");
                 rewardAdReady = true;
@@ -106,7 +106,7 @@ namespace DosinisSDK.Ads
         {
             Log("Loading banner ads");
 
-            App.Core.Timer.Delay(3f, () =>
+            App.Timer.Delay(3f, () =>
             {
                 OnBannerLoaded?.Invoke();
             });

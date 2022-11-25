@@ -19,9 +19,9 @@ namespace DosinisSDK.Utils
             }
         }
 
-        protected override void OnInit()
+        protected override void OnInit(IApp app)
         {
-            dataManager = App.Core.GetModule<IDataManager>();
+            dataManager = app.GetModule<IDataManager>();
 
             StartCoroutine(AutoSaveCoroutine());
         }
