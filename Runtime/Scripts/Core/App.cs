@@ -29,12 +29,12 @@ namespace DosinisSDK.Core
 
         // Core Modules
 
-        public static CoroutineManager Coroutine => Core.GetModule<CoroutineManager>();
+        public static ICoroutineManager Coroutine => Core.GetModule<ICoroutineManager>();
         public static IDataManager Data => Core.GetModule<IDataManager>();
         public static IClock Clock => Core.GetModule<IClock>();
         public static ITimer Timer => Core.GetModule<ITimer>();
         public static ISceneManager SceneManager => Core.GetModule<ISceneManager>();
-        public static UIManager UIManager => Core.GetModule<UIManager>();
+        public static IUIManager UIManager => Core.GetModule<IUIManager>();
 
         // Properties
 
@@ -278,7 +278,7 @@ namespace DosinisSDK.Core
                         duplicateModules.Add(sceneManager);
                     }
 
-                    if (cache.Value is UIManager uiManager)
+                    if (cache.Value is IUIManager uiManager)
                     {
                         duplicateModules.Add(uiManager);
                     }

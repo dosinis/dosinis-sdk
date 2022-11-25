@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class CoroutineManager : BehaviourModule
+    public class CoroutineManager : BehaviourModule, ICoroutineManager
     {
         protected override void OnInit(IApp app)
         {
