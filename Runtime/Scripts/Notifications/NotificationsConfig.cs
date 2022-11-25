@@ -1,5 +1,4 @@
 using DosinisSDK.Core;
-using Unity.Notifications.Android;
 using UnityEngine;
 
 namespace DosinisSDK.Notifications
@@ -7,8 +6,11 @@ namespace DosinisSDK.Notifications
     [CreateAssetMenu(fileName = "NotificationsConfig", menuName = "DosinisSDK/Configs/NotificationsConfig")]
     public class NotificationsConfig : ModuleConfig
     {
-        public NotificationChannelWrapper defaultChannel;
         public int minDelayForNotification;
+        
+        [Header("Android")]
+        
+        public NotificationChannelWrapper defaultChannel;
 
         public string androidSmallIcon = "small_icon";
         public string androidLargeIcon = "large_icon";
@@ -20,6 +22,14 @@ namespace DosinisSDK.Notifications
         public string id;
         public string nameKey;
         public string description;
-        public Importance importance = Importance.High;
+        public AndroidNotificationImportance importance = AndroidNotificationImportance.High;
+    }
+
+    public enum AndroidNotificationImportance
+    {
+        None = 0,
+        Low = 2,
+        Default = 3,
+        High = 4,
     }
 }

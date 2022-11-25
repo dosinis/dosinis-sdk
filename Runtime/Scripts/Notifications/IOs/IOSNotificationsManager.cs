@@ -24,7 +24,6 @@ namespace DosinisSDK.Notifications
 
         public void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
         {
-               
             var notification = new iOSNotification
             {
                 Title = title,

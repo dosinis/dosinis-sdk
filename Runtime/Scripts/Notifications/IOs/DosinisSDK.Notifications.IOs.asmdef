@@ -1,20 +1,23 @@
 {
-    "name": "DosinisSDK.Notifications",
+    "name": "DosinisSDK.Notifications.IOs",
     "rootNamespace": "DosinisSDK.Notifications",
     "references": [
+        "GUID:1e8e55397bd004beaba78a667566665f",
         "GUID:ba55aab39d97f8d4d8a552da093e94e4",
-        "GUID:fd2b018fb93129a479a862914b971440",
-        "GUID:ac145e6b8c6034cdbadc8c6e26aedbcf",
-        "GUID:1e8e55397bd004beaba78a667566665f"
+        "GUID:fd2b018fb93129a479a862914b971440"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor",
+        "iOS"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "MOBILE_NOTIFICATIONS"
+        "MOBILE_NOTIFICATIONS",
+        "UNITY_IOS"
     ],
     "versionDefines": [],
     "noEngineReferences": false

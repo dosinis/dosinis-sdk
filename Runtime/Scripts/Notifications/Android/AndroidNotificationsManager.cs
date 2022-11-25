@@ -69,7 +69,7 @@ namespace DosinisSDK.Notifications
                 Id = channelWrapper.id,
                 Name = channelWrapper.nameKey,
                 Description = channelWrapper.description,
-                Importance = channelWrapper.importance
+                Importance = (Importance)channelWrapper.importance
             };
         }
 

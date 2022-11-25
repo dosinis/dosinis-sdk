@@ -1,0 +1,24 @@
+{
+    "name": "DosinisSDK.Notifications.Android",
+    "rootNamespace": "DosinisSDK.Notifications",
+    "references": [
+        "GUID:ac145e6b8c6034cdbadc8c6e26aedbcf",
+        "GUID:ba55aab39d97f8d4d8a552da093e94e4",
+        "GUID:fd2b018fb93129a479a862914b971440"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "MOBILE_NOTIFICATIONS",
+        "UNITY_ANDROID"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
