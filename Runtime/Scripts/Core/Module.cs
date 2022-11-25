@@ -6,9 +6,12 @@ namespace DosinisSDK.Core
     public abstract class Module : IModule
     {
         protected ModuleConfig mainConfig;
-
+        protected IApp app;
+        
         void IModule.Init(IApp app, ModuleConfig config)
         {
+            this.app = app;
+            
             if (config)
                 mainConfig = config;
         

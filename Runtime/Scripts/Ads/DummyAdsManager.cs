@@ -16,8 +16,11 @@ namespace DosinisSDK.Ads
         public override event Action<string> OnInterstitialShown;
         public override event Action<string> OnRewardedShown;
 
+        private ITimer timer;
+
         protected override void OnInit(IApp app)
         {
+            this.timer = timer;
             LoadRewardedAds();
             LoadInterstitialAds();
 
@@ -73,7 +76,7 @@ namespace DosinisSDK.Ads
             
             Time.timeScale = 0;
 
-            App.Timer.Delay(3f, () =>
+            timer.Delay(3f, () =>
             {
                 Time.timeScale = 1;
                 rewardAdReady = false;
@@ -88,7 +91,7 @@ namespace DosinisSDK.Ads
         protected override void LoadRewardedAds()
         {
             Log("Loading rewarded ads");
-            App.Timer.Delay(3f, () =>
+            timer.Delay(3f, () =>
             {
                 Log("Loaded rewarded ads");
                 rewardAdReady = true;
@@ -106,7 +109,7 @@ namespace DosinisSDK.Ads
         {
             Log("Loading banner ads");
 
-            App.Timer.Delay(3f, () =>
+            timer.Delay(3f, () =>
             {
                 OnBannerLoaded?.Invoke();
             });

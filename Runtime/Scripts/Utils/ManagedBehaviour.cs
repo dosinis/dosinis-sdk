@@ -20,7 +20,7 @@ namespace DosinisSDK.Utils
                 }
                 else
                 {
-                    App.Timer.WaitUntil(() => App.Core.IsModuleReady<ISceneManager>(), () =>
+                    App.Core.Timer.WaitUntil(() => App.Core.IsModuleReady<ISceneManager>(), () =>
                     {
                         OnInit(App.Core);
                         ready = true;

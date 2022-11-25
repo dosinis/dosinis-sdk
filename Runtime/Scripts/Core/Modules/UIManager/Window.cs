@@ -19,11 +19,12 @@ namespace DosinisSDK.Core
         public bool IsShown { get; private set; }
 
         private RectTransform rect;
-
         private Action hideCallback;
+        protected IApp app;
 
         internal void Init(IApp app)
         {
+            this.app = app;
             if (TryGetComponent(out IWindowTransition t))
             {
                 transition = t;

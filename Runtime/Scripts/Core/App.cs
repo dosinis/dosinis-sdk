@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -8,18 +7,15 @@ using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
-    public sealed class App : MonoBehaviour, IApp
+    public sealed class App : MonoBehaviour, IApp, IModuleFactory
     {
-        [SerializeField] private bool prewarmShaders;
-        
         // Private
 
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
         private readonly List<IProcessable> processables = new List<IProcessable>();
 
-        private AppConfigBase config;
-        private AsyncOperation loadSceneOperation;
-        
+        private ModuleManifestBase manifest;
+
         // Events
 
         public event Action<bool> OnAppPaused;
@@ -28,26 +24,28 @@ namespace DosinisSDK.Core
         public event Action OnAppRestart;
 
         // Core Modules
-
-        public static ICoroutineManager Coroutine => Core.GetModule<ICoroutineManager>();
-        public static IDataManager Data => Core.GetModule<IDataManager>();
-        public static IClock Clock => Core.GetModule<IClock>();
-        public static ITimer Timer => Core.GetModule<ITimer>();
-        public static ISceneManager SceneManager => Core.GetModule<ISceneManager>();
-        public static IUIManager UIManager => Core.GetModule<IUIManager>();
-
-        // Properties
-
-        public float SceneLoadProgress { get; private set; }
-
+        
+        public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();
+        public IDataManager Data => GetModule<IDataManager>();
+        public IClock Clock => GetModule<IClock>();
+        public ITimer Timer => GetModule<ITimer>();
+        public ISceneManager SceneManager => GetModule<ISceneManager>();
+        public IUIManager UIManager => GetModule<IUIManager>();
+        
         // Static
 
         private static Action onAppInitialized;
         public static bool Initialized { get; private set; }
-        public static App Core { get; private set; }
-        public const string CONFIG_PATH = "AppConfig";
+        public static IApp Core { get; private set; }
+        public const string MANIFEST_PATH = "ModuleManifest";
 
         // App
+        
+        public void Restart()
+        {
+            OnAppRestart?.Invoke();
+            SceneManager.LoadScene(0);
+        }
         
         public T GetModule<T>() where T : class, IModule
         {
@@ -128,7 +126,7 @@ namespace DosinisSDK.Core
 
             cachedModules.Add(mType, module);
             
-            if (config.safeMode)
+            if (manifest.safeMode)
             {
                 try
                 {
@@ -203,46 +201,7 @@ namespace DosinisSDK.Core
 
             await module.InitAsync(this, config);
         }
-
-        public void Restart()
-        {
-            OnAppRestart?.Invoke();
-            LoadScene(0);
-        }
-
-        public void SwitchLoadedScene()
-        {
-            loadSceneOperation.allowSceneActivation = true;
-        }
-
-        public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, Action done = null)
-        {
-            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, done));
-        }
-
-        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, Action done)
-        {
-            SceneLoadProgress = 0;
-
-            yield return new WaitForSeconds(0.5f);
-
-            loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
-
-            loadSceneOperation.allowSceneActivation = switchLoadedScene;
-            
-            while (!loadSceneOperation.isDone)
-            {
-                yield return null;
-                SceneLoadProgress = loadSceneOperation.progress;
-            }
-
-            SceneLoadProgress = 1;
-            
-            yield return new WaitForSeconds(0.1f);
-            
-            done?.Invoke();
-        }
-
+        
         public static void Ready(Action onReady)
         {
             if (Initialized)
@@ -263,63 +222,38 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void SetSceneChangedCallback(Action<Scene> onSceneChanged)
+        private void CleanupSceneModules()
         {
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += (oldScene, newScene) =>
+            var duplicateModules = new List<IModule>();
+
+            foreach (var cache in cachedModules)
             {
-                Debug.Log($"Scene was changed into {newScene.name}");
-
-                var duplicateModules = new List<IModule>();
-
-                foreach (var cache in cachedModules)
-                {
-                    if (cache.Value is ISceneManager sceneManager)
-                    {
-                        duplicateModules.Add(sceneManager);
-                    }
-
-                    if (cache.Value is IUIManager uiManager)
-                    {
-                        duplicateModules.Add(uiManager);
-                    }
-                }
-
-                var modulesToRemove = new List<Type>();
-
-                foreach (var module in duplicateModules)
-                {
-                    foreach (var cache in cachedModules)
-                    {
-                        if (cache.Value != module) 
-                            continue;
-                        
-                        modulesToRemove.Add(cache.Key);
-
-                        if (module is IProcessable processable)
-                        {
-                            if (processables.Contains(processable))
-                                processables.Remove(processable);
-                        }
-                    }
-                }      
+                if (cache.Value is not SceneModule sceneModule) 
+                    continue;
                 
-                foreach (var module in modulesToRemove)
+                duplicateModules.Add(sceneModule);
+                    
+                if (sceneModule is IProcessable processable)
                 {
-                    cachedModules.Remove(module);
+                    if (processables.Contains(processable))
+                        processables.Remove(processable);
                 }
-                
-                onSceneChanged?.Invoke(newScene);
-            };
+            }
+
+            foreach (var module in duplicateModules)
+            {
+                cachedModules.Remove(module.GetType());
+            }
         }
         
-        private async void Init(AppConfigBase config)
+        private async void Init(ModuleManifestBase manifest)
         {
-            if (Core)
+            if (Core != null)
             {
                 Debug.LogWarning($"{nameof(App)} already exists. " +
                                  $"Make sure there's only one instance of the {nameof(App)}");
 
-                if (this != Core)
+                if (this != (App)Core)
                     Destroy(this);
 
                 return;
@@ -329,36 +263,41 @@ namespace DosinisSDK.Core
 
             Core = this;
 
-            this.config = config;
+            this.manifest = manifest;
 
-            if (prewarmShaders)
+            if (manifest.prewarmShaders)
                 Shader.WarmupAllShaders();
 
             DontDestroyOnLoad(this);
 
             Debug.Log("Registering Modules...");
 
-            await config.CreateUserModules(this);
+            await manifest.CreateUserModules(this);
 
-            Debug.Log("Setting up scene manager...");
+            Debug.Log("Setting up scene modules...");
 
             void setupScene(Scene scene)
             {
-                var newSceneManager = FindObjectOfType<SceneManager>();
-                var newUIManager = FindObjectOfType<UIManager>();
+                var sceneModules = FindObjectsOfType<SceneModule>();
 
-                if (newSceneManager != null)
+                IUIManager foundUIManager = null;
+                
+                foreach (var module in sceneModules)
                 {
-                    RegisterModule(newSceneManager);
-                }
-                else
-                {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(SceneManager)}. Ignore if it's intended");
+                    if (module is IUIManager uiManager)
+                    {
+                        foundUIManager = uiManager;
+                    }
+                    else
+                    {
+                        RegisterModule(module);
+                    }
                 }
 
-                if (newUIManager != null)
+                // Registering UIManager as the very last module
+                if (foundUIManager != null)
                 {
-                    RegisterModule(newUIManager);
+                    RegisterModule(foundUIManager);
                 }
                 else
                 {
@@ -370,7 +309,12 @@ namespace DosinisSDK.Core
             
             setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
-            SetSceneChangedCallback(setupScene);
+            SceneManager.OnSceneChanged += (oldScene, newScene) =>
+            {
+                Debug.Log($"Scene was changed into {newScene.name}");
+                CleanupSceneModules();
+                setupScene(newScene);
+            };
 
             Initialized = true;
 
@@ -385,15 +329,15 @@ namespace DosinisSDK.Core
             if (Initialized)
                 return;
 
-            var config = Resources.Load<AppConfigBase>(CONFIG_PATH);
+            var manifest = Resources.Load<ModuleManifestBase>(MANIFEST_PATH);
 
-            if (config == null)
+            if (manifest == null)
             {
-                throw new FileNotFoundException($"App failed to boot up! Couldn't find {CONFIG_PATH} in the Resources folder");
+                throw new FileNotFoundException($"App failed to boot up! Couldn't find {MANIFEST_PATH} in the Resources folder");
             }
 
             var appObject = new GameObject(nameof(App)).AddComponent<App>();
-            appObject.Init(config);
+            appObject.Init(manifest);
         }
 
         // MonoBehaviour

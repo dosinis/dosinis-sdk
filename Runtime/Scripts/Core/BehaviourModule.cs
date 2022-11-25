@@ -2,12 +2,16 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public abstract class BehaviourModule : MonoBehaviour, IBehaviourModule
+    public abstract class BehaviourModule : MonoBehaviour, IModule
     {
         [SerializeField] protected ModuleConfig mainConfig;
-
+        
+        protected IApp app;
+        
         void IModule.Init(IApp app, ModuleConfig config)
         {
+            this.app = app;
+            
             if (config)
                 mainConfig = config;
 

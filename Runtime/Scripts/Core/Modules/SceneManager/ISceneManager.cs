@@ -1,11 +1,15 @@
-using DosinisSDK.Core;
-using UnityEngine;
+using System;
+using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
-    public interface ISceneManager : IBehaviourModule
+    public interface ISceneManager : IModule
     {
-        T As<T>() where T : class, ISceneManager;
+        event Action<Scene, Scene> OnSceneChanged; // oldScene, newScene
+        float SceneLoadProgress { get; }
+        void SwitchLoadedScene();
+        void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true,
+            Action done = null);
     }
 }
 

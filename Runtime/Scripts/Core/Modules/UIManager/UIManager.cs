@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class UIManager : BehaviourModule, IUIManager, IProcessable
+    public class UIManager : SceneModule, IUIManager, IProcessable
     {
         public Camera Camera { get; private set; }
         

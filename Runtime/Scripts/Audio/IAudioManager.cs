@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Audio
 {
-    public interface IAudioManager : IBehaviourModule
+    public interface IAudioManager : IModule
     {
         public void PlayOneShot(AudioClip clip, float volume = 1f, bool silentMusic = false);
         public void StopMusic();
