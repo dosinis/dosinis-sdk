@@ -20,7 +20,7 @@ namespace DosinisSDK.Ads
 
         protected override void OnInit(IApp app)
         {
-            this.timer = timer;
+            this.timer = app.Timer;
             LoadRewardedAds();
             LoadInterstitialAds();
 
