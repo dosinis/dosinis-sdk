@@ -1,9 +1,11 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace DosinisSDK.Utils
 {
+    [Obsolete("Dropping support for Text component. Use TMP_Text instead")]
     public class TextWrapper : MonoBehaviour
     {
         private Text text;
