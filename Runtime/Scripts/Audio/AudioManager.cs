@@ -8,7 +8,7 @@ namespace DosinisSDK.Audio
 {
     public class AudioManager : BehaviourModule, IAudioManager
     {
-        [SerializeField] private float musicVolume = 1f;
+        private float musicVolume = 1f;
 
         private const int POOL_SIZE = 10;
 
