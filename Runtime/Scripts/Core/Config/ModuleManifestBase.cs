@@ -4,7 +4,7 @@ using UnityEngine;
 namespace DosinisSDK.Core
 {
     /// <summary>
-    /// NOTE: by default AppConfigBase registers modules before any SceneModule or UIManager
+    /// NOTE: by default ModuleManifest registers modules before any SceneModule
     /// </summary>
     public class ModuleManifestBase : ScriptableObject
     {

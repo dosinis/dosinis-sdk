@@ -24,11 +24,6 @@ namespace DosinisSDK.Core
         {
         }
 
-        public T As<T>() where T : class, ISceneManager
-        {
-            return this as T;
-        }
-        
         public void SwitchLoadedScene()
         {
             loadSceneOperation.allowSceneActivation = true;
