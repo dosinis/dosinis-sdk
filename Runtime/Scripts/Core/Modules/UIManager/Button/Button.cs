@@ -28,7 +28,7 @@ namespace DosinisSDK.Core
 
         // Private
         
-        private IButtonAnimation buttonAnimation;
+        protected IButtonAnimation buttonAnimation;
         private ScrollRect scrollRectParent;
         private Image image;
         protected bool heldDown = false;

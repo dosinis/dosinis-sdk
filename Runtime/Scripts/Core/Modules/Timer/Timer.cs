@@ -20,9 +20,9 @@ namespace DosinisSDK.Core
             coroutineManager.Begin(DelayCoroutine(delay, done));
         }
         
-        public void Repeat(float frequency, int times, float initDelay, Action onTick)
+        public void Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f, Func<bool> cancelFunc = null)
         {
-            coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, onTick));
+            coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, cancelFunc, onTick));
         }
 
         public void SkipFrame(Action done)
@@ -46,13 +46,21 @@ namespace DosinisSDK.Core
             done();
         }
 
-        private IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Action onTick)
+        private IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Func<bool> cancelFunc, Action<int> onTick)
         {
             yield return new WaitForSeconds(initDelay);
-            
+
             for (int i = 0; i < times; i++)
             {
-                onTick?.Invoke();
+                if (cancelFunc != null)
+                {
+                    if (cancelFunc())
+                    {
+                        yield break;
+                    }
+                }
+                
+                onTick?.Invoke(i);
                 yield return new WaitForSeconds(frequency);
             }
         }
