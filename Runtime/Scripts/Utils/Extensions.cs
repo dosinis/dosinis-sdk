@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityRandom = UnityEngine.Random;
@@ -347,6 +348,12 @@ namespace DosinisSDK.Utils
         // Text
 
         public static void SetAlpha(this Text text, float alpha)
+        {
+            var color = text.color;
+            text.color = color.SetAlpha(alpha);
+        }
+        
+        public static void SetAlpha(this TMP_Text text, float alpha)
         {
             var color = text.color;
             text.color = color.SetAlpha(alpha);

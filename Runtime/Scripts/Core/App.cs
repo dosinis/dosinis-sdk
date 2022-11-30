@@ -145,7 +145,7 @@ namespace DosinisSDK.Core
             
             if (module is IProcessable processabe)
             {
-                if (processables.Contains(processabe)== false)
+                if (processables.Contains(processabe) == false)
                 {
                     processables.Add(processabe);
                 }
