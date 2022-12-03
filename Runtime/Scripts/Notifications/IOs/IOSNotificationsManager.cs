@@ -9,10 +9,14 @@ namespace DosinisSDK.Notifications
     public class IOSNotificationsManager : Module, INotificationsManager
     {
         private NotificationsConfig config;
+        private NotificationsData data;
+
+        public bool Enabled => data.enabled;
         
         protected override async void OnInit(IApp app)
         {
             config = GetConfigAs<NotificationsConfig>();
+            data = app.GetModule<IDataManager>().RetrieveOrCreateData<NotificationsData>();
             
             using var req = new AuthorizationRequest(AuthorizationOption.Alert | AuthorizationOption.Badge, false);
             
@@ -21,9 +25,17 @@ namespace DosinisSDK.Notifications
                 await Task.Yield();
             }
         }
+        
+        public void SetEnabled(bool value)
+        {
+            data.enabled = value;
+        }
 
         public void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
         {
+            if (Enabled == false)
+                return;
+            
             var notification = new iOSNotification
             {
                 Title = title,

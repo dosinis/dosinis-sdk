@@ -8,10 +8,14 @@ namespace DosinisSDK.Notifications
     public class AndroidNotificationsManager : Module, INotificationsManager
     {
         private NotificationsConfig config;
+        private NotificationsData data;
 
+        public bool Enabled => data.enabled;
+        
         protected override void OnInit(IApp app)
         {
             config = GetConfigAs<NotificationsConfig>();
+            data = app.GetModule<IDataManager>().RetrieveOrCreateData<NotificationsData>();
 
             AndroidNotificationCenter.Initialize();
             
@@ -30,8 +34,16 @@ namespace DosinisSDK.Notifications
             CheckIfAppOpenedFromNotification();
         }
 
+        public void SetEnabled(bool value)
+        {
+            data.enabled = value;
+        }
+
         public void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
         {
+            if (Enabled == false)
+                return;
+            
             var notification = new AndroidNotification
             {
                 Title = title,
