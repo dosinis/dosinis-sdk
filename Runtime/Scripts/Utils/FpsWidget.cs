@@ -1,24 +1,24 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace DosinisSDK.Utils
 {
     public class FpsWidget : MonoBehaviour
     {
-        private Text text;
+        private TMP_Text text;
 
         private float hudRefreshRate = 1;
         private float timer;
 
         private void Awake()
         {
-            if (gameObject.TryGetComponent(out Text text))
+            if (gameObject.TryGetComponent(out TMP_Text txt))
             {
-                this.text = text;
+                text = txt;
             }
             else
             {
-                this.text = gameObject.AddComponent<Text>();
+                text = gameObject.AddComponent<TMP_Text>();
             }
         }
 

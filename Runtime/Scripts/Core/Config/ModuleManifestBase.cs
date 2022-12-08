@@ -8,9 +8,13 @@ namespace DosinisSDK.Core
     /// </summary>
     public class ModuleManifestBase : ScriptableObject
     {
+        [Header("AppConfig")]
         public bool prewarmShaders;
+        public int targetFramerate = 60;
+        
+        [Header("ModulesManifest")]
         public bool safeMode = true;
-
+       
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
             await CreateModules(moduleFactory);

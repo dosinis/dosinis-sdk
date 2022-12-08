@@ -265,6 +265,9 @@ namespace DosinisSDK.Core
 
             this.manifest = manifest;
 
+            if (manifest.targetFramerate != 0)
+                Application.targetFrameRate = manifest.targetFramerate;
+            
             if (manifest.prewarmShaders)
                 Shader.WarmupAllShaders();
 
