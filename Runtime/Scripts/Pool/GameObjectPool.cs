@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -32,6 +33,22 @@ namespace DosinisSDK.Pool
             {
                 yield return obj as T;
             }
+        }
+
+        public T GetByRule<T>(Predicate<T> rule) where T : Component
+        {
+            foreach (var obj in pool)
+            {
+                var result = obj as T;
+                
+                if (rule(result))
+                {
+                    return result;
+                }
+            }
+
+            Debug.LogError("Couldn't find object that matched the rule");
+            return default;
         }
 
         public T Take<T>() where T : Component
