@@ -35,13 +35,13 @@ namespace DosinisSDK.Pool
             }
         }
 
-        public T GetByRule<T>(Predicate<T> rule) where T : Component
+        public T Find<T>(Predicate<T> match) where T : Component
         {
             foreach (var obj in pool)
             {
                 var result = obj as T;
                 
-                if (rule(result))
+                if (match(result))
                 {
                     return result;
                 }
