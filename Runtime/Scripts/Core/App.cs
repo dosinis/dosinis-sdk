@@ -195,11 +195,11 @@ namespace DosinisSDK.Core
             return source;
         }
 
-        public async Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IModule, IAsyncModule
+        public async Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IAsyncModule
         {
-            var module = CreateModule<T>(source, config) as IAsyncModule;
+            var module = CreateModule(source, config) as IAsyncModule;
 
-            await module.InitAsync(this, config);
+            await module.InitAsync(this);
         }
         
         public static void Ready(Action onReady)

@@ -27,6 +27,6 @@ namespace DosinisSDK.Core
     public interface IModuleFactory
     {
         T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule;
-        Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IModule, IAsyncModule;
+        Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IAsyncModule;
     }
 }

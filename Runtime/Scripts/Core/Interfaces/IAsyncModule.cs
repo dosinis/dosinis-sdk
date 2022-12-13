@@ -2,8 +2,12 @@ using System.Threading.Tasks;
 
 namespace DosinisSDK.Core
 {
-    public interface IAsyncModule
+    public interface IAsyncModule : IModule
     {
-        Task InitAsync(IApp app, ModuleConfig moduleConfig);
+        /// <summary>
+        /// Happens after IModule Init()
+        /// </summary>
+        /// <returns></returns>
+        Task InitAsync(IApp app);
     }
 }
