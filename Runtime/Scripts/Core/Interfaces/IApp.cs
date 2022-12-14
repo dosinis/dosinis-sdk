@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
         // Core Modules
         
         public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();
-        public IDataManager Data => GetModule<IDataManager>();
+        public IDataManager DataManager => GetModule<IDataManager>();
         public IClock Clock => GetModule<IClock>();
         public ITimer Timer => GetModule<ITimer>();
         public ISceneManager SceneManager => GetModule<ISceneManager>();

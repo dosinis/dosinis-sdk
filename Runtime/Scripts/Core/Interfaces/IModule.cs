@@ -6,4 +6,3 @@ namespace DosinisSDK.Core
         T GetConfigAs<T>() where T : ModuleConfig;
     }
 }
-
