@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Window : MonoBehaviour
+    public class Window : MonoBehaviour, IWindow
     {
         [SerializeField] protected bool ignoreSafeArea = false;
         [SerializeField] protected Button closeButton;
@@ -17,14 +17,19 @@ namespace DosinisSDK.Core
         public event Action OnBeforeHide;
         
         public bool IsShown { get; private set; }
+        public bool Initialized { get; private set; }
 
         private RectTransform rect;
         private Action hideCallback;
         protected IApp app;
 
-        internal void Init(IApp app)
+        void IWindow.Init(IApp app)
         {
+            if (Initialized)
+                return;
+            
             this.app = app;
+            
             if (TryGetComponent(out IWindowTransition t))
             {
                 transition = t;
@@ -47,9 +52,11 @@ namespace DosinisSDK.Core
                 closeButton.OnClick += Hide;
 
             OnInit(app);
+            
+            Initialized = true;
         }
         
-        internal void Dispose()
+        void IWindow.Dispose()
         {
             OnDispose();
 
@@ -154,7 +161,7 @@ namespace DosinisSDK.Core
         {
         }
 
-        // This applies safe area wrongly on Game view (it work on DeviceSimulator though)
+        // NOTE: This might apply safe area wrongly in Game view (it works on DeviceSimulator though)
         private void ApplySafeArea()
         {
             var rootCanvas = GetComponentInParent<Canvas>();

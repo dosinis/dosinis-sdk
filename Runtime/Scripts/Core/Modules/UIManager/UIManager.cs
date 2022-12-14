@@ -8,12 +8,12 @@ namespace DosinisSDK.Core
     {
         public Camera Camera { get; private set; }
         
-        private readonly Dictionary<Type, Window> windows = new Dictionary<Type, Window>();
+        private readonly Dictionary<Type, IWindow> windows = new Dictionary<Type, IWindow>();
         private readonly List<IProcessable> processedWindows = new List<IProcessable>();
 
         protected override void OnInit(IApp app)
         {
-            foreach (Window win in GetComponentsInChildren<Window>(true))
+            foreach (IWindow win in GetComponentsInChildren<IWindow>(true))
             {
                 windows.Add(win.GetType(), win);
             }
@@ -39,11 +39,11 @@ namespace DosinisSDK.Core
             }
         }
 
-        public T GetWindow<T>() where T : Window
+        public T GetWindow<T>() where T : IWindow
         {
             var wType = typeof(T);
 
-            if (windows.TryGetValue(wType, out Window window))
+            if (windows.TryGetValue(wType, out IWindow window))
             {
                 return (T) window;
             }
@@ -61,18 +61,27 @@ namespace DosinisSDK.Core
             return default;
         }
 
-        public void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : Window
+        public void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : IWindow
         {
-            GetWindow<T>().Show(callBack, onHidden);
+            var window = GetWindow<T>();
+
+            if (window.Initialized == false)
+                window.Init(app);
+            
+            window.Show(callBack, onHidden);
         }
         
-        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null) where T : WindowWithArgs<TArgs>
+        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null) where T : IWindowWithArgs<TArgs>
         {
-            var window = GetWindow<T>() as WindowWithArgs<TArgs>;
+            var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
+            
+            if (window.Initialized == false)
+                window.Init(app);
+            
             window.Show(args, callBack, onHidden);
         }
 
-        public void HideWindow<T>(Action callBack = null) where T : Window
+        public void HideWindow<T>(Action callBack = null) where T : IWindow
         {
             GetWindow<T>().Hide(callBack);
         }
