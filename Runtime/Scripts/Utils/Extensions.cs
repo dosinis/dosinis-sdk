@@ -295,6 +295,21 @@ namespace DosinisSDK.Utils
             transform.position = new Vector3(transform.position.x, transform.position.y, value);
         }
 
+        public static void SetLocalPosX(this Transform transform, float value)
+        {
+            transform.localPosition = new Vector3(value, transform.localPosition.y, transform.localPosition.z);
+        }
+
+        public static void SetLocalPosY(this Transform transform, float value)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, value, transform.localPosition.z);
+        }
+
+        public static void SetLocalPosZ(this Transform transform, float value)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, value);
+        }
+        
         // Color
 
         public static Color SetAlpha(ref this Color color, float alpha)
