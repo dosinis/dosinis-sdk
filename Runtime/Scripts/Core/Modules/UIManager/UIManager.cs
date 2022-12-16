@@ -61,6 +61,27 @@ namespace DosinisSDK.Core
             return default;
         }
 
+        public bool IsWindowReady<T>() where T : IWindow
+        {
+            var wType = typeof(T);
+
+            if (windows.TryGetValue(wType, out IWindow _))
+            {
+                return true;
+            }
+
+            foreach (var w in windows)
+            {
+                if (w.Value is T)
+                {
+                    windows.Add(wType, w.Value);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : IWindow
         {
             var window = GetWindow<T>();
