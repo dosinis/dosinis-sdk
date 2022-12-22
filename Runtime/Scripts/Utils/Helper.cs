@@ -48,18 +48,6 @@ namespace DosinisSDK.Utils
         }
         
         /// <summary>
-        /// Returns DateTime constructed from now and X seconds delay
-        /// </summary>
-        /// <param name="seconds"></param>
-        /// <returns></returns>
-        public static DateTime GetDateTimeAfterSeconds(long seconds)
-        {
-            long time = DateTimeOffset.Now.ToUnixTimeSeconds() + seconds;
-
-            return DateTimeOffset.FromUnixTimeSeconds(time).DateTime.ToLocalTime();
-        }
-
-        /// <summary>
         /// Converts Dictionary to json. Useful for analytics data.
         /// NOTE: collection nesting support is up to one layer only.
         /// </summary>

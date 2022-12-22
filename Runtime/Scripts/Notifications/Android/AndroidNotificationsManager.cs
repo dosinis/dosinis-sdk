@@ -66,7 +66,7 @@ namespace DosinisSDK.Notifications
                 fireAfter = config.minDelayForNotification;
             }
             
-            ScheduleNotification(title, text, Helper.GetDateTimeAfterSeconds(fireAfter), repeatInterval);
+            ScheduleNotification(title, text, DateTime.Now.AddSeconds(fireAfter), repeatInterval);
         }
         
         private void OnNotificationReceived(AndroidNotificationIntentData data)
