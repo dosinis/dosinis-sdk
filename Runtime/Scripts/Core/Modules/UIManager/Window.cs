@@ -145,6 +145,20 @@ namespace DosinisSDK.Core
             }
         }
 
+        public T GetWidget<T>() where T : Widget
+        {
+            foreach (var w in widgets)
+            {
+                if (w is T widget)
+                {
+                    return widget;
+                }
+            }
+
+            Debug.LogError($"Widget {nameof(T)} not found");
+            return default;
+        }
+        
         protected virtual void BeforeShown()
         {
         }
