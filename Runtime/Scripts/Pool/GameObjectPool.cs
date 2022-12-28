@@ -27,12 +27,36 @@ namespace DosinisSDK.Pool
             }
         }
 
-        public IEnumerable<T> CollectAll<T>() where T : Component
+        public IEnumerable<T> GetAll<T>() where T : Component
         {
             foreach (var obj in pool)
             {
                 yield return obj as T;
             }
+        }
+
+        public IEnumerable<T> GetAllActive<T>() where T : Component
+        {
+            foreach (var obj in pool)
+            {
+                if (obj.gameObject.activeInHierarchy)
+                {
+                    yield return obj as T;
+                }
+            }
+        }
+        
+        public void ReturnToPool(Component obj)
+        {
+            if (pool.Contains(obj))
+            {
+                obj.gameObject.SetActive(false);
+            }
+        }
+        
+        public void ReturnToPoolIfFound<T>(Predicate<T> match) where T : Component
+        {
+            ReturnToPool(Find(match));
         }
 
         public T Find<T>(Predicate<T> match) where T : Component
