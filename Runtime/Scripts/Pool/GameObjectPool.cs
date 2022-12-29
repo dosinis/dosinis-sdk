@@ -59,6 +59,21 @@ namespace DosinisSDK.Pool
             ReturnToPool(Find(match));
         }
 
+        public bool Contains<T>(Predicate<T> match) where T : Component
+        {
+            foreach (var obj in pool)
+            {
+                var result = obj as T;
+                
+                if (match(result))
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
         public T Find<T>(Predicate<T> match) where T : Component
         {
             foreach (var obj in pool)
