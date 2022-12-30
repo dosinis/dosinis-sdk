@@ -240,6 +240,11 @@ namespace DosinisSDK.Utils
         {
             return rt.anchoredPosition.y;
         }
+        
+        public static void SetSize(this RectTransform rt, float width, float height)
+        {
+            rt.sizeDelta = new Vector2(width, height);
+        }
 
         public static void SetWidth(this RectTransform rt, float width)
         {
