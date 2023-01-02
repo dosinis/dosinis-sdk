@@ -5,7 +5,9 @@ namespace DosinisSDK.Core
 {
     public class Window : MonoBehaviour, IWindow
     {
+#if UNITY_STANDALONE == false
         [SerializeField] protected bool ignoreSafeArea = false;
+#endif
         [SerializeField] protected Button closeButton;
 
         private IWindowTransition transition;
@@ -37,10 +39,10 @@ namespace DosinisSDK.Core
             }
 
             rect = GetComponent<RectTransform>();
-            
+#if UNITY_STANDALONE == false
             if (ignoreSafeArea == false)
                 ApplySafeArea();
-
+#endif
             widgets = GetComponentsInChildren<Widget>(true);
 
             foreach (var widget in widgets)
@@ -174,7 +176,7 @@ namespace DosinisSDK.Core
         protected virtual void Hidden()
         {
         }
-
+#if UNITY_STANDALONE == false
         // NOTE: This might apply safe area wrongly in Game view (it works on DeviceSimulator though)
         private void ApplySafeArea()
         {
@@ -193,6 +195,7 @@ namespace DosinisSDK.Core
             rect.anchorMin = anchorMin;
             rect.anchorMax = anchorMax;
         }
+#endif
     }
 }
 
