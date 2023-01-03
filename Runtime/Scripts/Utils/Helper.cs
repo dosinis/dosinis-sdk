@@ -46,6 +46,24 @@ namespace DosinisSDK.Utils
 
             return angle;
         }
+
+        /// <summary>
+        /// Returns uid of such length and format '4a9d0f06'
+        /// </summary>
+        /// <returns></returns>
+        public static string ShortUid()
+        {
+            return Random.Range(0, int.MaxValue).ToString("x");
+        }
+        
+        /// <summary>
+        /// Returns uid of such length and format '4a9d0f064a9d0f06'
+        /// </summary>
+        /// <returns></returns>
+        public static string Uid()
+        {
+            return Random.Range(0, int.MaxValue).ToString("x") + Random.Range(0, int.MaxValue).ToString("x");
+        }
         
         /// <summary>
         /// Converts Dictionary to json. Useful for analytics data.
