@@ -53,7 +53,7 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static string ShortUid()
         {
-            return Random.Range(0, int.MaxValue).ToString("x");
+            return Random.Range(int.MinValue, int.MaxValue).ToString("x");
         }
         
         /// <summary>
@@ -62,7 +62,7 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static string Uid()
         {
-            return Random.Range(0, int.MaxValue).ToString("x") + Random.Range(0, int.MaxValue).ToString("x");
+            return Random.Range(int.MinValue, int.MaxValue).ToString("x") + Random.Range(int.MinValue, int.MaxValue).ToString("x");
         }
         
         /// <summary>
