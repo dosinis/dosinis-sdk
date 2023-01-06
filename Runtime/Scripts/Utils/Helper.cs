@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
 using Random = UnityEngine.Random;
 
 namespace DosinisSDK.Utils
@@ -63,6 +65,23 @@ namespace DosinisSDK.Utils
         public static string Uid()
         {
             return Random.Range(int.MinValue, int.MaxValue).ToString("x") + Random.Range(int.MinValue, int.MaxValue).ToString("x");
+        }
+        
+        /// <summary>
+        /// Checks if mouse or finger is over UI element
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsPointerOverUI()
+        {
+            if (Application.isEditor == false && Input.touchSupported)
+            {
+                if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                {
+                    return true;
+                }
+            }
+
+            return EventSystem.current.IsPointerOverGameObject();
         }
         
         /// <summary>
