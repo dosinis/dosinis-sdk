@@ -56,7 +56,7 @@ namespace DosinisSDK.Notifications
                 fireAfter = config.minDelayForNotification;
             }
 
-            ScheduleNotification(title, text, Helper.GetDateTimeAfterSeconds(fireAfter));
+            ScheduleNotification(title, text, DateTime.Now.AddSeconds(fireAfter));
         }
         
         private iOSNotificationCalendarTrigger BuildCalendarTrigger(DateTime dt, bool repeats)
