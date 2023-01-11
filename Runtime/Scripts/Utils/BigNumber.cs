@@ -300,7 +300,7 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static BigNumber Random(BigNumber v1, BigNumber v2)
         {
-            if (v2.FitsInFloat)
+            if (v1.FitsInFloat && (v2 + 1).FitsInFloat)
             {
                 return (BigInteger)UnityEngine.Random.Range((long)v1.Value, (long)v2.Value + 1);
             }
@@ -371,14 +371,14 @@ namespace DosinisSDK.Utils
                 default:
                     char firstLetter = (char)((numberOfThousands - 6) / 26 + 'a');
                     char secondLetter = (char)((numberOfThousands - 6) % 26 + 'a');
-                    res = firstLetter.ToString() + secondLetter.ToString();
+                    res = firstLetter + secondLetter.ToString();
                     break;
             }
 
             return res;
         }
 
-        public static string ToPrettyFracturedString(this BigNumber number, int symbolsAfterComa = 1)
+        public static string ToPrettyFracturedString(this BigNumber number, int symbolsAfterComma = 1)
         {
             var value = number.Value;
             
@@ -399,7 +399,7 @@ namespace DosinisSDK.Utils
             var numberOfThousands = Mathf.CeilToInt(length / 3.0f);
 
             var integerPart = str.Substring(0, integerPartLength);
-            var fractionalPart = str.Substring(integerPartLength, symbolsAfterComa);
+            var fractionalPart = str.Substring(integerPartLength, symbolsAfterComma);
 
             var fractional = int.Parse(fractionalPart);
 
