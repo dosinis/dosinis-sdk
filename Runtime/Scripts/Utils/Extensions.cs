@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -59,6 +60,24 @@ namespace DosinisSDK.Utils
             return list[list.Count - 1];
         }
 
+        public static void Shuffle<T>(this T[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                int randomIndex = UnityRandom.Range(i, array.Length);
+                (array[i], array[randomIndex]) = (array[randomIndex], array[i]);
+            }
+        }
+        
+        public static void Shuffle<T>(this List<T> list)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                int randomIndex = UnityRandom.Range(i, list.Count());
+                (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
+            }
+        }
+        
         public static int Count(this IEnumerable collection)
         {
             int amount = 0;
@@ -70,9 +89,9 @@ namespace DosinisSDK.Utils
             return amount;
         }
         
-        public static bool Any(this IEnumerable collection)
+        public static bool Empty(this IEnumerable collection)
         {
-            return collection.Count() > 0;
+            return collection.Count() == 0;
         }
 
         // Vectors
@@ -106,7 +125,7 @@ namespace DosinisSDK.Utils
 
         public static string RemovePathExtension(this string path)
         {
-            string ext = System.IO.Path.GetExtension(path);
+            string ext = Path.GetExtension(path);
 
             if (string.IsNullOrEmpty(ext) == false)
             {
