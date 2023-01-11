@@ -68,7 +68,25 @@ namespace DosinisSDK.Core
             Debug.LogError($"Cached Module {typeof(T).Name} is not found! Maybe it's not ready yet?");
             return default;
         }
-        
+
+        public async Task<T> WaitForModule<T>(float? timeOut = null) where T : class, IModule
+        {
+            float startTime = Time.time;
+            
+            while (IsModuleReady<T>() == false)
+            {
+                if (timeOut != null && Time.time - startTime > timeOut)
+                {
+                    Debug.LogError($"Module is not ready after {timeOut} seconds");
+                    return default;
+                }
+                
+                await Task.Yield();
+            }
+            
+            return GetModule<T>();
+        }
+
         public bool TryGetModule<T>(out T module) where T : class, IModule
         {
             var mType = typeof(T);

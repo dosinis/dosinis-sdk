@@ -10,6 +10,7 @@ namespace DosinisSDK.Core
         event Action OnAppQuit;
         event Action OnAppRestart;
         T GetModule<T>() where T : class, IModule;
+        Task<T> WaitForModule<T>(float? timeOut = null) where T : class, IModule; 
         bool TryGetModule<T>(out T module) where T : class, IModule;
         bool IsModuleReady<T>() where T : class, IModule;
         void Restart();
