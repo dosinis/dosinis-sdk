@@ -37,6 +37,8 @@ namespace DosinisSDK.Core
         // Events
 
         public event Action OnClick;
+        public event Action OnPointerEntered;
+        public event Action OnPointerExited;
         public event Action OnPressedIn;
         public event Action OnReleased;
 
@@ -81,6 +83,8 @@ namespace DosinisSDK.Core
         {
             if (interactable == false)
                 return;
+            
+            OnPointerExited?.Invoke();
 
             mouseOverObject = false;
             heldDown = false;
@@ -92,6 +96,8 @@ namespace DosinisSDK.Core
         {
             if (interactable == false)
                 return;
+            
+            OnPointerEntered?.Invoke();
 
             mouseOverObject = true;
         }
