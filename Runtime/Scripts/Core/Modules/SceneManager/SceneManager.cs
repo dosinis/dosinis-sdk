@@ -12,7 +12,8 @@ namespace DosinisSDK.Core
         public event Action<Scene, Scene> OnSceneChanged;
         
         public float SceneLoadProgress { get; private set; }
-        
+        public Scene ActiveScene { get; private set; }
+
         protected override void OnInit(IApp app)
         {
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnActiveSceneChanged;
@@ -59,6 +60,7 @@ namespace DosinisSDK.Core
         
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
+            ActiveScene = newScene;
             OnSceneChanged?.Invoke(oldScene, newScene);
         }
     }
