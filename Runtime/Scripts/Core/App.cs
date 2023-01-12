@@ -153,7 +153,7 @@ namespace DosinisSDK.Core
                 catch (Exception ex)
                 {
                     Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. " +
-                        $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in AppConfig</color></i>");
+                        $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
                 }
             }
             else
