@@ -10,6 +10,7 @@ namespace DosinisSDK.Notifications
         private NotificationsConfig config;
         private NotificationsData data;
 
+        public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
         
         protected override async void OnInit(IApp app)
@@ -23,6 +24,11 @@ namespace DosinisSDK.Notifications
             {
                 await Task.Yield();
             }   
+            
+            if (IsOpenedFromNotification(out string d))
+            {
+                OpenFromNotificationData = d;
+            }
         }
         
         public void SetEnabled(bool value)

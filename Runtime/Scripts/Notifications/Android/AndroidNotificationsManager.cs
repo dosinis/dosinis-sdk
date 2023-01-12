@@ -1,6 +1,5 @@
 using System;
 using DosinisSDK.Core;
-using DosinisSDK.Utils;
 using Unity.Notifications.Android;
 
 namespace DosinisSDK.Notifications
@@ -10,6 +9,7 @@ namespace DosinisSDK.Notifications
         private NotificationsConfig config;
         private NotificationsData data;
 
+        public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
         
         protected override void OnInit(IApp app)
@@ -26,10 +26,15 @@ namespace DosinisSDK.Notifications
             // }
             
             AndroidNotificationCenter.RegisterNotificationChannel(BuildChannel(config.defaultChannel));
+            
+            AndroidNotificationCenter.OnNotificationReceived += OnNotificationReceived;
+            
+            if (IsOpenedFromNotification(out string d))
+            {
+                OpenFromNotificationData = d;
+            }
 
             AndroidNotificationCenter.CancelAllNotifications();
-
-            AndroidNotificationCenter.OnNotificationReceived += OnNotificationReceived;
         }
 
         public void SetEnabled(bool value)
