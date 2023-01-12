@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using DosinisSDK.Core;
-using DosinisSDK.Utils;
 using Unity.Notifications.iOS;
 
 namespace DosinisSDK.Notifications
@@ -23,7 +22,7 @@ namespace DosinisSDK.Notifications
             while (req.IsFinished == false)
             {
                 await Task.Yield();
-            }
+            }   
         }
         
         public void SetEnabled(bool value)
@@ -43,6 +42,7 @@ namespace DosinisSDK.Notifications
                 Trigger = BuildCalendarTrigger(fireTime, repeatInterval != null),
                 Badge = 0,
                 ShowInForeground = false,
+                Data = extraData
             };
 
             iOSNotificationCenter.ScheduleNotification(notification);
@@ -71,6 +71,22 @@ namespace DosinisSDK.Notifications
                 Second = dt.Second,
                 Repeats = repeats
             };
+        }
+
+        public bool IsOpenedFromNotification(out string data)
+        {
+            var notification = iOSNotificationCenter.GetLastRespondedNotification();
+
+            if (notification != null)
+            {
+                Log($"App opened from notification {notification.Title}, custom data {notification.Data} ");
+
+                data = notification.Data;
+                return true;
+            }
+
+            data = string.Empty;
+            return false;
         }
     }
 }
