@@ -9,5 +9,6 @@ namespace DosinisSDK.Notifications
         void SetEnabled(bool value);
         void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "");
         void ScheduleNotification(string title, string text, long fireAfter, TimeSpan? repeatInterval = null, string extraData = "");
+        bool IsOpenedFromNotification(out string data);
     }
 }

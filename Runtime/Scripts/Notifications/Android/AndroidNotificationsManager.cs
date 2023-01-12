@@ -30,8 +30,6 @@ namespace DosinisSDK.Notifications
             AndroidNotificationCenter.CancelAllNotifications();
 
             AndroidNotificationCenter.OnNotificationReceived += OnNotificationReceived;
-
-            CheckIfAppOpenedFromNotification();
         }
 
         public void SetEnabled(bool value)
@@ -85,7 +83,7 @@ namespace DosinisSDK.Notifications
             };
         }
 
-        private void CheckIfAppOpenedFromNotification()
+        public bool IsOpenedFromNotification(out string data)
         {
             var notificationIntentData = AndroidNotificationCenter.GetLastNotificationIntent();
 
@@ -94,8 +92,14 @@ namespace DosinisSDK.Notifications
                 var id = notificationIntentData.Id;
                 var channel = notificationIntentData.Channel;
                 var notification = notificationIntentData.Notification;
-                Log($"App opened from notification: id {id}, channel: {channel}, intent data:");
+                Log($"App opened from notification: id {id}, channel: {channel}, intent data: {notification.IntentData}");
+
+                data = notification.IntentData;
+                return true;
             }
+
+            data = string.Empty;
+            return false;
         }
     }
 }
