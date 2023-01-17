@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     {
         public long LastTimeActive => data.lastTimeActive;
         public long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
+        public long NowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         public long TimeInactive => Now - LastTimeActive;
         
         // LocalClock
