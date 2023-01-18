@@ -53,6 +53,8 @@ namespace DosinisSDK.Core
             if (closeButton) 
                 closeButton.OnClick += Hide;
 
+            IsShown = gameObject.activeInHierarchy;
+            
             OnInit(app);
             
             Initialized = true;
