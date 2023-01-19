@@ -440,6 +440,16 @@ namespace DosinisSDK.Utils
             return res;
         }
 
+        public static double PreciseDivideDouble(this BigNumber number, BigNumber divider, int precision = 1000)
+        {
+            return (double)(precision * number.Value / divider.Value) / precision;
+        }
+        
+        public static float PreciseDivideFloat(this BigNumber number, BigNumber divider, int precision = 1000)
+        {
+            return (float)(precision * number.Value / divider.Value) / precision;
+        }
+        
         public static BigNumber MultiplyByFloat(this BigNumber bigNum, float value, int precision = 1000)
         {
             var bigInt = bigNum.Value;
