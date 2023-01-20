@@ -16,11 +16,11 @@ namespace DosinisSDK.Editor
 
         private void ButtonInspector()
         {
-            IEnumerable<MemberInfo> methods = GetMethodsWithAttribute(typeof(ButtonAttribute));
+            var methodsWithAttribute = GetMethodsWithAttribute(typeof(ButtonAttribute));
 
             EditorGUILayout.Space(10);
 
-            foreach (var memberInfo in methods)
+            foreach (var memberInfo in methodsWithAttribute)
             {
                 DrawButton(memberInfo as MethodInfo);
             }
