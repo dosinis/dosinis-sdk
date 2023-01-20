@@ -295,6 +295,18 @@ namespace DosinisSDK.Utils
             return LayoutUtility.GetPreferredWidth(rectTransform) > rectTransform.rect.width;
         }
 
+        // ScrollRect
+        
+        public static void ScrollToChild(this ScrollRect scrollRect, RectTransform child)
+        {
+            Canvas.ForceUpdateCanvases();
+            Vector2 viewportLocalPosition = scrollRect.viewport.localPosition;
+            Vector2 childLocalPosition   = child.localPosition;
+            
+            scrollRect.content.localPosition = new Vector2(0 - (viewportLocalPosition.x + childLocalPosition.x), 
+                0 - (viewportLocalPosition.y + childLocalPosition.y));
+        }
+        
         // Rect
         
         public static Vector2 GetRandomPointInside(this Rect rect)

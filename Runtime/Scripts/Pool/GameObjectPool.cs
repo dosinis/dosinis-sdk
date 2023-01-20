@@ -85,8 +85,7 @@ namespace DosinisSDK.Pool
                     return result;
                 }
             }
-
-            Debug.LogError("Couldn't find object that matched the rule");
+            
             return default;
         }
 
