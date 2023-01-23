@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace DosinisSDK.Utils
 {
     [Serializable]
-    public class ObservableList<T> : IList<T>
+    public class ObservableList<T> : IList<T>, IObservableList<T>
     {
         private readonly List<T> list = new List<T>();
 		
@@ -98,5 +98,12 @@ namespace DosinisSDK.Utils
             list.RemoveAt(index);
             OnCollectionModified?.Invoke();
         }
+    }
+    
+    public interface IObservableList<in T>
+    {
+        event Action OnCollectionModified;
+        bool Contains(T item);
+        int IndexOf(T item);
     }
 }
