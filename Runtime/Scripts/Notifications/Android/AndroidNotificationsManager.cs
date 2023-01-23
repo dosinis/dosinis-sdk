@@ -15,7 +15,7 @@ namespace DosinisSDK.Notifications
         protected override void OnInit(IApp app)
         {
             config = GetConfigAs<NotificationsConfig>();
-            data = app.GetModule<IDataManager>().RetrieveOrCreateData<NotificationsData>();
+            data = app.GetModule<IDataManager>().GetOrCreateData<NotificationsData>();
 
             AndroidNotificationCenter.Initialize();
             

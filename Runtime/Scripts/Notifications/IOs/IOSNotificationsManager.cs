@@ -16,7 +16,7 @@ namespace DosinisSDK.Notifications
         protected override async void OnInit(IApp app)
         {
             config = GetConfigAs<NotificationsConfig>();
-            data = app.GetModule<IDataManager>().RetrieveOrCreateData<NotificationsData>();
+            data = app.GetModule<IDataManager>().GetOrCreateData<NotificationsData>();
             
             using var req = new AuthorizationRequest(AuthorizationOption.Alert | AuthorizationOption.Badge, false);
             
