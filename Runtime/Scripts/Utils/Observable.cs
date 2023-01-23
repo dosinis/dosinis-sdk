@@ -5,7 +5,7 @@ using UnityEngine;
 namespace DosinisSDK.Utils
 {
 	[Serializable]
-    public class Observable<T>
+    public class Observable<T> : IObservable<T>
 	{
 		[SerializeField] private T value;
 
@@ -40,4 +40,10 @@ namespace DosinisSDK.Utils
 			return value.ToString();
 		}
 	}
+
+    public interface IObservable<out T>
+    {
+	    T Value { get; }
+	    event Action<T> OnValueChanged;
+    }
 }
