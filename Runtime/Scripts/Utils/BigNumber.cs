@@ -319,6 +319,8 @@ namespace DosinisSDK.Utils
         {
             return v1.MultiplyByFloat(1f - t) + v2.MultiplyByFloat(t);
         }
+        
+        public static BigNumber Zero => 0;
     }
 
     public static class BigNumberExtensions
