@@ -12,9 +12,12 @@ namespace DosinisSDK.Core
         // Private
 
         private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
-        private readonly List<IProcessable> processables = new List<IProcessable>();
+        private readonly HashSet<IProcessable> processables = new HashSet<IProcessable>();
+        private readonly HashSet<ITickable> tickables = new HashSet<ITickable>();
+        private readonly HashSet<IFixedProcessable> fixedProcessables = new HashSet<IFixedProcessable>();
 
         private ModuleManifestBase manifest;
+        private float lastTick;
 
         // Events
 
@@ -163,10 +166,17 @@ namespace DosinisSDK.Core
             
             if (module is IProcessable processabe)
             {
-                if (processables.Contains(processabe) == false)
-                {
-                    processables.Add(processabe);
-                }
+                processables.Add(processabe);
+            }
+
+            if (module is IFixedProcessable fixedProcessable)
+            {
+                fixedProcessables.Add(fixedProcessable);
+            }
+
+            if (module is ITickable tickable)
+            {
+                tickables.Add(tickable);
             }
 
             Debug.Log($"Registered {mType.Name} successfully");
@@ -253,8 +263,17 @@ namespace DosinisSDK.Core
                     
                 if (sceneModule is IProcessable processable)
                 {
-                    if (processables.Contains(processable))
-                        processables.Remove(processable);
+                    processables.Remove(processable);
+                }
+
+                if (sceneModule is ITickable tickable)
+                {
+                    tickables.Remove(tickable);
+                }
+                
+                if (sceneModule is IFixedProcessable fixedProcessable)
+                {
+                    fixedProcessables.Remove(fixedProcessable);
                 }
             }
 
@@ -368,6 +387,24 @@ namespace DosinisSDK.Core
             foreach (var processable in processables)
             {
                 processable.Process(Time.deltaTime);
+            }
+            
+            if (Time.time - lastTick >= 1)
+            {
+                lastTick = Time.time;
+                
+                foreach (var tickable in tickables)
+                {
+                    tickable.Tick();
+                }
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            foreach (var fp in fixedProcessables)
+            {
+                fp.FixedProcess(Time.fixedDeltaTime);
             }
         }
 

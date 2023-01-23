@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace DosinisSDK.Core
 {
-    public sealed class SceneManager : BehaviourModule, ISceneManager, IProcessable
+    public sealed class SceneManager : BehaviourModule, ISceneManager
     {
         private AsyncOperation loadSceneOperation;
         
@@ -20,10 +20,6 @@ namespace DosinisSDK.Core
         }
 
         // ISceneManager
-        
-        public void Process(float delta)
-        {
-        }
 
         public void SwitchLoadedScene()
         {

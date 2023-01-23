@@ -107,7 +107,7 @@ namespace DosinisSDK.Core
             GetWindow<T>().Hide(callBack);
         }
 
-        public void Process(float delta)
+        public void Process(in float delta)
         {
             foreach (var processed in processedWindows)
             {

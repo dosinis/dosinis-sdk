@@ -2,6 +2,6 @@ namespace DosinisSDK.Core
 {
     public interface IProcessable
     {
-        void Process(float delta);
+        void Process(in float delta);
     }
 }
