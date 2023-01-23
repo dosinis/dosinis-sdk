@@ -88,7 +88,7 @@ namespace DosinisSDK.Core
             return Path.Combine(EDITOR_SAVE_PATH, key + ".json");
         }
 
-        public T RetrieveOrCreateData<T>() where T : class, IData, new()
+        public T GetOrCreateData<T>() where T : class, IData, new()
         {
             if (dataRegistry.TryGetValue(typeof(T).Name, out object data) == false)
             {

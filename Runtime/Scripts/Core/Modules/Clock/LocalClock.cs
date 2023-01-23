@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
         {
             var dataManager = app.GetModule<IDataManager>();
             
-            data = dataManager.RetrieveOrCreateData<LocalClockData>();
+            data = dataManager.GetOrCreateData<LocalClockData>();
 
             if (data.lastTimeActive == 0)
             {

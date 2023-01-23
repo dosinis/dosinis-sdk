@@ -25,7 +25,7 @@ namespace DosinisSDK.Audio
 
         protected override void OnInit(IApp app)
         {
-            data = app.DataManager.RetrieveOrCreateData<AudioData>();
+            data = app.DataManager.GetOrCreateData<AudioData>();
 
             for (int i = 0; i < POOL_SIZE; i++)
             {
