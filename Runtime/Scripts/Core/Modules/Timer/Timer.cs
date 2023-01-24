@@ -15,14 +15,14 @@ namespace DosinisSDK.Core
             coroutineManager = app.GetModule<CoroutineManager>();
         }
 
-        public void Delay(float delay, Action done)
+        public ITimedAction Delay(float delay, Action done)
         {
-            coroutineManager.Begin(DelayCoroutine(delay, done));
+            return new TimedAction(coroutineManager.Begin(DelayCoroutine(delay, done)));
         }
         
-        public void Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f, Func<bool> cancelFunc = null)
+        public ITimedAction Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f)
         {
-            coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, cancelFunc, onTick));
+            return new TimedAction(coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, onTick)));
         }
 
         public void SkipFrame(Action done)
@@ -35,9 +35,9 @@ namespace DosinisSDK.Core
             coroutineManager.Begin(SkipFixedUpdateCoroutine(done));
         }
         
-        public void WaitUntil(Func<bool> condition, Action onComplete)
+        public ITimedAction WaitUntil(Func<bool> condition, Action onComplete)
         {
-            coroutineManager.Begin(WaitUntilCoroutine(condition, onComplete));
+            return new TimedAction(coroutineManager.Begin(WaitUntilCoroutine(condition, onComplete)));
         }
 
         private IEnumerator DelayCoroutine(float delay, Action done)
@@ -46,20 +46,12 @@ namespace DosinisSDK.Core
             done();
         }
 
-        private IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Func<bool> cancelFunc, Action<int> onTick)
+        private IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Action<int> onTick)
         {
             yield return new WaitForSeconds(initDelay);
 
             for (int i = 0; i < times; i++)
             {
-                if (cancelFunc != null)
-                {
-                    if (cancelFunc())
-                    {
-                        yield break;
-                    }
-                }
-                
                 onTick?.Invoke(i);
                 yield return new WaitForSeconds(frequency);
             }
