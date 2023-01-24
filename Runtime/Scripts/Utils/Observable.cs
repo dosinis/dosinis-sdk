@@ -17,7 +17,7 @@ namespace DosinisSDK.Utils
 			{
 				if (EqualityComparer<T>.Default.Equals(this.value, value) == false)
 				{
-					OnValueChangedDelta?.Invoke(this.value, value);
+					OnValueAboutToChangeDelta?.Invoke(this.value, value);
 					this.value = value;
 					OnValueChanged?.Invoke(this.value);
 				}
@@ -25,7 +25,7 @@ namespace DosinisSDK.Utils
 		}
 
 		public event Action<T> OnValueChanged;
-		public event Action<T,T> OnValueChangedDelta;// previous,final
+		public event Action<T,T> OnValueAboutToChangeDelta; // previous, final
 
 		public Observable(T value)
 		{
@@ -47,6 +47,6 @@ namespace DosinisSDK.Utils
     {
 	    T Value { get; }
 	    event Action<T> OnValueChanged;
-	    event Action<T,T> OnValueChangedDelta;
+	    event Action<T,T> OnValueAboutToChangeDelta;
     }
 }
