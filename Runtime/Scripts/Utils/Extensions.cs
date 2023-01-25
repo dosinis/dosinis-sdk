@@ -43,6 +43,22 @@ namespace DosinisSDK.Utils
 
             return UnityRandom.Range(0, list.Count);
         }
+        
+        public static T First<T>(this T[] array)
+        {
+            if (array.Length == 0)
+                return default;
+
+            return array[0];
+        }
+        
+        public static T First<T>(this List<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[0];
+        }
 
         public static T Last<T>(this T[] array)
         {
