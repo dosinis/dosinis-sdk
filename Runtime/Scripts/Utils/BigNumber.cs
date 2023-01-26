@@ -23,6 +23,8 @@ namespace DosinisSDK.Utils
         public bool FitsInFloat => Value < MAX_FLOAT;
         [JsonIgnore]
         public bool FitsInDouble => Value < MAX_DOULBE;
+        [JsonIgnore]
+        public bool FitsInLong => Value < long.MaxValue;
 
         [JsonIgnore]
         public BigInteger Value
@@ -300,7 +302,7 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static BigNumber Random(BigNumber v1, BigNumber v2)
         {
-            if (v1.FitsInFloat && (v2 + 1).FitsInFloat)
+            if (v1.FitsInLong && (v2 + 1).FitsInLong)
             {
                 return (BigInteger)UnityEngine.Random.Range((long)v1.Value, (long)v2.Value + 1);
             }
