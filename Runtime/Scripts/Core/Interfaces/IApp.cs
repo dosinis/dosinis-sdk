@@ -23,6 +23,7 @@ namespace DosinisSDK.Core
         public ITimer Timer => GetModule<ITimer>();
         public ISceneManager SceneManager => GetModule<ISceneManager>();
         public IUIManager UIManager => GetModule<IUIManager>();
+        public IEventsManager EventsManager => GetModule<IEventsManager>();
     }
 
     public interface IModuleFactory

@@ -25,6 +25,7 @@ namespace DosinisSDK.Core
         /// </summary>
         protected virtual Task CreateModules(IModuleFactory moduleFactory)
         {
+            moduleFactory.CreateModule<EventsManager>();
             moduleFactory.CreateModule<SceneManager>();
             moduleFactory.CreateModule<CoroutineManager>();
             moduleFactory.CreateModule<Timer>();
