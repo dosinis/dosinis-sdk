@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DosinisSDK.Core;
 using Unity.Notifications.Android;
 
@@ -8,6 +9,7 @@ namespace DosinisSDK.Notifications
     {
         private NotificationsConfig config;
         private NotificationsData data;
+        private readonly Dictionary<string, int> cachedNotifications = new();
 
         public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
@@ -42,7 +44,7 @@ namespace DosinisSDK.Notifications
             data.enabled = value;
         }
 
-        public void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
+        public void ScheduleNotification(string id, string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
         {
             if (Enabled == false)
                 return;
@@ -57,19 +59,27 @@ namespace DosinisSDK.Notifications
                 IntentData = extraData,
                 RepeatInterval = repeatInterval
             };
-
-            AndroidNotificationCenter.SendNotification(notification, config.defaultChannel.id);
-            Log($"Notification {notification.Title} scheduled on: {notification.FireTime}");
+            
+            if (cachedNotifications.ContainsKey(id))
+            {
+                AndroidNotificationCenter.CancelNotification(cachedNotifications[id]);
+                cachedNotifications.Remove(id);
+            }
+            
+            var notificationId = AndroidNotificationCenter.SendNotification(notification, config.defaultChannel.id);
+            cachedNotifications.Add(id, notificationId);
+            
+            Log($"Notification {id} scheduled on: {notification.FireTime}");
         }
 
-        public void ScheduleNotification(string title, string text, long fireAfter, TimeSpan? repeatInterval = null, string extraData = "")
+        public void ScheduleNotification(string id, string title, string text, long fireAfter, TimeSpan? repeatInterval = null, string extraData = "")
         {
             if (fireAfter < config.minDelayForNotification)
             {
                 fireAfter = config.minDelayForNotification;
             }
             
-            ScheduleNotification(title, text, DateTime.Now.AddSeconds(fireAfter), repeatInterval);
+            ScheduleNotification(id, title, text, DateTime.Now.AddSeconds(fireAfter), repeatInterval);
         }
         
         private void OnNotificationReceived(AndroidNotificationIntentData data)

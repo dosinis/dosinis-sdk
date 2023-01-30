@@ -36,7 +36,7 @@ namespace DosinisSDK.Notifications
             data.enabled = value;
         }
 
-        public void ScheduleNotification(string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
+        public void ScheduleNotification(string id, string title, string text, DateTime fireTime, TimeSpan? repeatInterval = null, string extraData = "")
         {
             if (Enabled == false)
                 return;
@@ -50,12 +50,14 @@ namespace DosinisSDK.Notifications
                 ShowInForeground = false,
                 Data = extraData
             };
+            
+            // TODO: cancel duplicate notifications
 
             iOSNotificationCenter.ScheduleNotification(notification);
             Log($"Notification {notification.Title} scheduled on: {fireTime}");
         }
 
-        public void ScheduleNotification(string title, string text, long fireAfter, TimeSpan? repeatInterval = null, string extraData = "")
+        public void ScheduleNotification(string id, string title, string text, long fireAfter, TimeSpan? repeatInterval = null, string extraData = "")
         {
             if (fireAfter < config.minDelayForNotification)
             {
