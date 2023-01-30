@@ -4,6 +4,21 @@ namespace DosinisSDK.UI.Elements
 {
     public class Element : MonoBehaviour
     {
+        private RectTransform rectTransform;
+
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (rectTransform == null)
+                {
+                    rectTransform = GetComponent<RectTransform>();
+                }
+
+                return rectTransform;
+            }
+        }
+
         protected bool initialized = false;
 
         public void Init()

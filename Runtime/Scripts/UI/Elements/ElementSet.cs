@@ -6,24 +6,13 @@ namespace DosinisSDK.UI.Elements
 {
     public class ElementSet : MonoBehaviour
     {
-        [SerializeField] private Element element;
-        [SerializeField] private Transform root;
+        [SerializeField] protected Element element;
+        [SerializeField] protected Transform content;
 
-        private readonly List<Element> spawnedElements = new List<Element>();
+        protected readonly List<Element> spawnedElements = new List<Element>();
 
         public int Size => spawnedElements.Count;
-
-        private void SetupElement<T>(Element element, T arg)
-        {
-            element.Init();
-            
-            if (element is ElementFor<T> elementFor)
-            {
-                elementFor.Setup(arg);
-                elementFor.Show();
-            }
-        }
-
+        
         public Element GetElement(int index)
         {
             if (spawnedElements.Count <= index)
@@ -53,61 +42,41 @@ namespace DosinisSDK.UI.Elements
             return collected;
         }
 
-        public void Setup<T>(T[] args)
+        public void Clear()
         {
-            element.Hide();
-
-            int reusedElements = 0;
-
             for (int i = 0; i < spawnedElements.Count; i++)
             {
-                if (args.Length <= i)
-                {
-                    spawnedElements[i].Hide();
-                }
-                else
-                {
-                    SetupElement(spawnedElements[i], args[i]);
-                    reusedElements++;
-                }
-            }
-
-            for (int i = reusedElements; i < args.Length; i++)
-            {
-                Element instance = Instantiate(element, root);
-
-                SetupElement(instance, args[i]);
-
-                spawnedElements.Add(instance);
+                spawnedElements[i].Hide();
             }
         }
 
-        public void Setup<T>(List<T> args)
+        public virtual void Setup<TE, T>(IEnumerable<T> objects) where TE : Element
         {
             element.Hide();
-
-            int reusedElements = 0;
-
-            for (int i = 0; i < spawnedElements.Count; i++)
+            Clear();
+            int i = 0;
+            
+            foreach (var o in objects)
             {
-                if (args.Count <= i)
+                Element e;
+                if (i < spawnedElements.Count)
                 {
-                    spawnedElements[i].Hide();
+                    e = spawnedElements[i];
                 }
                 else
                 {
-                    SetupElement(spawnedElements[i], args[i]);
-                    reusedElements++;
+                    e = Instantiate(element, content);
+                    e.Init();
+                    spawnedElements.Add(e);
                 }
-            }
-
-            for (int i = reusedElements; i < args.Count; i++)
-            {
-                Element instance = Instantiate(element, root);
-
-                SetupElement(instance, args[i]);
-
-                spawnedElements.Add(instance);
+                
+                if (e is ElementFor<T> elementFor)
+                {
+                    elementFor.Setup(o);
+                }
+                
+                e.Show();
+                i++;
             }
         }
 
