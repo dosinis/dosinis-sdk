@@ -98,6 +98,20 @@ namespace DosinisSDK.UI.Elements
                 elementToSwap.RectTransform.anchoredPosition = new Vector2(elementToSwap.RectTransform.anchoredPosition.x, y);
             }
         }
+        
+        public void FocusAround<T>(T value)
+        {
+            int index = valuesCache.IndexOf(value);
+
+            if (index < 0)
+            {
+                return;
+            }
+
+            float y = (elementHeight * index + elementHeight / 2) - visibleElementCount / 2f * elementHeight;
+
+            anchor.anchoredPosition = new Vector2(anchor.anchoredPosition.x, y);
+        }
 
         public override void Setup<TE, T>(IEnumerable<T> objects)
         {
