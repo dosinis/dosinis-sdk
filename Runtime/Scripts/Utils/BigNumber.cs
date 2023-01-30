@@ -7,7 +7,7 @@ using UnityEngine;
 namespace DosinisSDK.Utils
 {
     [Serializable]
-    public struct BigNumber : ISerializationCallbackReceiver
+    public struct BigNumber : ISerializationCallbackReceiver, IComparable
     {
         [JsonProperty]
         [SerializeField] private string stringValue;
@@ -227,6 +227,43 @@ namespace DosinisSDK.Utils
         {
             v1.Value /= v2.Value;
             return v1;
+        }
+        
+        // IComparer
+        
+        public int CompareTo(object obj)
+        {
+            if (obj is BigNumber)
+            {
+                return Value.CompareTo(((BigNumber)obj).Value);
+            }
+
+            if (obj is BigInteger)
+            {
+                return Value.CompareTo((BigInteger)obj);
+            }
+
+            if (obj is int)
+            {
+                return Value.CompareTo((int)obj);
+            }
+
+            if (obj is long)
+            {
+                return Value.CompareTo((long)obj);
+            }
+
+            if (obj is float)
+            {
+                return Value.CompareTo((float)obj);
+            }
+
+            if (obj is double)
+            {
+                return Value.CompareTo((double)obj);
+            }
+
+            throw new ArgumentException("Object is not a BigNumber");
         }
 
         // Serialization
