@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Elements
@@ -111,7 +112,7 @@ namespace DosinisSDK.UI.Elements
             var enumerable = objects as T[] ?? objects.ToArray();
             float contentHeight = elementHeight * enumerable.Length;
 
-            anchor.sizeDelta = new Vector2(anchor.sizeDelta.x, contentHeight);
+            anchor.SetHeight(contentHeight);
             currentPivot = 0;
             valuesCache.Clear();
             Clear();
