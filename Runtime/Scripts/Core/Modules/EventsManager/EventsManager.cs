@@ -13,7 +13,7 @@ namespace DosinisSDK.Core
 
         public void Subscribe<T>(Action<T> action) where T : IEvent
         {
-            eventHandlers.GetOrAdd(typeof(T), (_) => new List<Delegate>()).Add(action);
+            eventHandlers.GetOrAdd(typeof(T), () => new List<Delegate>()).Add(action);
         }
 
         public void Unsubscribe<T>(Action<T> action) where T : IEvent
