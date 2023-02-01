@@ -107,15 +107,27 @@ namespace DosinisSDK.Core
             return collection.Count() == 0;
         }
         
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> valueFactory)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue valueToAdd)
         {
             if (dictionary.TryGetValue(key, out var value)) 
                 return value;
-            
-            value = valueFactory();
+
+            value = valueToAdd;
             dictionary[key] = value;
             
             return value;
-        } 
+        }
+
+        public static void AddOrReplace<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        {
+            if (dictionary.ContainsKey(key))
+            {
+                dictionary[key] = value;
+            }
+            else
+            {
+                dictionary.Add(key, value);
+            }
+        }
     }
 }
