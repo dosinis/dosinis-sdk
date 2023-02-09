@@ -576,13 +576,12 @@ namespace DosinisSDK.Utils
 
             BigNumber bigNum;
             float small = number;
-            long index;
 
             for (long i = 0; i < power - 1; i++)
             {
                 if (small > 1000)
                 {
-                    index = i;
+                    var index = i;
                     bigNum = (int)small;
 
                     while (index < power - 1)
