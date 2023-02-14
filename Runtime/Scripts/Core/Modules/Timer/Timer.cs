@@ -6,8 +6,8 @@ namespace DosinisSDK.Core
 {
     public class Timer : Module, ITimer
     {
-        private readonly WaitForEndOfFrame skipFrame = new WaitForEndOfFrame();
-        private readonly WaitForFixedUpdate skipFixedUpdate = new WaitForFixedUpdate();
+        private readonly WaitForEndOfFrame skipFrame = new();
+        private readonly WaitForFixedUpdate skipFixedUpdate = new();
         private CoroutineManager coroutineManager;
 
         protected override void OnInit(IApp app)

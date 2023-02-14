@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using DosinisSDK.Core;
 using UnityEngine;
 
@@ -14,7 +13,12 @@ namespace DosinisSDK.Utils
             
             if (skipFrame)
             {
-                await Task.Delay(1); // making sure that after switching the scene all SceneModule are ready as well
+                App.Core.Timer.SkipFrame(() =>
+                {
+                    OnInit(App.Core);
+                });
+                
+                return;
             }
             
             OnInit(App.Core);
