@@ -58,9 +58,11 @@ namespace DosinisSDK.UI
         {
             float t = 0f;
 
+            var initScale = transform.localScale;
+            
             while (t < 1)
             {
-                transform.localScale = Vector3.Lerp(transform.localScale, startScale, t);
+                transform.localScale = Vector3.Lerp(initScale, startScale, t);
                 t += Time.deltaTime / animationDuration;
                 yield return null;
             }

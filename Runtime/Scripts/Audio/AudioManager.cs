@@ -97,10 +97,11 @@ namespace DosinisSDK.Audio
             float t = 0f;
 
             var currentVolume = musicSource.volume;
+            var targetVolume = currentVolume / 2f;
 
             while (t < 1)
             {
-                musicSource.volume = Mathf.Lerp(musicSource.volume, currentVolume / 2f, t);
+                musicSource.volume = Mathf.Lerp(currentVolume, targetVolume, t);
                 t += Time.deltaTime / duration;
                 yield return null;
             }
@@ -113,7 +114,7 @@ namespace DosinisSDK.Audio
 
             while (t < 1)
             {
-                musicSource.volume = Mathf.Lerp(musicSource.volume, currentVolume, t);
+                musicSource.volume = Mathf.Lerp(targetVolume, currentVolume, t);
                 t += Time.deltaTime / duration;
                 yield return null;
             }
@@ -163,17 +164,28 @@ namespace DosinisSDK.Audio
         private IEnumerator LerpTimeScale(float value, float lerpDuration)
         {
             float duration = lerpDuration;
+            var initPitch = musicSource.pitch;
 
             while (duration > 0)
             {
                 duration -= Time.deltaTime;
                 
-                SetMusicPitch(Mathf.Lerp(musicSource.pitch, value, lerpDuration / duration));
+                SetMusicPitch(Mathf.Lerp(initPitch, value, lerpDuration / duration));
+                
+                var initPitches = new List<float>();
+                
                 foreach (var src in sources)
                 {
-                    src.pitch = Mathf.Lerp(src.pitch, value, lerpDuration / duration);
+                    initPitches.Add(src.pitch);
                 }
 
+                int i = 0;
+                foreach (var src in sources)
+                {
+                    src.pitch = Mathf.Lerp(initPitches[i], value, lerpDuration / duration);
+                    i++;
+                }
+                
                 yield return null;
             }
         }
