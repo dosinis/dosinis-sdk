@@ -8,9 +8,9 @@ namespace DosinisSDK.Core
     {
         public Camera Camera { get; private set; }
         
-        private readonly Dictionary<Type, IWindow> windows = new Dictionary<Type, IWindow>();
-        private readonly List<IProcessable> processedWindows = new List<IProcessable>();
-        private readonly List<ITickable> tickableWindows = new List<ITickable>();
+        private readonly Dictionary<Type, IWindow> windows = new();
+        private readonly List<IProcessable> processedWindows = new();
+        private readonly List<ITickable> tickableWindows = new();
 
         protected override void OnInit(IApp app)
         {
@@ -113,7 +113,7 @@ namespace DosinisSDK.Core
             GetWindow<T>().Hide(callBack);
         }
 
-        public void Process(in float delta)
+        void IProcessable.Process(in float delta)
         {
             foreach (var processed in processedWindows)
             {
@@ -121,7 +121,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        public void Tick()
+        void ITickable.Tick()
         {
             foreach (var tickable in tickableWindows)
             {
