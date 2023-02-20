@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class UIManager : SceneModule, IUIManager, IProcessable
+    public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
         public Camera Camera { get; private set; }
         
         private readonly Dictionary<Type, IWindow> windows = new Dictionary<Type, IWindow>();
         private readonly List<IProcessable> processedWindows = new List<IProcessable>();
+        private readonly List<ITickable> tickableWindows = new List<ITickable>();
 
         protected override void OnInit(IApp app)
         {
@@ -25,6 +26,11 @@ namespace DosinisSDK.Core
                 if (win.Value is IProcessable proc)
                 {
                     processedWindows.Add(proc);
+                }
+
+                if (win.Value is ITickable tickable)
+                {
+                    tickableWindows.Add(tickable);
                 }
             }
 
@@ -112,6 +118,14 @@ namespace DosinisSDK.Core
             foreach (var processed in processedWindows)
             {
                 processed.Process(delta);
+            }
+        }
+
+        public void Tick()
+        {
+            foreach (var tickable in tickableWindows)
+            {
+                tickable.Tick();
             }
         }
     }
