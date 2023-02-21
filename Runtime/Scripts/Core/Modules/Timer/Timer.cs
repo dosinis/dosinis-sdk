@@ -15,9 +15,9 @@ namespace DosinisSDK.Core
             coroutineManager = app.GetModule<CoroutineManager>();
         }
 
-        public ITimedAction Delay(float delay, Action done)
+        public ITimedAction Delay(float delay, Action done, bool realtime = true)
         {
-            return new TimedAction(coroutineManager.Begin(DelayCoroutine(delay, done)));
+            return new TimedAction(coroutineManager.Begin(DelayCoroutine(delay, done, realtime)));
         }
         
         public ITimedAction Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f)
@@ -40,9 +40,13 @@ namespace DosinisSDK.Core
             return new TimedAction(coroutineManager.Begin(WaitUntilCoroutine(condition, onComplete)));
         }
 
-        private IEnumerator DelayCoroutine(float delay, Action done)
+        private IEnumerator DelayCoroutine(float delay, Action done, bool realtime = true)
         {
-            yield return new WaitForSecondsRealtime(delay);
+            if (realtime)
+                yield return new WaitForSecondsRealtime(delay);
+            else 
+                yield return new WaitForSeconds(delay);
+            
             done();
         }
 
