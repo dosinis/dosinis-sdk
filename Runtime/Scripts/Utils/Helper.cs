@@ -50,28 +50,20 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
-        /// Returns -1 when targetPoint is to the left, 1 to the right, and 0 if it's in front/behind
+        /// Returns -1 when targetPoint is to the left, 1 to the right
         /// </summary>
-        /// <param name="fwd">transform forward</param>
-        /// <param name="up">transform up</param>
-        /// <param name="targetPoint">target point</param>
         /// <returns></returns>
-        public static int GetTargetDirection(Vector3 fwd, Vector3 up, Vector3 targetPoint)
+        public static int GetTargetDirection(Transform transform, Vector3 targetPosition)
         {
-            var cross = Vector3.Cross(fwd, targetPoint);
-            var dot = Vector3.Dot(cross, up);
-
-            if (dot > 0f)
-            {
-                return 1;
-            }
-
-            if (dot < 0.0)
+            var targetDir = targetPosition - transform.position;
+            var dir = Vector3.SignedAngle(targetDir, transform.forward, Vector3.up);
+            
+            if (dir > -1)
             {
                 return -1;
             }
 
-            return 0;
+            return 1;
         }
 
         /// <summary>
