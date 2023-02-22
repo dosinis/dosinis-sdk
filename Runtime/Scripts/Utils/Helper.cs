@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Random = UnityEngine.Random;
 
 namespace DosinisSDK.Utils
 {
@@ -23,6 +21,7 @@ namespace DosinisSDK.Utils
             {
                 return Random.Range(0f, 100f) <= chance;
             }
+
             return Random.Range(0f, 1f) <= chance;
         }
 
@@ -34,20 +33,45 @@ namespace DosinisSDK.Utils
         {
             return Random.Range(1, 101) <= chance;
         }
-        
+
         /// <summary>
         /// Returns the same angle from eulerAngles, that is displayed in the inspector
         /// </summary>
-        /// <param name="angle"></param>
+        /// <param name="angle">initial euler angle</param>
         /// <returns></returns>
         public static float TranslateEulerAngles(float angle)
         {
             angle %= 360;
-            
+
             if (angle > 180)
                 return angle - 360;
 
             return angle;
+        }
+
+        /// <summary>
+        /// Returns -1 when targetPoint is to the left, 1 to the right, and 0 if it's in front/behind
+        /// </summary>
+        /// <param name="fwd">transform forward</param>
+        /// <param name="up">transform up</param>
+        /// <param name="targetPoint">target point</param>
+        /// <returns></returns>
+        public static int GetTargetDirection(Vector3 fwd, Vector3 up, Vector3 targetPoint)
+        {
+            var cross = Vector3.Cross(fwd, targetPoint);
+            var dot = Vector3.Dot(cross, up);
+
+            if (dot > 0f)
+            {
+                return 1;
+            }
+
+            if (dot < 0.0)
+            {
+                return -1;
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -58,16 +82,17 @@ namespace DosinisSDK.Utils
         {
             return Random.Range(int.MinValue, int.MaxValue).ToString("x");
         }
-        
+
         /// <summary>
         /// Returns uid of such length and format '4a9d0f064a9d0f06'
         /// </summary>
         /// <returns></returns>
         public static string Uid()
         {
-            return Random.Range(int.MinValue, int.MaxValue).ToString("x") + Random.Range(int.MinValue, int.MaxValue).ToString("x");
+            return Random.Range(int.MinValue, int.MaxValue).ToString("x") +
+                   Random.Range(int.MinValue, int.MaxValue).ToString("x");
         }
-        
+
         /// <summary>
         /// Checks if mouse or finger is over UI element
         /// </summary>
@@ -84,12 +109,11 @@ namespace DosinisSDK.Utils
 
             return EventSystem.current.IsPointerOverGameObject();
         }
-        
+
         /// <summary>
         /// Converts Dictionary to json. Useful for analytics data.
         /// NOTE: collection nesting support is up to one layer only.
         /// </summary>
-        /// <param name="dictionary"></param>
         /// <returns></returns>
         public static string ConvertDictionaryToJson(Dictionary<string, object> dictionary)
         {
