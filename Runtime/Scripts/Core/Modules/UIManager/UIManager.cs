@@ -7,7 +7,7 @@ namespace DosinisSDK.Core
     public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
         public Camera Camera { get; private set; }
-        
+
         private readonly Dictionary<Type, IWindow> windows = new();
         private readonly List<IProcessable> processedWindows = new();
         private readonly List<ITickable> tickableWindows = new();
@@ -51,7 +51,7 @@ namespace DosinisSDK.Core
 
             if (windows.TryGetValue(wType, out IWindow window))
             {
-                return (T) window;
+                return (T)window;
             }
 
             foreach (var w in windows)
@@ -65,6 +65,30 @@ namespace DosinisSDK.Core
 
             LogError($"No Window {typeof(T).Name} is available!");
             return default;
+        }
+
+        public bool TryGetWindow<T>(out T window) where T : IWindow
+        {
+            var wType = typeof(T);
+
+            if (windows.TryGetValue(wType, out IWindow win))
+            {
+                window = (T)win;
+                return true;
+            }
+
+            foreach (var w in windows)
+            {
+                if (w.Value is T value)
+                {
+                    windows.Add(wType, w.Value);
+                    window = value;
+                    return true;
+                }
+            }
+
+            window = default;
+            return false;
         }
 
         public bool IsWindowReady<T>() where T : IWindow
@@ -94,17 +118,18 @@ namespace DosinisSDK.Core
 
             if (window.Initialized == false)
                 window.Init(app);
-            
+
             window.Show(callBack, onHidden);
         }
-        
-        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null) where T : IWindowWithArgs<TArgs>
+
+        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null)
+            where T : IWindowWithArgs<TArgs>
         {
             var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
-            
+
             if (window.Initialized == false)
                 window.Init(app);
-            
+
             window.Show(args, callBack, onHidden);
         }
 

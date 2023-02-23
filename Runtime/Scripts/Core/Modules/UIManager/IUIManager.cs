@@ -7,6 +7,7 @@ namespace DosinisSDK.Core
     {
         Camera Camera { get; }
         T GetWindow<T>() where T : IWindow;
+        bool TryGetWindow<T>(out T window) where T : IWindow;
         bool IsWindowReady<T>() where T : IWindow;
         void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : IWindow;
         void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null)
