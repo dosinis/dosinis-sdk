@@ -34,7 +34,7 @@ namespace DosinisSDK.UI
                 scaleTarget = GetComponent<RectTransform>();
             }
 
-            if (scaleDuration > fadeDuration)
+            if (useScale && scaleDuration > fadeDuration)
             {
                 Debug.LogWarning("Scale duration is longer than fade duration. This may cause unexpected behaviour.");
             }
