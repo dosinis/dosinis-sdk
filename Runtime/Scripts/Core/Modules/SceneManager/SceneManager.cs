@@ -41,7 +41,7 @@ namespace DosinisSDK.Core
 
             loadSceneOperation.allowSceneActivation = switchLoadedScene;
             
-            while (!loadSceneOperation.isDone)
+            while (loadSceneOperation.isDone == false && loadSceneOperation.progress < 0.9f)
             {
                 yield return null;
                 SceneLoadProgress = loadSceneOperation.progress;
@@ -50,7 +50,7 @@ namespace DosinisSDK.Core
             SceneLoadProgress = 1;
             
             yield return new WaitForSeconds(0.1f);
-            
+
             done?.Invoke();
         }
         
