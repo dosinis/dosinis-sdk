@@ -25,6 +25,14 @@ namespace DosinisSDK.Core
             return list[UnityRandom.Range(0, list.Count)];
         }
         
+        public static T Random<T>(this IReadOnlyList<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[UnityRandom.Range(0, list.Count)];
+        }
+        
         public static int RandomIndex<T>(this T[] array)
         {
             if (array.Length == 0)
