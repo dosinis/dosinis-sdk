@@ -316,7 +316,7 @@ namespace DosinisSDK.Core
 
             Debug.Log("Setting up scene modules...");
 
-            void setupScene(Scene scene)
+            async Task setupScene(Scene scene)
             {
                 var sceneModules = FindObjectsOfType<SceneModule>();
 
@@ -331,6 +331,11 @@ namespace DosinisSDK.Core
                     else
                     {
                         RegisterModule(module);
+
+                        if (module is IAsyncModule asyncModule)
+                        {
+                            await asyncModule.InitAsync(this);
+                        }
                     }
                 }
 
@@ -338,6 +343,11 @@ namespace DosinisSDK.Core
                 if (foundUIManager != null)
                 {
                     RegisterModule(foundUIManager);
+
+                    if (foundUIManager is IAsyncModule asyncModule)
+                    {
+                        await asyncModule.InitAsync(this);
+                    }
                 }
                 else
                 {
@@ -347,13 +357,13 @@ namespace DosinisSDK.Core
 
             await Task.Delay(1); // Tiny delay for scene to be completely loaded (next frame)
             
-            setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            await setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
             SceneManager.OnSceneChanged += (oldScene, newScene) =>
             {
                 Debug.Log($"Scene was changed into {newScene.name}");
                 CleanupSceneModules();
-                setupScene(newScene);
+                Task.Run(() => setupScene(newScene));
             };
 
             Initialized = true;
