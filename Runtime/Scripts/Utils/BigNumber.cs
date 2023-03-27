@@ -115,24 +115,24 @@ namespace DosinisSDK.Utils
 
         // Compression
 
-        public static BigNumber FromCompressedInt(int compressedInt, int presicionDigitsCount = 6)
+        public static BigNumber FromCompressedInt(int compressedInt, int precisionDigitsCount = 6)
         {
-            if (compressedInt < BigInteger.Pow(10, presicionDigitsCount))
+            if (compressedInt < BigInteger.Pow(10, precisionDigitsCount))
             {
                 return compressedInt;
             }
 
             string numString = compressedInt.ToString();
 
-            int.TryParse(numString.Substring(0, numString.Length - presicionDigitsCount), out int zeroesCount);
-            int.TryParse(numString.Substring(numString.Length - presicionDigitsCount, presicionDigitsCount), out int num);
+            int.TryParse(numString.Substring(0, numString.Length - precisionDigitsCount), out int zeroesCount);
+            int.TryParse(numString.Substring(numString.Length - precisionDigitsCount, precisionDigitsCount), out int num);
 
             return num * BigInteger.Pow(10, zeroesCount);
         }
 
-        public int ConvertToCompressedInt(int presicionDigitsCount = 6)
+        public int ConvertToCompressedInt(int precisionDigitsCount = 6)
         {
-            return Value.ToCompressedInt(presicionDigitsCount);
+            return Value.ToCompressedInt(precisionDigitsCount);
         }
 
         // String
