@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace DosinisSDK.Core
 {
     [RequireComponent(typeof(Image))]
-    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, IPointerEnterHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    public class Button : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
     {
         // Properties
         
@@ -63,7 +63,7 @@ namespace DosinisSDK.Core
             buttonAnimation?.PressAnimation();
         }
 
-        public virtual void OnPointerUp(PointerEventData eventData)
+        public virtual void OnPointerClick(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
@@ -102,31 +102,6 @@ namespace DosinisSDK.Core
             mouseOverObject = true;
         }
         
-        public virtual void OnBeginDrag(PointerEventData eventData)
-        {
-            if (scrollRectParent != null)
-            {
-                scrollRectParent.OnBeginDrag(eventData);
-            }
-        }
-        
-        public virtual void OnDrag(PointerEventData eventData)
-        {
-            if (scrollRectParent != null)
-            {
-                scrollRectParent.OnDrag(eventData);
-            }
-        }
-        
-        public virtual void OnEndDrag(PointerEventData eventData)
-        {
-            if (scrollRectParent != null)
-            {
-                scrollRectParent.OnEndDrag(eventData);
-                OnPointerExit(eventData);
-            }
-        }
-
         protected virtual void Awake()
         {
             buttonAnimation = GetComponent<IButtonAnimation>();
@@ -134,8 +109,6 @@ namespace DosinisSDK.Core
             
             buttonAnimation?.Init();
 
-            scrollRectParent = GetComponentInParent<ScrollRect>();
-            
             buttonAnimation?.OnInteractableStateChanged(interactable);
         }
 
