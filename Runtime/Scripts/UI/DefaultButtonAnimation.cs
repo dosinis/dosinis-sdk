@@ -1,6 +1,7 @@
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
 using System.Collections;
+using DosinisSDK.Inspector;
 using DosinisSDK.Utils;
 using UnityEngine;
 
@@ -11,15 +12,20 @@ namespace DosinisSDK.UI
         [SerializeField] private float scaleRatio = 0.9f;
         [SerializeField] private float animationDuration = 0.1f;
         [SerializeField] private bool interactableAffectsAlpha = false;
-
+        [SerializeField] private bool highlightOnMouseOver = false;
         [SerializeField] private AudioClip clickSfx;
+        [ShowIf("highlightOnMouseOver", true)] 
+        [SerializeField] private Color highlightColor = Color.gray;
 
         private Vector3 startScale;
-
+        private Color initColor;
+        private Button button;
         private IAudioManager audioManager;
 
         public void Init()
         {
+            button = GetComponent<Button>();
+            initColor = button.Image.color;
             startScale = transform.localScale;
 
             if (clickSfx && audioManager == null)
@@ -50,7 +56,39 @@ namespace DosinisSDK.UI
         {
             if (interactableAffectsAlpha)
             {
-                GetComponent<Button>().Image.SetAlpha(value ? 1f : 0.8f);
+                button.Image.SetAlpha(value ? 1f : 0.8f);
+            }
+        }
+
+        public void Highlight(bool value)
+        {
+            if (highlightOnMouseOver)
+            {
+                StartCoroutine(value ? HighlightAnimationRoutine() : UnhighlightAnimationRoutine());
+            }
+        }
+        
+        private IEnumerator HighlightAnimationRoutine()
+        {
+            float t = 0f;
+
+            while (t < 1)
+            {
+                button.Image.color = Color.Lerp(initColor, highlightColor, t);
+                t += Time.deltaTime / animationDuration;
+                yield return null;
+            }
+        }
+        
+        private IEnumerator UnhighlightAnimationRoutine()
+        {
+            float t = 0f;
+
+            while (t < 1)
+            {
+                button.Image.color = Color.Lerp(highlightColor, initColor, t);
+                t += Time.deltaTime / animationDuration;
+                yield return null;
             }
         }
 

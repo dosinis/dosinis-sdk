@@ -90,6 +90,7 @@ namespace DosinisSDK.Core
             heldDown = false;
             
             buttonAnimation?.ReleaseAnimation();
+            buttonAnimation?.Highlight(false);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -100,6 +101,8 @@ namespace DosinisSDK.Core
             OnPointerEntered?.Invoke();
 
             mouseOverObject = true;
+            
+            buttonAnimation?.Highlight(true);
         }
         
         protected virtual void Awake()
@@ -108,7 +111,6 @@ namespace DosinisSDK.Core
             image = GetComponent<Image>();
             
             buttonAnimation?.Init();
-
             buttonAnimation?.OnInteractableStateChanged(interactable);
         }
 
