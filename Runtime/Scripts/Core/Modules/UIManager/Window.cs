@@ -22,7 +22,8 @@ namespace DosinisSDK.Core
         public bool Initialized { get; private set; }
 
         private RectTransform rect;
-        private Action hideCallback;
+        private Action hiddenCallback;
+        private Action beforeHideCallback;
         protected IApp app;
 
         void IWindow.Init(IApp app)
@@ -84,14 +85,15 @@ namespace DosinisSDK.Core
             Show(() => { });
         }
 
-        public void Show(Action done, Action onHidden = null)
+        public void Show(Action done, Action onHidden = null, Action onBeforeHide = null)
         {
             gameObject.SetActive(true);
 
             OnBeforeShow?.Invoke();
             BeforeShown();
 
-            hideCallback += onHidden;
+            hiddenCallback += onHidden;
+            beforeHideCallback += onBeforeHide;
 
             if (transition != null)
             {
@@ -114,10 +116,22 @@ namespace DosinisSDK.Core
             }           
         }
 
-        public void ForwardTo<T>() where T : IWindow
+        public void ForwardTo<T>(bool waitUntilHidden = true) where T : IWindow
         {
-            Hide();
-            app.UIManager.ShowWindow<T>(onHidden: Show);
+            var window = app.UIManager.GetWindow<T>();
+            
+            if (waitUntilHidden)
+            {
+                Hide(() =>
+                {
+                    window.Show(null, onHidden: Show);
+                });
+            }
+            else
+            {
+                Hide();
+                window.Show(null, onBeforeHide: Show);
+            }
         }
 
         public void Hide()
@@ -127,11 +141,11 @@ namespace DosinisSDK.Core
 
         public void Hide(Action done)
         {
-            hideCallback?.Invoke();
-            hideCallback = null;
-
             OnBeforeHide?.Invoke();
             BeforeHidden();
+            
+            beforeHideCallback?.Invoke();
+            beforeHideCallback = null;
 
             if (transition != null)
             {
@@ -141,6 +155,9 @@ namespace DosinisSDK.Core
                     Hidden();
                     OnHidden?.Invoke();
 
+                    hiddenCallback?.Invoke();
+                    hiddenCallback = null;
+                    
                     IsShown = false;
                     done?.Invoke();
                 });
@@ -151,6 +168,9 @@ namespace DosinisSDK.Core
                 Hidden();
                 OnHidden?.Invoke();
 
+                hiddenCallback?.Invoke();
+                hiddenCallback = null;
+                
                 IsShown = false;
                 done?.Invoke();
             }

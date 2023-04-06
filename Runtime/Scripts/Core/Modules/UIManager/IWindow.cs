@@ -16,8 +16,8 @@ namespace DosinisSDK.Core
         bool Initialized { get; }
 
         void Show();
-        void Show(Action done, Action onHidden = null);
-        void ForwardTo<T>() where T : IWindow;
+        void Show(Action done, Action onHidden = null, Action onBeforeHide = null);
+        void ForwardTo<T>(bool waitUntilHidden = false) where T : IWindow;
         void Hide();
         void Hide(Action done);
     }

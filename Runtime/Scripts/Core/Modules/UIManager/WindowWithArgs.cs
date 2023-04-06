@@ -6,16 +6,16 @@ namespace DosinisSDK.Core
     {
         protected T args;
         
-        public virtual void Show(T args, Action done = null, Action onHidden = null)
+        public virtual void Show(T args, Action done = null, Action onHidden = null, Action onBeforeHide = null)
         {
             this.args = args;
-            Show(done, onHidden);
+            Show(done, onHidden, onBeforeHide);
         }
     }
 
     public interface IWindowWithArgs<in T> : IWindow
     {
-        void Show(T args, Action done = null, Action onHidden = null);
+        void Show(T args, Action done = null, Action onHidden = null, Action onBeforeHide = null);
     }
 }
 

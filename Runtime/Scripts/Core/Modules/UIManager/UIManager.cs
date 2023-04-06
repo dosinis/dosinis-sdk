@@ -14,7 +14,7 @@ namespace DosinisSDK.Core
 
         protected override void OnInit(IApp app)
         {
-            foreach (IWindow win in GetComponentsInChildren<IWindow>(true))
+            foreach (var win in GetComponentsInChildren<IWindow>(true))
             {
                 windows.Add(win.GetType(), win);
             }
@@ -112,17 +112,17 @@ namespace DosinisSDK.Core
             return false;
         }
 
-        public void ShowWindow<T>(Action callBack = null, Action onHidden = null) where T : IWindow
+        public void ShowWindow<T>(Action callBack = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow
         {
             var window = GetWindow<T>();
 
             if (window.Initialized == false)
                 window.Init(app);
 
-            window.Show(callBack, onHidden);
+            window.Show(callBack, onHidden, onBeforeHide);
         }
 
-        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null)
+        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null, Action onBeforeHide = null)
             where T : IWindowWithArgs<TArgs>
         {
             var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
@@ -130,7 +130,7 @@ namespace DosinisSDK.Core
             if (window.Initialized == false)
                 window.Init(app);
 
-            window.Show(args, callBack, onHidden);
+            window.Show(args, callBack, onHidden, onBeforeHide);
         }
 
         public void HideWindow<T>(Action callBack = null) where T : IWindow
