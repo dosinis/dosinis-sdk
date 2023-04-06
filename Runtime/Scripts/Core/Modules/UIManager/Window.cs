@@ -39,6 +39,7 @@ namespace DosinisSDK.Core
             }
 
             rect = GetComponent<RectTransform>();
+            
 #if UNITY_STANDALONE == false
             if (ignoreSafeArea == false)
                 ApplySafeArea();
@@ -113,6 +114,12 @@ namespace DosinisSDK.Core
             }           
         }
 
+        public void ForwardTo<T>() where T : IWindow
+        {
+            Hide();
+            app.UIManager.ShowWindow<T>(onHidden: Show);
+        }
+
         public void Hide()
         {
             Hide(() => { });
@@ -178,6 +185,7 @@ namespace DosinisSDK.Core
         protected virtual void Hidden()
         {
         }
+        
 #if UNITY_STANDALONE == false
         // NOTE: This might apply safe area wrongly in Game view (it works on DeviceSimulator though)
         private void ApplySafeArea()

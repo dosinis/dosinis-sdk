@@ -17,6 +17,7 @@ namespace DosinisSDK.Core
 
         void Show();
         void Show(Action done, Action onHidden = null);
+        void ForwardTo<T>() where T : IWindow;
         void Hide();
         void Hide(Action done);
     }
