@@ -26,17 +26,15 @@ namespace DosinisSDK.Core
             loadSceneOperation.allowSceneActivation = true;
         }
 
-        public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, Action done = null)
+        public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, float delay = 0f, Action done = null)
         {
-            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, done));
+            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, delay, done));
         }
         
-        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, Action done)
+        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, float delay, Action done)
         {
             SceneLoadProgress = 0;
-
-            yield return new WaitForSeconds(0.5f);
-
+            
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
 
             loadSceneOperation.allowSceneActivation = switchLoadedScene;
@@ -49,7 +47,7 @@ namespace DosinisSDK.Core
 
             SceneLoadProgress = 1;
             
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(delay);
 
             done?.Invoke();
         }
