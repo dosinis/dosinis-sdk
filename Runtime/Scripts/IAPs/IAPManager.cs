@@ -29,12 +29,12 @@ namespace DosinisSDK.IAPs
         /// <summary>
         /// Get GooglePlay store public key from generated script - GooglePlayTangle.Data()
         /// </summary>
-        public Func<byte[]> GooglePublicKeyHandler { get; set; }
+        public static Func<byte[]> GooglePublicKeyHandler { get; set; }
 
         /// <summary>
         /// Get Apple store public key from generated script - AppleTangle.Data()
         /// </summary>
-        public Func<byte[]> ApplePublicKeyHandler { get; set; }
+        public static Func<byte[]> ApplePublicKeyHandler { get; set; }
         
         // IAPManager
 
@@ -44,8 +44,7 @@ namespace DosinisSDK.IAPs
 
             foreach (var handler in config.purchaseHandlers)
             {
-                RegisterProduct(handler.productId, handler.productType,
-                    () => OnProductPurchased?.Invoke(handler.productId));
+                RegisterProduct(handler.productId, handler.productType, handler.HandlePurchase);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
