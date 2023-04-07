@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     {
         protected Window parentWindow;
 
-        internal void Init(Window parentWindow)
+        internal void Init(IApp app, Window parentWindow)
         {
             this.parentWindow = parentWindow;
             parentWindow.OnShown += OnWindowShown;
@@ -14,7 +14,7 @@ namespace DosinisSDK.Core
             parentWindow.OnBeforeShow += OnWindowBeforeShow;
             parentWindow.OnBeforeHide += OnWindowBeforeHide;
 
-            OnInit();
+            OnInit(app);
         }
 
         internal void Dispose()
@@ -22,7 +22,7 @@ namespace DosinisSDK.Core
             OnDispose();
         }
 
-        protected virtual void OnInit()
+        protected virtual void OnInit(IApp app)
         {
         }
 

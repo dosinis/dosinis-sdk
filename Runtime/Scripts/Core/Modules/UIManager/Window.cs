@@ -49,7 +49,7 @@ namespace DosinisSDK.Core
 
             foreach (var widget in widgets)
             {
-                widget.Init(this);
+                widget.Init(app, this);
             }
 
             if (closeButton) 
