@@ -359,11 +359,11 @@ namespace DosinisSDK.Core
             
             await setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
-            SceneManager.OnSceneChanged += (oldScene, newScene) =>
+            SceneManager.OnSceneChanged += async (oldScene, newScene) =>
             {
                 Debug.Log($"Scene was changed into {newScene.name}");
                 CleanupSceneModules();
-                Task.Run(() => setupScene(newScene));
+                await setupScene(newScene);
             };
 
             Initialized = true;
