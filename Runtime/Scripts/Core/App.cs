@@ -252,14 +252,14 @@ namespace DosinisSDK.Core
 
         private void CleanupSceneModules()
         {
-            var duplicateModules = new List<IModule>();
+            var expiredSceneModules = new List<Type>();
 
             foreach (var cache in cachedModules)
             {
                 if (cache.Value is not SceneModule sceneModule) 
                     continue;
                 
-                duplicateModules.Add(sceneModule);
+                expiredSceneModules.Add(cache.Key);
                     
                 if (sceneModule is IProcessable processable)
                 {
@@ -277,9 +277,9 @@ namespace DosinisSDK.Core
                 }
             }
 
-            foreach (var module in duplicateModules)
+            foreach (var type in expiredSceneModules)
             {
-                cachedModules.Remove(module.GetType());
+                cachedModules.Remove(type);
             }
         }
         
