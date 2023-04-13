@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Random = UnityEngine.Random;
 
 namespace DosinisSDK.Utils
 {
@@ -34,6 +36,11 @@ namespace DosinisSDK.Utils
             return Random.Range(1, 101) <= chance;
         }
 
+        public static T GetRandomEnum<T>() where T : struct, Enum
+        {
+            return Enum.Parse<T>(Random.Range(0, Enum.GetNames(typeof(T)).Length).ToString());
+        }
+        
         /// <summary>
         /// Returns the same angle from eulerAngles, that is displayed in the inspector
         /// </summary>
