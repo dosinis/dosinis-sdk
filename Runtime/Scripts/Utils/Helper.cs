@@ -93,6 +93,20 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
+        /// Sets UI element position to mouse position
+        /// </summary>
+        /// <param name="element">target UI element</param>
+        /// <param name="camera">Camera that is used in canvas</param>
+        public static void SetElementPosToMouse(Transform element, Camera camera)
+        {
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(element.parent as RectTransform, 
+                    Input.mousePosition, camera, out var localPoint))
+            {
+                element.localPosition = localPoint;
+            }
+        }
+
+        /// <summary>
         /// Checks if mouse or finger is over UI element
         /// </summary>
         /// <returns></returns>
