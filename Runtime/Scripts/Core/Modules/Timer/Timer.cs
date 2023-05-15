@@ -8,11 +8,11 @@ namespace DosinisSDK.Core
     {
         private readonly WaitForEndOfFrame skipFrame = new();
         private readonly WaitForFixedUpdate skipFixedUpdate = new();
-        private CoroutineManager coroutineManager;
+        private ICoroutineManager coroutineManager;
 
         protected override void OnInit(IApp app)
         {
-            coroutineManager = app.GetModule<CoroutineManager>();
+            coroutineManager = app.GetModule<ICoroutineManager>();
         }
 
         public ITimedAction Delay(float delay, Action done, bool realtime = true)
