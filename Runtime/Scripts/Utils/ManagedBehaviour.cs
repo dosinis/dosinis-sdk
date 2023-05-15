@@ -6,6 +6,8 @@ namespace DosinisSDK.Utils
     public abstract class ManagedBehaviour : MonoBehaviour
     {
         [SerializeField] private bool skipFrame;
+
+        private IApp app;
         
         private async void Awake()
         {
@@ -20,8 +22,9 @@ namespace DosinisSDK.Utils
                 
                 return;
             }
-            
-            OnInit(App.Core);
+
+            app = App.Core;
+            OnInit(app);
         }
 
         /// <summary>
