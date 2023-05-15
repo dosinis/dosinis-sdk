@@ -71,10 +71,7 @@ namespace DosinisSDK.Core
             OnReleased?.Invoke();
             buttonAnimation?.ReleaseAnimation();
 
-            if (mouseOverObject && heldDown)
-            {
-                ClickPerformed();
-            }
+            ClickPerformed();
 
             heldDown = false;
         }
@@ -93,7 +90,7 @@ namespace DosinisSDK.Core
             buttonAnimation?.Highlight(false);
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
+        public virtual void OnPointerEnter(PointerEventData eventData)
         {
             if (interactable == false)
                 return;
