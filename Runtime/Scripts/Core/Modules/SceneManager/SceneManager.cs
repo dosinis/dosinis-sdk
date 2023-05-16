@@ -35,6 +35,8 @@ namespace DosinisSDK.Core
         {
             SceneLoadProgress = 0;
             
+            yield return new WaitForSeconds(delay / 2f);
+            
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
 
             loadSceneOperation.allowSceneActivation = switchLoadedScene;
@@ -47,7 +49,7 @@ namespace DosinisSDK.Core
 
             SceneLoadProgress = 1;
             
-            yield return new WaitForSeconds(delay);
+            yield return new WaitForSeconds(delay / 2f);
 
             done?.Invoke();
         }

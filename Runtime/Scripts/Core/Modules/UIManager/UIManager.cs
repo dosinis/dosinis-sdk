@@ -112,6 +112,7 @@ namespace DosinisSDK.Core
             return false;
         }
 
+        // ReSharper disable once MethodOverloadWithOptionalParameter
         public void ShowWindow<T>(Action callBack = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow
         {
             var window = GetWindow<T>();
@@ -120,6 +121,11 @@ namespace DosinisSDK.Core
                 window.Init(app);
 
             window.Show(callBack, onHidden, onBeforeHide);
+        }
+
+        public void ShowWindow<T>() where T : IWindow
+        {
+            ShowWindow<T>(null);
         }
 
         public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action callBack = null, Action onHidden = null, Action onBeforeHide = null)
@@ -133,9 +139,14 @@ namespace DosinisSDK.Core
             window.Show(args, callBack, onHidden, onBeforeHide);
         }
 
-        public void HideWindow<T>(Action callBack = null) where T : IWindow
+        public void HideWindow<T>(Action callBack) where T : IWindow
         {
             GetWindow<T>().Hide(callBack);
+        }
+
+        public void HideWindow<T>() where T : IWindow
+        {
+            HideWindow<T>(null);
         }
 
         void IProcessable.Process(in float delta)
