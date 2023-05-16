@@ -259,7 +259,20 @@ namespace DosinisSDK.Utils
         {
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, value);
         }
-        
+
+        public static Vector3 GetRandomPointAround(this Transform transform, float maxDist, float minDist = 0f)
+        {
+            var randomRadius = Random.Range(minDist, maxDist);
+            var randomAngle = Random.Range(0f, 2f * Mathf.PI);
+
+            var x = transform.position.x + randomRadius * Mathf.Cos(randomAngle);
+            var z = transform.position.z + randomRadius * Mathf.Sin(randomAngle);
+
+            var randomPoint = new Vector3(x, transform.position.y, z);
+            
+            return randomPoint;
+        }
+
         // Color
 
         public static Color SetAlpha(ref this Color color, float alpha)
