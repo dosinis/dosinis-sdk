@@ -164,9 +164,9 @@ namespace DosinisSDK.Core
                 module.Init(this, mConfig);
             }
             
-            if (module is IProcessable processabe)
+            if (module is IProcessable processable)
             {
-                processables.Add(processabe);
+                processables.Add(processable);
             }
 
             if (module is IFixedProcessable fixedProcessable)
