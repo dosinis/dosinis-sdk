@@ -1,6 +1,6 @@
+using System.Collections;
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
-using System.Collections;
 using DosinisSDK.Inspector;
 using DosinisSDK.Utils;
 using UnityEngine;
@@ -67,7 +67,12 @@ namespace DosinisSDK.UI
                 StartCoroutine(value ? HighlightAnimationRoutine() : UnhighlightAnimationRoutine());
             }
         }
-        
+
+        private void OnDisable()
+        {
+            button.Image.color = initColor;
+        }
+
         private IEnumerator HighlightAnimationRoutine()
         {
             float t = 0f;
