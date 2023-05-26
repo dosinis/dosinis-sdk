@@ -98,6 +98,14 @@ namespace DosinisSDK.Core
                 (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
             }
         }
+
+        public static void ClearValues<T>(this T[] array)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                array[i] = default;
+            }
+        }
         
         public static int Count(this IEnumerable collection)
         {
