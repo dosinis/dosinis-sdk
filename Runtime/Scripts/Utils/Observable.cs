@@ -25,7 +25,7 @@ namespace DosinisSDK.Utils
 		}
 
 		public event Action<T> OnValueChanged;
-		public event Action<T,T> OnValueAboutToChangeDelta; // previous, final
+		public event Action<T,T> OnValueAboutToChangeDelta;
 
 		public Observable(T value)
 		{
@@ -46,7 +46,13 @@ namespace DosinisSDK.Utils
     public interface IObservable<out T>
     {
 	    T Value { get; }
+	    /// <summary>
+	    /// The argument is the final value.
+	    /// </summary>
 	    event Action<T> OnValueChanged;
+	    /// <summary>
+	    /// The first argument is the previous value, the second argument is the final value.
+	    /// </summary>
 	    event Action<T,T> OnValueAboutToChangeDelta;
     }
 }
