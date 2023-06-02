@@ -69,7 +69,7 @@ namespace DosinisSDK.UI
             }
         }
 
-        private void OnEnable()
+        private void OnDisable()
         {
             if (interactableAffectsColor)
             {
