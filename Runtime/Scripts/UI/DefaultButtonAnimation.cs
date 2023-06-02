@@ -2,7 +2,6 @@ using System.Collections;
 using DosinisSDK.Audio;
 using DosinisSDK.Core;
 using DosinisSDK.Inspector;
-using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.UI
@@ -11,7 +10,9 @@ namespace DosinisSDK.UI
     {
         [SerializeField] private float scaleRatio = 0.9f;
         [SerializeField] private float animationDuration = 0.1f;
-        [SerializeField] private bool interactableAffectsAlpha = false;
+        [SerializeField] private bool interactableAffectsColor = false;
+        [ShowIf("interactableAffectsColor", true)] 
+        [SerializeField] private Color notInteractiveColor = Color.gray;
         [SerializeField] private bool highlightOnMouseOver = false;
         [ShowIf("highlightOnMouseOver", true)] 
         [SerializeField] private Color highlightColor = Color.gray;
@@ -54,9 +55,9 @@ namespace DosinisSDK.UI
 
         public void OnInteractableStateChanged(bool value)
         {
-            if (interactableAffectsAlpha)
+            if (interactableAffectsColor)
             {
-                button.Image.SetAlpha(value ? 1f : 0.8f);
+                button.Image.color = value ? initColor : notInteractiveColor;
             }
         }
 
