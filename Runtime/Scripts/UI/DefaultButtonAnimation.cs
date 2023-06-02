@@ -10,7 +10,7 @@ namespace DosinisSDK.UI
     {
         [SerializeField] private float scaleRatio = 0.9f;
         [SerializeField] private float animationDuration = 0.1f;
-        [SerializeField] private bool interactableAffectsColor = false;
+        [SerializeField] private bool interactableAffectsColor = true;
         [ShowIf("interactableAffectsColor", true)] 
         [SerializeField] private Color notInteractiveColor = Color.gray;
         [SerializeField] private bool highlightOnMouseOver = false;
@@ -71,7 +71,14 @@ namespace DosinisSDK.UI
 
         private void OnEnable()
         {
-            OnInteractableStateChanged(button.Interactable);
+            if (interactableAffectsColor)
+            {
+                OnInteractableStateChanged(button.Interactable);
+            }
+            else
+            {
+                button.Image.color = initColor;
+            }
         }
 
         private IEnumerator HighlightAnimationRoutine()
