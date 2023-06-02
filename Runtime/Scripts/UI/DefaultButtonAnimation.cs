@@ -69,9 +69,9 @@ namespace DosinisSDK.UI
             }
         }
 
-        private void OnDisable()
+        private void OnEnable()
         {
-            button.Image.color = initColor;
+            OnInteractableStateChanged(button.Interactable);
         }
 
         private IEnumerator HighlightAnimationRoutine()
