@@ -46,5 +46,13 @@ namespace DosinisSDK.Pool
 
             return newParticleSys;
         }
+        
+        public ParticleSystem Play(Vector3 position)
+        {
+            var ps = Play();
+            ps.gameObject.transform.position = position;
+
+            return ps;
+        }
     }
 }
