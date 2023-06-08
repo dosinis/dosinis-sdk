@@ -17,7 +17,7 @@ namespace DosinisSDK.Inspector
         }
 
         /// <summary>
-        /// Only draws the field only if a condition is met. Supports enum and bool and null.
+        /// Only draws the field only if a condition is met. Supports enum, int, bool and null.
         /// </summary>
         /// <param name="fieldName">The name of the property that is being compared (case sensitive).</param>
         /// <param name="comparedValue">The value the property is being compared to.</param>
