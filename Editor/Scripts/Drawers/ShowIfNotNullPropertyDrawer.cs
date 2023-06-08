@@ -5,15 +5,15 @@ using UnityEngine;
 
 namespace DosinisSDK.Editor
 {
-    [CustomPropertyDrawer(typeof(ShowIfAttribute))]
-    public class ShowIfPropertyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ShowIfNotNullAttribute))]
+    public class ShowIfNotNullPropertyDrawer : PropertyDrawer
     {
-        private ShowIfAttribute showIf;
+        private ShowIfNotNullAttribute showIf;
         private SerializedProperty comparedProperty;
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (!Show(property) && showIf.AppearingType == ShowIfAttribute.AppearType.DontDraw)
+            if (!Show(property) && showIf.AppearingType == ShowIfNotNullAttribute.AppearType.DontDraw)
             {
                 return -EditorGUIUtility.standardVerticalSpacing;
             }
@@ -45,7 +45,7 @@ namespace DosinisSDK.Editor
 
         private bool Show(SerializedProperty property)
         {
-            showIf = attribute as ShowIfAttribute;
+            showIf = attribute as ShowIfNotNullAttribute;
 
             if (showIf == null)
             {
@@ -64,26 +64,12 @@ namespace DosinisSDK.Editor
                 return true;
             }
 
-            if (showIf.ComparedValue == null && comparedProperty.objectReferenceValue == null)
-            {
-                return true;
-            }
-
-            if (showIf.ComparedValue == null && comparedProperty.objectReferenceValue != null)
+            if (comparedProperty.objectReferenceValue == null)
             {
                 return false;
             }
 
-            switch (comparedProperty.type)
-            {
-                case "bool":
-                    return comparedProperty.boolValue.Equals(showIf.ComparedValue);
-                case "Enum":
-                    return comparedProperty.enumValueIndex.Equals((int)showIf.ComparedValue);
-                default:
-                    Debug.LogError("Error: " + comparedProperty.type + " is not supported of " + path);
-                    return true;
-            }
+            return true;
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -115,7 +101,7 @@ namespace DosinisSDK.Editor
                     EditorGUI.PropertyField(position, property, label);
                 }
             }
-            else if (showIf.AppearingType == ShowIfAttribute.AppearType.ReadOnly)
+            else if (showIf.AppearingType == ShowIfNotNullAttribute.AppearType.ReadOnly)
             {
                 GUI.enabled = false;
                 EditorGUI.PropertyField(position, property, label);
