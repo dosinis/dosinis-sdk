@@ -387,38 +387,6 @@ namespace DosinisSDK.Utils
             return 0;
         }
 
-        private static string GetStringModifier(int numberOfThousands)
-        {
-            string res;
-
-            switch (numberOfThousands)
-            {
-                case 2:
-                    res = "K";
-                    break;
-
-                case 3:
-                    res = "M";
-                    break;
-
-                case 4:
-                    res = "B";
-                    break;
-
-                case 5:
-                    res = "T";
-                    break;
-
-                default:
-                    char firstLetter = (char)((numberOfThousands - 6) / 26 + 'a');
-                    char secondLetter = (char)((numberOfThousands - 6) % 26 + 'a');
-                    res = firstLetter + secondLetter.ToString();
-                    break;
-            }
-
-            return res;
-        }
-
         public static string ToPrettyFracturedString(this BigNumber number, int symbolsAfterComma = 1)
         {
             var value = number.Value;
@@ -444,8 +412,8 @@ namespace DosinisSDK.Utils
 
             var fractional = int.Parse(fractionalPart);
 
-            string res = fractional == 0 ? $"{integerPart}{GetStringModifier(numberOfThousands)}"
-                : $"{integerPart},{fractionalPart}{GetStringModifier(numberOfThousands)}";
+            string res = fractional == 0 ? $"{integerPart}{Helper.GetStringModifier(numberOfThousands)}"
+                : $"{integerPart},{fractionalPart}{Helper.GetStringModifier(numberOfThousands)}";
             
             return res;
         }
@@ -475,8 +443,8 @@ namespace DosinisSDK.Utils
 
             var fractional = int.Parse(fractionalPart);
 
-            string res = fractional == 0 ? $"{integerPart}{GetStringModifier(numberOfThousands)}"
-                : $"{integerPart},{fractionalPart}{GetStringModifier(numberOfThousands)}";
+            string res = fractional == 0 ? $"{integerPart}{Helper.GetStringModifier(numberOfThousands)}"
+                : $"{integerPart},{fractionalPart}{Helper.GetStringModifier(numberOfThousands)}";
 
             return res;
         }

@@ -122,6 +122,43 @@ namespace DosinisSDK.Utils
 
             return EventSystem.current.IsPointerOverGameObject();
         }
+        
+        /// <summary>
+        /// Returns string modifier for numbers. For example 1000 -> 1K, 1000000 -> 1M, 1000000000 -> 1B, etc.
+        /// </summary>
+        /// <param name="numberOfThousands"></param>
+        /// <returns></returns>
+        public static string GetStringModifier(int numberOfThousands)
+        {
+            string res;
+
+            switch (numberOfThousands)
+            {
+                case 2:
+                    res = "K";
+                    break;
+
+                case 3:
+                    res = "M";
+                    break;
+
+                case 4:
+                    res = "B";
+                    break;
+
+                case 5:
+                    res = "T";
+                    break;
+
+                default:
+                    char firstLetter = (char)((numberOfThousands - 6) / 26 + 'a');
+                    char secondLetter = (char)((numberOfThousands - 6) % 26 + 'a');
+                    res = firstLetter + secondLetter.ToString();
+                    break;
+            }
+
+            return res;
+        }
 
         /// <summary>
         /// Converts Dictionary to json. Useful for analytics data.
