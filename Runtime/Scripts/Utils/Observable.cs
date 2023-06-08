@@ -41,6 +41,11 @@ namespace DosinisSDK.Utils
 		{
 			return value.ToString();
 		}
+		
+		public void SetWithoutNotifying(T value)
+		{
+			this.value = value;
+		}
 	}
 
     public interface IObservable<out T>
