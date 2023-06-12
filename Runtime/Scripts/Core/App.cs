@@ -319,6 +319,8 @@ namespace DosinisSDK.Core
             async Task setupScene(Scene scene)
             {
                 var sceneModules = FindObjectsOfType<SceneModule>();
+                
+                Array.Sort(sceneModules, (a, b) => a.InitPriority.CompareTo(b.InitPriority));
 
                 IUIManager foundUIManager = null;
                 
