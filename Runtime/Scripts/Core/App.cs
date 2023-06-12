@@ -320,7 +320,7 @@ namespace DosinisSDK.Core
             {
                 var sceneModules = FindObjectsOfType<SceneModule>();
                 
-                Array.Sort(sceneModules, (a, b) => a.InitPriority.CompareTo(b.InitPriority));
+                Array.Sort(sceneModules, (a, b) => b.InitPriority.CompareTo(a.InitPriority));
 
                 IUIManager foundUIManager = null;
                 
