@@ -1,43 +1,30 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
-using System;
-using UnityEngine;
+using DosinisSDK.Core;
 
 namespace DosinisSDK.Utils
 {
-    public class Dispatcher : MonoBehaviour
+    public class Dispatcher : BehaviourModule, IProcessable
     {
-        public static bool IsOnMainThread
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    return false;
-                }
-
-                return instance.mainThread == Thread.CurrentThread;
-            }
-        }
-
         private Thread mainThread;
+        private volatile bool queued = false;
+        private List<Action> backlog = new(8);
+        private List<Action> actions = new(8);
+        
+        public bool IsOnMainThread => mainThread == Thread.CurrentThread;
 
-        private static Dispatcher instance;
-        private static volatile bool queued = false;
-        private static List<Action> backlog = new List<Action>(8);
-        private static List<Action> actions = new List<Action>(8);
-
-        public static void RunAsync(Action action)
+        public void RunAsync(Action action)
         {
             ThreadPool.QueueUserWorkItem(o => action());
         }
 
-        public static void RunAsync(Action<object> action, object state)
+        public void RunAsync(Action<object> action, object state)
         {
             ThreadPool.QueueUserWorkItem(o => action(o), state);
         }
 
-        public static void RunOnMainThread(Action action)
+        public void RunOnMainThread(Action action)
         {
             lock (backlog)
             {
@@ -46,17 +33,11 @@ namespace DosinisSDK.Utils
             }
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Initialize()
+        protected override void OnInit(IApp app)
         {
-            if (instance == null)
-            {
-                instance = new GameObject(nameof(Dispatcher)).AddComponent<Dispatcher>();
-                DontDestroyOnLoad(instance.gameObject);
-            }
         }
 
-        private void Update()
+        public void Process(in float delta)
         {
             if (mainThread == null)
             {
