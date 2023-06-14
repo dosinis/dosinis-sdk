@@ -105,11 +105,19 @@ namespace DosinisSDK.Utils
 
         // Int
 
+        /// <summary>
+        /// Returns time string in such formats: 59s; 59m 59s; 24h 59m; 30d;
+        /// </summary>
+        /// <returns></returns>
         public static string ToTimeString(this int time)
         {
             return ((long)time).ToTimeString();
         }
 
+        /// <summary>
+        /// Returns time string in 59; 59:59; 00:59:59; 30d format.
+        /// </summary>
+        /// <returns></returns>
         public static string ToDurationString(this int time)
         {
             return ((long)time).ToDurationString();
@@ -146,16 +154,28 @@ namespace DosinisSDK.Utils
 
         // Float
 
+        /// <summary>
+        /// Returns time string in F2 format (59.00).
+        /// </summary>
+        /// <returns></returns>
         public static string ToTimerString(this float time)
         {
             return $"{time:F2}";
         }
 
+        /// <summary>
+        /// Returns time string in such formats: 59s; 59m 59s; 24h 59m; 30d;
+        /// </summary>
+        /// <returns></returns>
         public static string ToTimeString(this float time)
         {
             return ((long)time).ToTimeString();
         }
         
+        /// <summary>
+        /// Returns time string in 59; 59:59; 00:59:59; 30d format.
+        /// </summary>
+        /// <returns></returns>
         public static string ToDurationString(this float time)
         {
             return ((long)time).ToDurationString();
