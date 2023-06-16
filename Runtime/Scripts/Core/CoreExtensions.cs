@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityRandom = UnityEngine.Random;
@@ -142,6 +143,27 @@ namespace DosinisSDK.Core
             else
             {
                 dictionary.Add(key, value);
+            }
+        }
+
+        /// <summary>
+        /// Removes all entries from the dictionary that match the conditions defined by the specified predicate.
+        /// </summary>
+        public static void RemoveAll<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Predicate<TValue> match)
+        {
+            var keysToRemove = new List<TKey>();
+            
+            foreach (var key in dictionary.Keys)
+            {
+                if (match(dictionary[key]))
+                {
+                    keysToRemove.Add(key);
+                }
+            }
+            
+            foreach (var key in keysToRemove)
+            {
+                dictionary.Remove(key);
             }
         }
     }
