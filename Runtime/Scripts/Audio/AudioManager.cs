@@ -46,6 +46,11 @@ namespace DosinisSDK.Audio
             SetSfxEnabled(data.isSfxEnabled);
         }
 
+        public void PlayAtPoint(AudioClip clip, Vector3 position, float volume = 1)
+        {
+            AudioSource.PlayClipAtPoint(clip, position, volume);
+        }
+
         public void StopMusic()
         {
             musicSource.Stop();
