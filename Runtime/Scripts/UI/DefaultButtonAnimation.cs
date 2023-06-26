@@ -71,6 +71,9 @@ namespace DosinisSDK.UI
 
         private void OnDisable()
         {
+            if (button == null)
+                return;
+                
             if (interactableAffectsColor)
             {
                 OnInteractableStateChanged(button.Interactable);

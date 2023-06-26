@@ -49,7 +49,7 @@ namespace DosinisSDK.Core
             return UnityRandom.Range(0, list.Count);
         }
         
-        public static T FirstOrDefault<T>(this T[] array)
+        public static T First<T>(this T[] array)
         {
             if (array.Length == 0)
                 return default;
@@ -57,7 +57,7 @@ namespace DosinisSDK.Core
             return array[0];
         }
         
-        public static T FirstOrDefault<T>(this List<T> list)
+        public static T First<T>(this List<T> list)
         {
             if (list.Count == 0)
                 return default;
