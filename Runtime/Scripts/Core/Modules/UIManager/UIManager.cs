@@ -14,6 +14,8 @@ namespace DosinisSDK.Core
 
         protected override void OnInit(IApp app)
         {
+            Camera = GetComponentInChildren<Camera>();
+            
             foreach (var win in GetComponentsInChildren<IWindow>(true))
             {
                 windows.Add(win.GetType(), win);
@@ -33,8 +35,6 @@ namespace DosinisSDK.Core
                     tickableWindows.Add(tickable);
                 }
             }
-
-            Camera = GetComponentInChildren<Camera>();
         }
 
         private void OnDestroy()
