@@ -7,17 +7,19 @@ namespace DosinisSDK.Pool
     public class Pool<T> where T : class, IPooled
     {
         private static readonly Dictionary<Type, Pool<T>> pools = new Dictionary<Type, Pool<T>>();
-
+        private const int CAPACITY = 100;
+        
         private readonly List<IPooled> pooledObjects = new List<IPooled>();
-
         private readonly IPooled sourceObject;
 
-        private const int CAPACITY = 100;
-
+        private readonly GameObject parent;
+        
         private Pool(IPooled pooled)
         {
             sourceObject = pooled;
             sourceObject.gameObject.SetActive(false);
+            
+            parent = new GameObject($"POOL-{typeof(T).Name}");
         }
 
         public T Take()
@@ -37,7 +39,8 @@ namespace DosinisSDK.Pool
                 return pooledObjects[0] as T;
             }
                 
-            T newObj = UnityEngine.Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent).GetComponent<T>();
+            T newObj = UnityEngine.Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent ?
+                sourceObject.gameObject.transform.parent : parent.transform).GetComponent<T>();
 
             newObj.gameObject.SetActive(true);
 
@@ -46,11 +49,16 @@ namespace DosinisSDK.Pool
             return newObj;
         }
         
-        public static Pool<T> Create(IPooled source)
+        public static Pool<T> GetOrCreate(IPooled source)
         {
-            var pool = new Pool<T>(source);
-
+            if (pools.TryGetValue(source.GetType(), out var pool))
+            {
+                return pool;
+            }
+            
+            pool = new Pool<T>(source);
             pools.Add(source.GetType(), pool);
+            
             return pool;
         }
 
