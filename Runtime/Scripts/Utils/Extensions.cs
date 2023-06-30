@@ -180,6 +180,40 @@ namespace DosinisSDK.Utils
         {
             return ((long)time).ToDurationString();
         }
+        
+        // Renderer
+
+        public static void SetInstanceMaterialColor(this Renderer rend, Color color)
+        {
+            Material[] materials = rend.materials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                var materialInstance = Object.Instantiate(materials[i]);
+
+                materialInstance.color = color;
+
+                materials[i] = materialInstance;
+            }
+
+            rend.materials = materials;
+        }
+
+        public static void SetInstanceMaterialTexture(this Renderer rend, Texture tex)
+        {
+            Material[] materials = rend.materials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                var materialInstance = Object.Instantiate(materials[i]);
+
+                materialInstance.mainTexture = tex;
+
+                materials[i] = materialInstance;
+            }
+
+            rend.materials = materials;
+        }
 
         // RectTransform
 
