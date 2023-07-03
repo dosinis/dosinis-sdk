@@ -17,7 +17,11 @@ namespace DosinisSDK.Pool
         private Pool(IPooled pooled)
         {
             sourceObject = pooled;
-            sourceObject.gameObject.SetActive(false);
+            
+            if (string.IsNullOrEmpty(sourceObject.gameObject.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
+            {
+                sourceObject.gameObject.SetActive(false);
+            }
             
             parent = new GameObject($"POOL-{typeof(T).Name}");
         }
