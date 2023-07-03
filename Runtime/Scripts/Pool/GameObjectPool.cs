@@ -9,14 +9,32 @@ namespace DosinisSDK.Pool
         [SerializeField] private GameObject source;
         [SerializeField] private Transform parent;
 
-        private readonly List<Component> pool = new List<Component>();
+        private readonly List<Component> pool = new();
 
+        public static GameObjectPool Create(GameObject source)
+        {
+            var pool = new GameObject("POOL-" + source.name).AddComponent<GameObjectPool>();
+            pool.SetSource(source);
+            return pool;
+        }
+        
         private void Awake()
         {
-            if (string.IsNullOrEmpty(source.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
+            Init();
+        }
+
+        private void Init()
+        {
+            if (source != null && string.IsNullOrEmpty(source.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
             {
                 source.SetActive(false);
             }
+        }
+
+        private void SetSource(GameObject source)
+        {
+            this.source = source;
+            Init();
         }
 
         public void ReturnAll()
