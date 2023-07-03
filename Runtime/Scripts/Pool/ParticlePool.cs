@@ -7,11 +7,19 @@ namespace DosinisSDK.Pool
     {
         [SerializeField] private int prewarmSize = 3;
         [SerializeField] private ParticleSystem source;
+        [SerializeField] private bool useGlobalParent = false;
 
         private readonly List<ParticleSystem> pool = new List<ParticleSystem>();
 
+        private static GameObject parent;
+        
         private void Awake()
         {
+            if (parent == null)
+            {
+                parent = new GameObject("POOL-ParticlePool");
+            }
+            
             if (string.IsNullOrEmpty(source.gameObject.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
             {
                 source.gameObject.SetActive(false);
@@ -19,7 +27,7 @@ namespace DosinisSDK.Pool
 
             for (int i = 0; i < prewarmSize; i++)
             {
-                var newParticleSys = Instantiate(source, transform);
+                var newParticleSys = Instantiate(source, useGlobalParent ? parent.transform : transform);
                 newParticleSys.gameObject.SetActive(false);
                 pool.Add(newParticleSys);
             }
@@ -38,7 +46,7 @@ namespace DosinisSDK.Pool
                 }
             }
 
-            var newParticleSys = Instantiate(source, transform);
+            var newParticleSys = Instantiate(source, useGlobalParent ? parent.transform : transform);
             pool.Add(newParticleSys);
 
             newParticleSys.Play();
