@@ -1,4 +1,6 @@
 using System.IO;
+using DosinisSDK.Audio;
+using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -418,6 +420,19 @@ namespace DosinisSDK.Utils
         {
             var color = text.color;
             text.color = color.SetAlpha(alpha);
+        }
+        
+        // Audio
+
+        /// <summary>
+        /// Plays a sound effect if the AudioManager is available.
+        /// </summary>
+        public static void PlayOneShotSafe(this AudioClip clip, float volume = 1)
+        {
+            if (App.Core.TryGetModule(out IAudioManager audio))
+            {
+                audio.PlayOneShot(clip, volume);
+            }
         }
     }
 }
