@@ -8,13 +8,14 @@ namespace DosinisSDK.Utils
     {
         [SerializeField] private int autoSaveInterval = 30;
 
+        private WaitForSeconds waitInterval;
         private IDataManager dataManager;
 
         private IEnumerator AutoSaveCoroutine()
         {
             while (true)
             {
-                yield return new WaitForSeconds(autoSaveInterval);
+                yield return waitInterval;
                 dataManager.SaveAll();
             }
         }
@@ -23,6 +24,8 @@ namespace DosinisSDK.Utils
         {
             dataManager = app.GetModule<IDataManager>();
 
+            waitInterval = new WaitForSeconds(autoSaveInterval);
+            
             StartCoroutine(AutoSaveCoroutine());
         }
     }
