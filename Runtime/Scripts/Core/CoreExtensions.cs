@@ -146,6 +146,18 @@ namespace DosinisSDK.Core
             }
         }
 
+        public static void AddOrSetList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, TKey key, TValue item)
+        {
+            if (dictionary.ContainsKey(key))
+            {
+                dictionary[key].Add(item);
+            }
+            else
+            {
+                dictionary.Add(key, new List<TValue> {item});
+            }
+        }
+
         /// <summary>
         /// Removes all entries from the dictionary that match the conditions defined by the specified predicate.
         /// </summary>
