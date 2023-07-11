@@ -124,6 +124,33 @@ namespace DosinisSDK.Utils
         }
         
         /// <summary>
+        /// Checks if an certain point is currently outside the camera's field of view
+        /// </summary>
+        public static bool IsInCameraFieldOfView(Vector3 position, Camera mainCamera = null)
+        {
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
+
+            if (mainCamera == null)
+            {
+                throw new Exception("No main camera found. Pass camera as a parameter");
+            }
+            
+            var viewportPoint = mainCamera.WorldToViewportPoint(position);
+            
+            if (viewportPoint.x < 0 || viewportPoint.x > 1 ||
+                viewportPoint.y < 0 || viewportPoint.y > 1 ||
+                viewportPoint.z < 0)
+            {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        /// <summary>
         /// Returns string modifier for numbers. For example 1000 -> 1K, 1000000 -> 1M, 1000000000 -> 1B, etc.
         /// </summary>
         /// <param name="numberOfThousands"></param>
