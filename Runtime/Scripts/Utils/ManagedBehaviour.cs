@@ -5,7 +5,7 @@ namespace DosinisSDK.Utils
 {
     public abstract class ManagedBehaviour : MonoBehaviour
     {
-        [SerializeField] private bool skipFrame;
+        [SerializeField] private bool skipFrame = true;
 
         private IApp app;
         
