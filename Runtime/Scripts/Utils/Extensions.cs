@@ -422,6 +422,17 @@ namespace DosinisSDK.Utils
             text.color = color.SetAlpha(alpha);
         }
         
+        // GameObject
+        
+        public static void SetLayerRecursively(this GameObject obj, int layer)
+        {
+            obj.layer = layer;
+            foreach (Transform child in obj.transform)
+            {
+                child.gameObject.SetLayerRecursively(layer);
+            }
+        }
+        
         // Audio
 
         /// <summary>
