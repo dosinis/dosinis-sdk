@@ -15,6 +15,7 @@ namespace DosinisSDK.UI.Elements
         private readonly List<object> valuesCache = new();
 
         private float elementHeight;
+        private float elementWidth;
         private int currentPivot;
         private int visibleElementCount;
         private RectTransform anchor = null;
@@ -22,7 +23,7 @@ namespace DosinisSDK.UI.Elements
         private Element[] currentElements = Array.Empty<Element>();
         private Element[] elementsCache = Array.Empty<Element>();
 
-        public void UpdateElements<TE, T>() where TE : ElementFor<T>
+        public void ProcessElements<TE, T>() where TE : ElementFor<T>
         {
             if (!viewport || !content)
             {

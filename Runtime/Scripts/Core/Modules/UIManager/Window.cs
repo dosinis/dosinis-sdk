@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
 {
     public class Window : MonoBehaviour, IWindow
     {
-#if UNITY_STANDALONE == false
+#if UNITY_ANDROID || UNITY_IOS
         [SerializeField] protected bool ignoreSafeArea = false;
 #endif
         [SerializeField] protected Button closeButton;
@@ -41,7 +41,7 @@ namespace DosinisSDK.Core
 
             rect = GetComponent<RectTransform>();
             
-#if UNITY_STANDALONE == false
+#if UNITY_ANDROID || UNITY_IOS
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
@@ -206,8 +206,7 @@ namespace DosinisSDK.Core
         {
         }
         
-#if UNITY_STANDALONE == false
-        // NOTE: This might apply safe area wrongly in Game view (it works on DeviceSimulator though)
+#if UNITY_ANDROID || UNITY_IOS
         private void ApplySafeArea()
         {
             var rootCanvas = GetComponentInParent<Canvas>();
