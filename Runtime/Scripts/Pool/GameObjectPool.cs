@@ -102,11 +102,13 @@ namespace DosinisSDK.Pool
             return false;
         }
         
-        public T Find<T>(Predicate<T> match) where T : Component
+        public T Find<T>(Predicate<T> match, bool lookActiveOnly = true) where T : Component
         {
-            foreach (var obj in pool)
+            var list = lookActiveOnly ? GetAllActive<T>() : GetAll<T>();
+            
+            foreach (var obj in list)
             {
-                var result = obj as T;
+                var result = obj;
                 
                 if (match(result))
                 {

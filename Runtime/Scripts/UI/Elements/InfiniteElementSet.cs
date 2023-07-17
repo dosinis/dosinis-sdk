@@ -15,7 +15,6 @@ namespace DosinisSDK.UI.Elements
         private readonly List<object> valuesCache = new();
 
         private float elementHeight;
-        private float elementWidth;
         private int currentPivot;
         private int visibleElementCount;
         private RectTransform anchor = null;
