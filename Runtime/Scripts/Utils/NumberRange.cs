@@ -20,6 +20,11 @@ namespace DosinisSDK.Utils
         {
             return UnityEngine.Random.Range(min, max + 1);
         }
+
+        public override string ToString()
+        {
+            return $"[{min}, {max}]";
+        }
     }
 
     [System.Serializable]
@@ -41,6 +46,11 @@ namespace DosinisSDK.Utils
         public float GetRandom()
         {
             return UnityEngine.Random.Range(min, max);
+        }
+        
+        public override string ToString()
+        {
+            return $"[{min}, {max}]";
         }
     }
 }
