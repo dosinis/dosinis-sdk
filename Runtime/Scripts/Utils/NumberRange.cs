@@ -1,7 +1,7 @@
 namespace DosinisSDK.Utils
 {
     [System.Serializable]
-    public class IntRange
+    public struct IntRange
     {
         public int min;
         public int max;
@@ -28,7 +28,7 @@ namespace DosinisSDK.Utils
     }
 
     [System.Serializable]
-    public class FloatRange
+    public struct FloatRange
     {
         public float min;
         public float max;
