@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.Pool
@@ -25,7 +26,7 @@ namespace DosinisSDK.Pool
 
         private void Init()
         {
-            if (source != null && string.IsNullOrEmpty(source.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
+            if (source != null && source.IsInScene())
             {
                 source.SetActive(false);
             }

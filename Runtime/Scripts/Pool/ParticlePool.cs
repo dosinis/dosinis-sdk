@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.Pool
@@ -20,7 +21,7 @@ namespace DosinisSDK.Pool
                 parent = new GameObject("POOL-ParticlePool");
             }
             
-            if (string.IsNullOrEmpty(source.gameObject.scene.name) == false) // NOTE: way of checking if it's prefab or a scene object
+            if (source.gameObject.IsInScene())
             {
                 source.gameObject.SetActive(false);
             }
