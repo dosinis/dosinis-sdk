@@ -32,7 +32,65 @@ namespace DosinisSDK.Core
 
             return list[UnityRandom.Range(0, list.Count)];
         }
+
+        public static T[] RandomRange<T>(this T[] array, int amount, bool canRepeat = true)
+        {
+            var rangeArray = new T[amount];
+            
+            int exitCount = 0;
+            
+            for (int i = 0; i < amount; i++)
+            {
+                var random = array.Random();
+                
+                if (canRepeat)
+                {
+                    rangeArray[i] = random;
+                }
+                else
+                {
+                    while (rangeArray.Contains(random) || exitCount < 100)
+                    {
+                        random = array.Random();
+                        exitCount++;
+                    }
+                    
+                    rangeArray[i] = random;
+                }
+            }
+            
+            return rangeArray;
+        }
         
+        public static List<T> RandomRange<T>(this List<T> list, int amount, bool canRepeat = true)
+        {
+            var rangeList = new List<T>();
+            
+            int exitCount = 0;
+            
+            for (int i = 0; i < amount; i++)
+            {
+                var random = list.Random();
+                
+                if (canRepeat)
+                {
+                    rangeList.Add(random);
+                }
+                else
+                {
+                    while (rangeList.Contains(random) || exitCount < 100)
+                    {
+                        random = list.Random();
+                        exitCount++;
+                    }
+                    
+                    rangeList.Add(random);
+                }
+            }
+            
+            return rangeList;
+        }
+
         public static int RandomIndex<T>(this T[] array)
         {
             if (array.Length == 0)
@@ -63,6 +121,11 @@ namespace DosinisSDK.Core
                 return default;
 
             return list[0];
+        }
+        
+        public static bool Contains<T>(this T[] array, T value)
+        {
+            return Array.Exists(array, x => x != null && x.Equals(value));
         }
 
         public static T Last<T>(this T[] array)
