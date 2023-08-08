@@ -80,6 +80,7 @@ namespace DosinisSDK.Particles
             }
         }
 
+        // TODO: Stop works bad. Need to fix it.
         public void Stop(ParticleSystem vfx)
         {
             if (effects.ContainsKey(vfx) == false)
