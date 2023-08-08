@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using DosinisSDK.Utils;
 using UnityEngine;
 
-namespace DosinisSDK.Pool
+namespace DosinisSDK.Particles
 {
     public class ParticlePool : MonoBehaviour
     {
@@ -18,7 +18,7 @@ namespace DosinisSDK.Pool
         {
             if (parent == null)
             {
-                parent = new GameObject("POOL-ParticlePool");
+                parent = new GameObject($"POOL-{nameof(ParticlePool)}");
             }
             
             if (source.gameObject.IsInScene())
