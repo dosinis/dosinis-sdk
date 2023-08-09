@@ -92,6 +92,11 @@ namespace DosinisSDK.Utils
                    Random.Range(int.MinValue, int.MaxValue).ToString("x");
         }
 
+        public static long GetRandomLong()
+        {
+            return (long)Random.Range(long.MinValue, long.MaxValue);
+        }
+
         /// <summary>
         /// Sets UI element position to mouse position
         /// </summary>

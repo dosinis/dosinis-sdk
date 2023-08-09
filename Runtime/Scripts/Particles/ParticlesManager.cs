@@ -10,8 +10,9 @@ namespace DosinisSDK.Particles
     public class ParticlesManager : BehaviourModule, IParticlesManager, IProcessable
     {
         private readonly Dictionary<ParticleSystem, PlainParticlePool> effects = new();
-        
-        private readonly ParticleSystem[] currentEffectsCache = new ParticleSystem[100];
+
+        private readonly Dictionary<long, ParticleSystem> forcedOrientationVfxCache = new();
+        private readonly Dictionary<long, ParticleSystem> effectsCache = new();
 
         protected override void OnInit(IApp app)
         {
@@ -37,7 +38,7 @@ namespace DosinisSDK.Particles
             }
         }
 
-        public void Play(ParticleSystem vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
+        public long Play(ParticleSystem vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
         {
             if (effects.ContainsKey(vfx) == false)
             {
@@ -57,16 +58,12 @@ namespace DosinisSDK.Particles
 
             ps.transform.localPosition += offset;
 
+            var h = Helper.GetRandomLong();
+            effectsCache.Add(h, ps);
+
             if (forceKeepOrientation)
             {
-                for (var i = 0; i < currentEffectsCache.Length; i++)
-                {
-                    if (currentEffectsCache[i] != null)
-                        continue;
-
-                    currentEffectsCache[i] = ps;
-                    break;
-                }
+                forcedOrientationVfxCache.Add(h, ps);
             }
 
             if (sfx != null)
@@ -78,10 +75,26 @@ namespace DosinisSDK.Particles
             {
                 app.Coroutine.Begin(WaitForEffect(ps, done));
             }
+
+            return h;
         }
 
-        // TODO: Stop works bad. Need to fix it.
-        public void Stop(ParticleSystem vfx)
+        public void Stop(ParticleSystem vfx, long hash)
+        {
+            if (effects.ContainsKey(vfx) == false)
+            {
+                return;
+            }
+
+            if (effectsCache.ContainsKey(hash) == false)
+            {
+                return;
+            }
+
+            effectsCache[hash].Stop();
+        }
+        
+        public void StopAll(ParticleSystem vfx)
         {
             if (effects.ContainsKey(vfx) == false)
             {
@@ -100,22 +113,35 @@ namespace DosinisSDK.Particles
 
         public void Process(in float delta)
         {
-            for (var i = 0; i < currentEffectsCache.Length; i++)
+            var itemsToRemove = new List<long>();
+            
+            foreach (var effect in effectsCache)
             {
-                var vfx = currentEffectsCache[i];
+                if (effect.Value == null)
+                {
+                    continue;
+                }
                 
-                if (vfx == null)
+                if (effect.Value.IsAlive() == false)
                 {
+                    itemsToRemove.Add(effect.Key);
                     continue;
                 }
 
-                if (vfx.IsAlive() == false)
+                if (forcedOrientationVfxCache.ContainsKey(effect.Key))
                 {
-                    currentEffectsCache[i] = null;
-                    continue;
+                    effect.Value.transform.rotation = Quaternion.identity;
                 }
-
-                vfx.transform.rotation = Quaternion.identity;
+            }
+            
+            foreach (var item in itemsToRemove)
+            {
+                effectsCache.Remove(item);
+                
+                if (forcedOrientationVfxCache.ContainsKey(item))
+                {
+                    forcedOrientationVfxCache.Remove(item);
+                }
             }
         }
     }
