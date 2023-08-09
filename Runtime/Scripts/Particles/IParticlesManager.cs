@@ -6,7 +6,7 @@ namespace DosinisSDK.Particles
 {
     public interface IParticlesManager : IModule
     {
-        void PlayAtPoint(ParticleSystem vfx, Vector3 point, AudioClip sfx = null, Action done = null);
+        void PlayAtPoint(ParticleSystem vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null);
         
         /// <summary>
         /// Returns VFX hash for further control

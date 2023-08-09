@@ -18,7 +18,7 @@ namespace DosinisSDK.Particles
         {
         }
 
-        public void PlayAtPoint(ParticleSystem vfx, Vector3 point, AudioClip sfx = null, Action done = null)
+        public void PlayAtPoint(ParticleSystem vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
         {
             if (effects.ContainsKey(vfx) == false)
             {
@@ -26,6 +26,8 @@ namespace DosinisSDK.Particles
             }
 
             var ps = effects[vfx].Play(point);
+            
+            ps.transform.forward = forward;
             
             if (sfx != null)
             {
