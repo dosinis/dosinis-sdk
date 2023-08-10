@@ -56,6 +56,8 @@ namespace DosinisSDK.Particles
 
         public ParticleSystem Play(Transform parent)
         {
+            CleanupPool();
+            
             foreach (var particleSys in pool)
             {
                 if (particleSys.gameObject.activeSelf == false || particleSys.isPlaying == false)
@@ -87,6 +89,24 @@ namespace DosinisSDK.Particles
             return newParticleSys;
         }
 
+        private void CleanupPool()
+        {
+            var toRemove = new List<ParticleSystem>();
+            
+            foreach (var ps in pool)
+            {
+                if (ps == null || ps.gameObject == null)
+                {
+                    toRemove.Add(ps);
+                }
+            }
+            
+            foreach (var ps in toRemove)
+            {
+                pool.Remove(ps);
+            }
+        }
+        
         public void StopAll()
         {
             foreach (var p in pool)
