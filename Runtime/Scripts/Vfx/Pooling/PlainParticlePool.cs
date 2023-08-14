@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using DosinisSDK.Utils;
 using UnityEngine;
 
-namespace DosinisSDK.Particles
+namespace DosinisSDK.Vfx
 {
     public class PlainParticlePool
     { 

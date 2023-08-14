@@ -5,29 +5,29 @@ using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
 
-namespace DosinisSDK.Particles
+namespace DosinisSDK.Vfx
 {
-    public class ParticlesManager : BehaviourModule, IParticlesManager, IProcessable
+    public class VfxManager : BehaviourModule, IVfxManager, IProcessable
     {
-        private readonly Dictionary<ParticleSystem, PlainParticlePool> effects = new();
+        private readonly Dictionary<IVfx, VfxPool> effects = new();
 
-        private readonly Dictionary<long, ParticleSystem> forcedOrientationVfxCache = new();
-        private readonly Dictionary<long, ParticleSystem> effectsCache = new();
+        private readonly Dictionary<long, IVfx> forcedOrientationVfxCache = new();
+        private readonly Dictionary<long, IVfx> effectsCache = new();
 
         protected override void OnInit(IApp app)
         {
         }
 
-        public void PlayAtPoint(ParticleSystem vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
+        public void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
         {
             if (effects.ContainsKey(vfx) == false)
             {
-                effects.Add(vfx, PlainParticlePool.Create(vfx));
+                effects.Add(vfx, VfxPool.Create(vfx));
             }
 
             var ps = effects[vfx].Play(point);
             
-            ps.transform.forward = forward;
+            ps.Transform.forward = forward;
             
             if (sfx != null)
             {
@@ -40,14 +40,14 @@ namespace DosinisSDK.Particles
             }
         }
 
-        public long Play(ParticleSystem vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
+        public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
         {
             if (effects.ContainsKey(vfx) == false)
             {
-                effects.Add(vfx, PlainParticlePool.Create(vfx));
+                effects.Add(vfx, VfxPool.Create(vfx));
             }
 
-            ParticleSystem ps;
+            IVfx ps;
             
             if (parent != null)
             {
@@ -58,7 +58,7 @@ namespace DosinisSDK.Particles
                 ps = effects[vfx].Play();
             }
 
-            ps.transform.localPosition += offset;
+            ps.Transform.localPosition += offset;
 
             var h = Helper.GetRandomLong();
             effectsCache.Add(h, ps);
@@ -81,7 +81,7 @@ namespace DosinisSDK.Particles
             return h;
         }
 
-        public void Stop(ParticleSystem vfx, long hash)
+        public void Stop(IVfx vfx, long hash)
         {
             if (effects.ContainsKey(vfx) == false)
             {
@@ -96,7 +96,7 @@ namespace DosinisSDK.Particles
             effectsCache[hash].Stop();
         }
         
-        public void StopAll(ParticleSystem vfx)
+        public void StopAll(IVfx vfx)
         {
             if (effects.ContainsKey(vfx) == false)
             {
@@ -106,7 +106,7 @@ namespace DosinisSDK.Particles
             effects[vfx].StopAll();
         }
 
-        private IEnumerator WaitForEffect(ParticleSystem vfx, Action done)
+        private IEnumerator WaitForEffect(IVfx vfx, Action done)
         {
             yield return new WaitUntil(vfx.IsAlive);
             
@@ -132,7 +132,7 @@ namespace DosinisSDK.Particles
 
                 if (forcedOrientationVfxCache.ContainsKey(effect.Key))
                 {
-                    effect.Value.transform.rotation = Quaternion.identity;
+                    effect.Value.Transform.rotation = Quaternion.identity;
                 }
             }
             
