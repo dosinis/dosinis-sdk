@@ -1,7 +1,6 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using System.Collections.Generic;
-using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Editor
 {
@@ -10,8 +9,7 @@ namespace DosinisSDK.Editor
         private const int MAX_CACHE_SIZE = 64;
         private static readonly List<Object> selectedAssets = new List<Object>();
         private static int selectionIndex = -1;
-
-
+        
         [MenuItem("Assets/SelectPrevious %q")]
         private static void SelectPrevious()
         {
@@ -42,17 +40,19 @@ namespace DosinisSDK.Editor
         {
             var selectedAsset = Selection.activeObject;
 
-            if (selectedAsset != null && selectedAsset is GameObject == false)
+            RegisterAsset(selectedAsset);
+        }
+        
+        private static void RegisterAsset(Object selectedAsset)
+        {
+            if (selectedAsset != null)
             {
-                if (!selectedAssets.Contains(selectedAsset))
+                if (selectedAssets.Count >= MAX_CACHE_SIZE)
                 {
-                    if (selectedAssets.Count >= MAX_CACHE_SIZE)
-                    {
-                        selectedAssets.RemoveAt(0);
-                    }
-
-                    selectedAssets.Add(selectedAsset);
+                    selectedAssets.RemoveAt(0);
                 }
+
+                selectedAssets.Add(selectedAsset);
 
                 selectionIndex = selectedAssets.IndexOf(selectedAsset);
             }
