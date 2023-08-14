@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -267,6 +268,19 @@ namespace DosinisSDK.Utils
             json += $"}}";
 
             return json;
+        }
+
+        public static void SetFieldWithReflection<T>(object targetObject, string fieldName, object value)
+        {
+            var field = typeof(T).GetField(fieldName, BindingFlags.NonPublic
+                                                      | BindingFlags.Instance | BindingFlags.Public);
+            if (field == null)
+            {
+                Debug.LogError($"Field \"{fieldName}\" not found");
+                return;
+            }
+
+            field.SetValue(targetObject, value);
         }
     }
 }
