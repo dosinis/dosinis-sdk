@@ -568,5 +568,13 @@ namespace DosinisSDK.Utils
 
             return bigNum;
         }
+
+        public static int Sign(this BigNumber number)
+        {
+            if (number == 0)
+                return 0;
+            
+            return number > 0 ? 1 : -1;
+        }
     }
 }
