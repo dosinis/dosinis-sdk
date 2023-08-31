@@ -90,8 +90,8 @@ namespace DosinisSDK.UI
 
             while (t < 1)
             {
-                button.Image.color = Color.Lerp(initColor, highlightColor, t);
                 t += Time.deltaTime / animationDuration;
+                button.Image.color = Color.Lerp(initColor, highlightColor, t);
                 yield return null;
             }
         }
@@ -102,8 +102,8 @@ namespace DosinisSDK.UI
 
             while (t < 1)
             {
-                button.Image.color = Color.Lerp(highlightColor, initColor, t);
                 t += Time.deltaTime / animationDuration;
+                button.Image.color = Color.Lerp(highlightColor, initColor, t);
                 yield return null;
             }
         }
