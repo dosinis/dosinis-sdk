@@ -282,5 +282,16 @@ namespace DosinisSDK.Utils
 
             field.SetValue(targetObject, value);
         }
+
+        public static void RotateDirSmooth(Transform transform, Vector3 dir, float relativeToEulerY, ref float rotationVelocity, float rotationSmoothTime)
+        {
+            var targetRotation = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg +
+                                 relativeToEulerY;
+                
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref rotationVelocity,
+                rotationSmoothTime);
+                
+            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+        }
     }
 }
