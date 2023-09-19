@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace DosinisSDK.Core
 {
     [RequireComponent(typeof(Image))]
-    public class Button : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
+    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
     {
         // Properties
         
@@ -67,8 +67,7 @@ namespace DosinisSDK.Core
         {
             if (interactable == false)
                 return;
-
-            OnReleased?.Invoke();
+            
             buttonAnimation?.ReleaseAnimation();
 
             ClickPerformed();
@@ -114,6 +113,11 @@ namespace DosinisSDK.Core
         private void OnEnable()
         {
             buttonAnimation?.ReleaseAnimation();
+        }
+
+        public virtual void OnPointerUp(PointerEventData eventData)
+        {
+            OnReleased?.Invoke();
         }
     }
 }
