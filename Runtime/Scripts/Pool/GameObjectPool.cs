@@ -68,7 +68,7 @@ namespace DosinisSDK.Pool
         {
             foreach (var obj in pool)
             {
-                if (obj.gameObject.activeInHierarchy)
+                if (obj.gameObject.activeSelf)
                 {
                     yield return obj as T;
                 }
