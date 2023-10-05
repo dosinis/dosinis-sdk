@@ -9,8 +9,9 @@ namespace DosinisSDK.Core
     {
         private AsyncOperation loadSceneOperation;
         
-        public event Action<Scene, Scene> OnSceneChanged;
-        
+        public event Action<(Scene, Scene)> OnSceneChanged;
+        public event Action OnSceneAboutToChange;
+
         public float SceneLoadProgress { get; private set; }
         public Scene ActiveScene { get; private set; }
 
@@ -38,7 +39,9 @@ namespace DosinisSDK.Core
             yield return new WaitForSeconds(delay / 2f);
             
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
-
+            
+            OnSceneAboutToChange?.Invoke();
+            
             loadSceneOperation.allowSceneActivation = switchLoadedScene;
             
             while (loadSceneOperation.isDone == false && loadSceneOperation.progress < 0.9f)
@@ -57,7 +60,7 @@ namespace DosinisSDK.Core
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
             ActiveScene = newScene;
-            OnSceneChanged?.Invoke(oldScene, newScene);
+            OnSceneChanged?.Invoke((oldScene, newScene));
         }
     }
 }

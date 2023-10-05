@@ -5,7 +5,8 @@ namespace DosinisSDK.Core
 {
     public interface ISceneManager : IModule
     {
-        event Action<Scene, Scene> OnSceneChanged; // oldScene, newScene
+        event Action<(Scene oldScene, Scene newScene)> OnSceneChanged;
+        event Action OnSceneAboutToChange;
         float SceneLoadProgress { get; }
         Scene ActiveScene { get; }
         void SwitchLoadedScene();
