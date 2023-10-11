@@ -95,7 +95,7 @@ namespace DosinisSDK.Vfx
             
             foreach (var vfx in pool)
             {
-                if (vfx == null || vfx.GameObject == null)
+                if (vfx == null || vfx.Expired())
                 {
                     toRemove.Add(vfx);
                 }

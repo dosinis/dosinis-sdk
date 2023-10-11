@@ -7,6 +7,7 @@ namespace DosinisSDK.Vfx
         void Play();
         void Stop(bool withChildren = true);
         bool IsAlive();
+        bool Expired();
         bool IsPlaying { get; }
         Transform Transform { get; }
         GameObject GameObject { get; }

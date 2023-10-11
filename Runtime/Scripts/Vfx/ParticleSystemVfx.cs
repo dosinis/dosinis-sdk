@@ -24,10 +24,15 @@ namespace DosinisSDK.Vfx
         {
             particleSystem.Stop(withChildren);
         }
+        
+        public override bool Expired()
+        {
+            return particleSystem == null || gameObject == null;
+        }
 
         public override bool IsAlive()
         {
-            return particleSystem.IsAlive();
+            return Expired() == false && particleSystem.IsAlive();
         }
     }
 }
