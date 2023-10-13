@@ -21,9 +21,12 @@ namespace DosinisSDK.Utils
 					this.value = value;
 					OnValueChanged?.Invoke(this.value);
 				}
+				
+				OnValueSet?.Invoke(this.value);
 			}
 		}
 
+		public event Action<T> OnValueSet;
 		public event Action<T> OnValueChanged;
 		public event Action<T,T> OnValueAboutToChangeDelta;
 
@@ -59,5 +62,10 @@ namespace DosinisSDK.Utils
 	    /// The first argument is the previous value, the second argument is the final value.
 	    /// </summary>
 	    event Action<T,T> OnValueAboutToChangeDelta;
+
+	    /// <summary>
+	    /// Fired when the value is set, regardless of whether it has changed.
+	    /// </summary>
+	    event Action<T> OnValueSet;
     }
 }
