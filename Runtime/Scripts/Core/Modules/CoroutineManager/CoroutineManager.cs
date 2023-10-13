@@ -21,7 +21,7 @@ namespace DosinisSDK.Core
 
         public void Stop(ref Coroutine coroutine)
         {
-            if (coroutine != null)
+            if (gameObject != null && this != null && coroutine != null)
             {
                 StopCoroutine(coroutine);
                 coroutine = null;
