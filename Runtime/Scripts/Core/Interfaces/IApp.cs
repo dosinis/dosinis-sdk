@@ -3,16 +3,12 @@ using System.Threading.Tasks;
 
 namespace DosinisSDK.Core
 {
-    public interface IApp
+    public interface IApp : IModulesProvider
     {
         event Action<bool> OnAppPaused;
         event Action<bool> OnAppFocus;
         event Action OnAppQuit;
         event Action OnAppRestart;
-        T GetModule<T>() where T : class, IModule;
-        Task<T> WaitForModule<T>(float? timeOut = null) where T : class, IModule; 
-        bool TryGetModule<T>(out T module) where T : class, IModule;
-        bool IsModuleReady<T>() where T : class, IModule;
         void Restart();
         
         // Core Modules
@@ -30,5 +26,13 @@ namespace DosinisSDK.Core
     {
         T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule;
         Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IAsyncModule;
+    }
+
+    public interface IModulesProvider
+    {
+        T GetModule<T>() where T : class, IModule;
+        Task<T> WaitForModule<T>(float? timeOut = null) where T : class, IModule; 
+        bool TryGetModule<T>(out T module) where T : class, IModule;
+        bool IsModuleReady<T>() where T : class, IModule;
     }
 }
