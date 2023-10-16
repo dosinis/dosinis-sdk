@@ -1,19 +1,44 @@
+using System.Collections;
 using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class TimedAction : ITimedAction
+    public class TimedAction : ITimedAction, IEnumerator
     {
         private Coroutine coroutine;
+        private readonly IEnumerator enumerator;
 
-        public TimedAction(Coroutine coroutine)
+        public TimedAction(IEnumerator enumerator)
         {
-            this.coroutine = coroutine;
+            this.enumerator = enumerator;
         }
-        
-        public void Cancel()
+
+        public ITimedAction Start()
+        {
+            coroutine = App.Core.Coroutine.Begin(enumerator, () =>
+            {
+                coroutine = null;
+            });
+
+            return this;
+        }
+
+        public ITimedAction Stop()
         {
             App.Core.Coroutine.Stop(ref coroutine);
+
+            return this;
         }
+        
+        bool IEnumerator.MoveNext()
+        {
+            return coroutine != null; // NOTE: keeps waiting if true
+        }
+
+        void IEnumerator.Reset()
+        {
+        }
+
+        object IEnumerator.Current => null;
     }
 }

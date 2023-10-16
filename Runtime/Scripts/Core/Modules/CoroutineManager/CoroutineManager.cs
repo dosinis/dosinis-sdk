@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -14,9 +15,16 @@ namespace DosinisSDK.Core
             return StartCoroutine(coroutine);
         }
 
-        public void Begin(IEnumerator coroutine, ref Coroutine current)
+        public Coroutine Begin(IEnumerator coroutine, Action done)
         {
-            current = StartCoroutine(coroutine);
+            return StartCoroutine(StartCoroutine(coroutine, done));
+        }
+
+        private static IEnumerator StartCoroutine(IEnumerator coroutine, Action done)
+        {
+            yield return coroutine;
+            
+            done?.Invoke();
         }
 
         public void Stop(ref Coroutine coroutine)

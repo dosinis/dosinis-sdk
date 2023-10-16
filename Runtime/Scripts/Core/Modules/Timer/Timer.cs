@@ -17,12 +17,40 @@ namespace DosinisSDK.Core
 
         public ITimedAction Delay(float delay, Action done, bool realtime = true)
         {
-            return new TimedAction(coroutineManager.Begin(DelayCoroutine(delay, done, realtime)));
+            var enumerator = DelayCoroutine(delay, done, realtime);
+            var action = new TimedAction(enumerator);
+            
+            action.Start();
+
+            return action;
         }
-        
+
+        public ITimedAction CreateDelayAction(float delay, Action done, bool realtime = true)
+        {
+            var enumerator = DelayCoroutine(delay, done, realtime);
+            var action = new TimedAction(enumerator);
+
+            return action;
+        }
+
+        public ITimedAction Sequence(Action done = null, params ITimedAction[] actions)
+        {
+            var enumerator = SequenceCoroutine(done, actions);
+            var action = new TimedAction(enumerator);
+            
+            action.Start();
+            
+            return action;
+        }
+
         public ITimedAction Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f)
         {
-            return new TimedAction(coroutineManager.Begin(RepeatCoroutine(frequency, times, initDelay, onTick)));
+            var enumerator = RepeatCoroutine(frequency, times, initDelay, onTick);
+            var action = new TimedAction(enumerator);
+            
+            action.Start();
+            
+            return action;
         }
 
         public void SkipFrame(Action done)
@@ -37,10 +65,25 @@ namespace DosinisSDK.Core
         
         public ITimedAction WaitUntil(Func<bool> condition, Action onComplete)
         {
-            return new TimedAction(coroutineManager.Begin(WaitUntilCoroutine(condition, onComplete)));
+            var enumerator = WaitUntilCoroutine(condition, onComplete);
+            var action = new TimedAction(enumerator);
+            
+            action.Start();
+            
+            return action;
+        }
+        
+        private static IEnumerator SequenceCoroutine(Action done, params ITimedAction[] actions)
+        {
+            foreach (var action in actions)
+            {
+                yield return action.Start();
+            }
+            
+            done?.Invoke();
         }
 
-        private IEnumerator DelayCoroutine(float delay, Action done, bool realtime = true)
+        private static IEnumerator DelayCoroutine(float delay, Action done, bool realtime = true)
         {
             if (realtime)
                 yield return new WaitForSecondsRealtime(delay);
@@ -50,7 +93,7 @@ namespace DosinisSDK.Core
             done();
         }
 
-        private IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Action<int> onTick)
+        private static IEnumerator RepeatCoroutine(float frequency, int times, float initDelay, Action<int> onTick)
         {
             yield return new WaitForSeconds(initDelay);
 
