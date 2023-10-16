@@ -12,7 +12,7 @@ namespace Framework.Editor.Timescale
 		static ToolbarTimeScale()
 		{
 			ToolbarExtender.leftToolbarGUI.Add(OnToolbarGUI);
-			EditorApplication.playModeStateChanged += ModeStateChanged ;
+			EditorApplication.playModeStateChanged += ModeStateChanged;
 		}
 
 		private static void ModeStateChanged(PlayModeStateChange state)
