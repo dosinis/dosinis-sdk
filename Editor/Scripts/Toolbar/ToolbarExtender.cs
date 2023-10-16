@@ -164,5 +164,21 @@ namespace DosinisSDK.Editor
 
             GUILayout.EndHorizontal();
         }
+        
+        public static void RegisterRightEntry(Action right, int order)
+        {
+            if (order > rightToolbarGUI.Count)
+            {
+                rightToolbarGUI.Add(right);
+                return;
+            }
+		    
+            if (order < 0)
+            {
+                order = 0;
+            }
+		    
+            rightToolbarGUI.Insert(order, right);
+        }
     }
 }
