@@ -23,12 +23,12 @@ namespace DosinisSDK.Core
             return this;
         }
 
-        public ITimedAction Stop()
+        public void Stop()
         {
             App.Core.Coroutine.Stop(ref coroutine);
-
-            return this;
         }
+        
+        // IEnumerator implementation
         
         bool IEnumerator.MoveNext()
         {
