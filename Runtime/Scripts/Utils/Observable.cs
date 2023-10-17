@@ -17,12 +17,35 @@ namespace DosinisSDK.Utils
 			{
 				if (EqualityComparer<T>.Default.Equals(this.value, value) == false)
 				{
-					OnValueAboutToChangeDelta?.Invoke(this.value, value);
+					try
+					{
+						OnValueAboutToChangeDelta?.Invoke(this.value, value);
+					}
+					catch (Exception ex)
+					{
+						Debug.LogError("OnValueAboutToChangeDelta: " + ex.Message + "\n" + ex.StackTrace);
+					}
+
 					this.value = value;
-					OnValueChanged?.Invoke(this.value);
+					
+					try
+					{
+						OnValueChanged?.Invoke(this.value);
+					}
+					catch (Exception ex)
+					{
+						Debug.LogError("OnValueChanged: " + ex.Message + "\n" + ex.StackTrace);
+					}
 				}
 				
-				OnValueSet?.Invoke(this.value);
+				try
+				{
+					OnValueSet?.Invoke(this.value);
+				}
+				catch (Exception ex)
+				{
+					Debug.LogError("OnValueSet: " + ex.Message + "\n" + ex.StackTrace);
+				}
 			}
 		}
 
