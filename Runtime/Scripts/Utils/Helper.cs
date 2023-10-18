@@ -146,8 +146,8 @@ namespace DosinisSDK.Utils
             
             var viewportPoint = mainCamera.WorldToViewportPoint(position);
             
-            if (viewportPoint.x < 0 || viewportPoint.x > 1 ||
-                viewportPoint.y < 0 || viewportPoint.y > 1 ||
+            if (viewportPoint.x < -0.1f || viewportPoint.x > 1.1f ||
+                viewportPoint.y < -0.1f || viewportPoint.y > 1.1f ||
                 viewportPoint.z < 0)
             {
                 return false;
@@ -159,7 +159,6 @@ namespace DosinisSDK.Utils
         /// <summary>
         /// Returns string modifier for numbers. For example 1000 -> 1K, 1000000 -> 1M, 1000000000 -> 1B, etc.
         /// </summary>
-        /// <param name="numberOfThousands"></param>
         /// <returns></returns>
         public static string GetStringModifier(int numberOfThousands)
         {
