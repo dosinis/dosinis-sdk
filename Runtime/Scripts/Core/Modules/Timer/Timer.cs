@@ -15,7 +15,7 @@ namespace DosinisSDK.Core
             coroutineManager = app.GetModule<ICoroutineManager>();
         }
 
-        public ITimedAction Delay(float delay, Action done, bool realtime = true)
+        public ITimedAction Delay(float delay, Action done, bool realtime = false)
         {
             var enumerator = DelayCoroutine(delay, done, realtime);
             var action = new TimedAction(enumerator);
@@ -25,7 +25,7 @@ namespace DosinisSDK.Core
             return action;
         }
 
-        public ITimedAction CreateDelayAction(float delay, Action done, bool realtime = true)
+        public ITimedAction CreateDelayAction(float delay, Action done, bool realtime = false)
         {
             var enumerator = DelayCoroutine(delay, done, realtime);
             var action = new TimedAction(enumerator);
@@ -83,7 +83,7 @@ namespace DosinisSDK.Core
             done?.Invoke();
         }
 
-        private static IEnumerator DelayCoroutine(float delay, Action done, bool realtime = true)
+        private static IEnumerator DelayCoroutine(float delay, Action done, bool realtime = false)
         {
             if (realtime)
                 yield return new WaitForSecondsRealtime(delay);
