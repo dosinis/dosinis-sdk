@@ -85,7 +85,7 @@ namespace DosinisSDK.Ads
                 LoadRewardedAds();
 
                 callBack(true);
-            });
+            }, true);
         }
         
         protected override void LoadRewardedAds()
@@ -95,7 +95,7 @@ namespace DosinisSDK.Ads
             {
                 Log("Loaded rewarded ads");
                 rewardAdReady = true;
-            });
+            }, true);
         }
         
         public override bool IsRewardAdReady()
@@ -112,7 +112,7 @@ namespace DosinisSDK.Ads
             timer.Delay(3f, () =>
             {
                 OnBannerLoaded?.Invoke();
-            });
+            }, true);
         }
         
         public override void ShowBanner()
