@@ -132,7 +132,7 @@ namespace DosinisSDK.Utils
         /// <summary>
         /// Checks if an certain point is currently outside the camera's field of view
         /// </summary>
-        public static bool IsInCameraFieldOfView(Vector3 position, Camera mainCamera = null)
+        public static bool IsInCameraFieldOfView(Vector3 position, float min = 0f, float max = 1f, Camera mainCamera = null)
         {
             if (mainCamera == null)
             {
@@ -146,8 +146,8 @@ namespace DosinisSDK.Utils
             
             var viewportPoint = mainCamera.WorldToViewportPoint(position);
             
-            if (viewportPoint.x < -0.1f || viewportPoint.x > 1.1f ||
-                viewportPoint.y < -0.1f || viewportPoint.y > 1.1f ||
+            if (viewportPoint.x < min || viewportPoint.x > max ||
+                viewportPoint.y < min || viewportPoint.y > max ||
                 viewportPoint.z < 0)
             {
                 return false;
