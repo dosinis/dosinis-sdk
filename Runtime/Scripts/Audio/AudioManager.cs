@@ -45,12 +45,7 @@ namespace DosinisSDK.Audio
             SetMusicEnabled(data.isMusicEnabled);
             SetSfxEnabled(data.isSfxEnabled);
         }
-
-        public void PlayAtPoint(AudioClip clip, Vector3 position, float volume = 1)
-        {
-            AudioSource.PlayClipAtPoint(clip, position, volume);
-        }
-
+        
         public void StopMusic()
         {
             musicSource.Stop();
@@ -149,6 +144,24 @@ namespace DosinisSDK.Audio
                     }
                 }
             }
+        }
+        
+        public void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1)
+        {
+            var go = new GameObject("One shot audio");
+            go.transform.position = position;
+            
+            var audioSource = (AudioSource) go.AddComponent(typeof(AudioSource));
+            
+            audioSource.clip = clip;
+            audioSource.spatialBlend = 1;
+            audioSource.volume = volume;
+            audioSource.minDistance = minDistance;
+            audioSource.maxDistance = maxDistance;
+            
+            audioSource.Play();
+            
+            Destroy(go, clip.length * (Time.timeScale < 0.009999999776482582 ? 0.01f : Time.timeScale));
         }
 
         public void SetSfxEnabled(bool value)

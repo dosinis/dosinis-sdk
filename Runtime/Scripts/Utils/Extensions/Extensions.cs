@@ -165,5 +165,13 @@ namespace DosinisSDK.Utils
                 audio.PlayOneShot(clip, volume);
             }
         }
+
+        public static void PlayOneShotSafeAtPoint(this AudioClip clip, Vector3 point, float minDistance = 1f, float maxDistance = 500f, float volume = 1)
+        {
+            if (App.Core.TryGetModule(out IAudioManager audio))
+            {
+                audio.PlayAtPoint(clip, point, minDistance, maxDistance, volume);
+            }
+        }
     }
 }
