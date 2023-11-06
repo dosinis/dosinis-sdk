@@ -25,10 +25,6 @@ namespace DosinisSDK.Editor
                     prop.stringValue = v.ToString();
                 }
             }
-            else
-            {
-                Debug.LogError(property.type);
-            }
         }
     }
 }
