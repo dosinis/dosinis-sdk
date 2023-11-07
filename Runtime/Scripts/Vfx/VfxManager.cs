@@ -9,7 +9,7 @@ namespace DosinisSDK.Vfx
 {
     public class VfxManager : BehaviourModule, IVfxManager, IProcessable
     {
-        private readonly Dictionary<IVfx, VfxPool> effects = new();
+        private readonly Dictionary<IVfx, VfxPool> effectPools = new();
 
         private readonly Dictionary<long, IVfx> forcedOrientationVfxCache = new();
         private readonly Dictionary<long, IVfx> effectsCache = new();
@@ -20,12 +20,12 @@ namespace DosinisSDK.Vfx
 
         public void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
         {
-            if (effects.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx) == false)
             {
-                effects.Add(vfx, VfxPool.Create(vfx));
+                effectPools.Add(vfx, VfxPool.Create(vfx));
             }
 
-            var ps = effects[vfx].Play(point);
+            var ps = effectPools[vfx].Play(point);
             
             ps.Transform.forward = forward;
             
@@ -42,20 +42,20 @@ namespace DosinisSDK.Vfx
 
         public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
         {
-            if (effects.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx) == false)
             {
-                effects.Add(vfx, VfxPool.Create(vfx));
+                effectPools.Add(vfx, VfxPool.Create(vfx));
             }
 
             IVfx ps;
             
             if (parent != null)
             {
-                ps = effects[vfx].Play(parent);
+                ps = effectPools[vfx].Play(parent);
             }
             else
             {
-                ps = effects[vfx].Play();
+                ps = effectPools[vfx].Play();
             }
 
             ps.Transform.localPosition += offset;
@@ -83,7 +83,7 @@ namespace DosinisSDK.Vfx
 
         public void Stop(IVfx vfx, long hash)
         {
-            if (effects.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx) == false)
             {
                 return;
             }
@@ -98,12 +98,12 @@ namespace DosinisSDK.Vfx
         
         public void StopAll(IVfx vfx)
         {
-            if (effects.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx) == false)
             {
                 return;
             }
 
-            effects[vfx].StopAll();
+            effectPools[vfx].StopAll();
         }
 
         private IEnumerator WaitForEffect(IVfx vfx, Action done)
