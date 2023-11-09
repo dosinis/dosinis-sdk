@@ -40,19 +40,26 @@ namespace DosinisSDK.Core
             
             loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
             
-            OnSceneAboutToChange?.Invoke();
-            
-            loadSceneOperation.allowSceneActivation = switchLoadedScene;
+            loadSceneOperation.allowSceneActivation = false;
             
             while (loadSceneOperation.isDone == false && loadSceneOperation.progress < 0.9f)
             {
                 yield return null;
                 SceneLoadProgress = loadSceneOperation.progress;
             }
-
+            
             SceneLoadProgress = 1;
             
             yield return new WaitForSeconds(delay / 2f);
+            
+            OnSceneAboutToChange?.Invoke();
+
+            yield return new WaitForEndOfFrame();
+            
+            if (switchLoadedScene)
+            {
+                loadSceneOperation.allowSceneActivation = true;
+            }
 
             done?.Invoke();
         }
