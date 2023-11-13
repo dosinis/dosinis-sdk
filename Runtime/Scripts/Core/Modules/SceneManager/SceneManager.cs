@@ -58,7 +58,7 @@ namespace DosinisSDK.Core
             
             if (switchLoadedScene)
             {
-                loadSceneOperation.allowSceneActivation = true;
+                SwitchLoadedScene();
             }
 
             done?.Invoke();
@@ -68,6 +68,8 @@ namespace DosinisSDK.Core
         {
             ActiveScene = newScene;
             OnSceneChanged?.Invoke((oldScene, newScene));
+            
+            SceneLoadProgress = 0f;
         }
     }
 }
