@@ -173,5 +173,12 @@ namespace DosinisSDK.Utils
                 audio.PlayAtPoint(clip, point, minDistance, maxDistance, volume);
             }
         }
+        
+        // LayerMask
+        
+        public static bool Contains(this LayerMask mask, int layer)
+        {
+            return mask == (mask | (1 << layer));
+        }
     }
 }
