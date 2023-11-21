@@ -9,7 +9,8 @@ namespace DosinisSDK.Audio
         void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1);
         void StopMusic();
         void PlayMusic(AudioClip clip, float volume = 1f);
-        void PlayLoop(AudioClip clip);
+        void SetPlayingClipPitch(AudioClip clip, float pitch);
+        void PlayLoop(AudioClip clip, float volume = 1f);
         void StopLoop(AudioClip clip);
         void SetMusicPitch(float value);
         void SetSfxEnabled(bool value);

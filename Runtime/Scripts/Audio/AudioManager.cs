@@ -62,7 +62,19 @@ namespace DosinisSDK.Audio
             musicSource.Play();
         }
 
-        public void PlayLoop(AudioClip clip)
+        public void SetPlayingClipPitch(AudioClip clip, float pitch)
+        {
+            foreach (AudioSource src in sources)
+            {
+                if (src.isPlaying && src.clip == clip)
+                {
+                    src.pitch = pitch;
+                    break;
+                }
+            }
+        }
+        
+        public void PlayLoop(AudioClip clip, float volume = 1f)
         {
             foreach (AudioSource src in sources)
             {
@@ -70,6 +82,7 @@ namespace DosinisSDK.Audio
                 {
                     src.clip = clip;
                     src.loop = true;
+                    src.volume = volume;
                     src.Play();
                     break;
                 }
