@@ -11,14 +11,23 @@ namespace DosinisSDK.Vfx
         
         private const int PREWARM_SIZE = 1;
         private static GameObject parent;
+        private static GameObject Parent
+        {
+            get
+            {
+                if (parent != null)
+                {
+                    return parent;
+                }
+                
+                parent = new GameObject($"POOL-{nameof(VfxPool)}");
+
+                return parent;
+            }
+        }
 
         private VfxPool(IVfx source)
         {
-            if (parent == null)
-            {
-                parent = new GameObject($"POOL-{nameof(PlainParticlePool)}");
-            }
-            
             if (source.GameObject.IsInScene())
             {
                 source.GameObject.SetActive(false);
@@ -28,7 +37,7 @@ namespace DosinisSDK.Vfx
             
             for (int i = 0; i < PREWARM_SIZE; i++)
             {
-                var newVfx = Object.Instantiate(source.GameObject, parent.transform).GetComponent<IVfx>();
+                var newVfx = Object.Instantiate(source.GameObject, Parent.transform).GetComponent<IVfx>();
                 newVfx.GameObject.SetActive(false);
                 pool.Add(newVfx);
             }
@@ -41,7 +50,7 @@ namespace DosinisSDK.Vfx
 
         public IVfx Play()
         {
-            var vfx = Play(parent.transform);
+            var vfx = Play(Parent.transform);
             
             return vfx;
         }
@@ -54,7 +63,7 @@ namespace DosinisSDK.Vfx
             return vfx;
         }
 
-        public IVfx Play(Transform parent)
+        public IVfx Play(Transform newParent)
         {
             CleanupPool();
             
@@ -62,9 +71,9 @@ namespace DosinisSDK.Vfx
             {
                 if (vfx.GameObject.activeSelf == false || vfx.IsPlaying == false)
                 {
-                    if (vfx.Transform.parent != parent)
+                    if (vfx.Transform.parent != newParent)
                     {
-                        vfx.Transform.SetParent(parent);
+                        vfx.Transform.SetParent(newParent);
                     }
                     
                     vfx.Transform.localPosition = Vector3.zero;
@@ -77,7 +86,7 @@ namespace DosinisSDK.Vfx
                 }
             }
 
-            var newVfx = Object.Instantiate(source.GameObject, parent.transform).GetComponent<IVfx>();
+            var newVfx = Object.Instantiate(source.GameObject, newParent).GetComponent<IVfx>();
             newVfx.Transform.localPosition = Vector3.zero;
             newVfx.Transform.rotation = Quaternion.identity;
             

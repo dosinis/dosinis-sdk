@@ -10,15 +10,25 @@ namespace DosinisSDK.Vfx
         private readonly List<ParticleSystem> pool = new List<ParticleSystem>();
         
         private const int PREWARM_SIZE = 1;
+        
         private static GameObject parent;
+        private static GameObject Parent
+        {
+            get
+            {
+                if (parent != null)
+                {
+                    return parent;
+                }
+                
+                parent = new GameObject($"POOL-{nameof(VfxPool)}");
+
+                return parent;
+            }
+        }
 
         private PlainParticlePool(ParticleSystem source)
         {
-            if (parent == null)
-            {
-                parent = new GameObject($"POOL-{nameof(PlainParticlePool)}");
-            }
-            
             if (source.gameObject.IsInScene())
             {
                 source.gameObject.SetActive(false);
@@ -28,7 +38,7 @@ namespace DosinisSDK.Vfx
             
             for (int i = 0; i < PREWARM_SIZE; i++)
             {
-                var newParticleSys = Object.Instantiate(source, parent.transform);
+                var newParticleSys = Object.Instantiate(source, Parent.transform);
                 newParticleSys.gameObject.SetActive(false);
                 pool.Add(newParticleSys);
             }
@@ -41,7 +51,7 @@ namespace DosinisSDK.Vfx
 
         public ParticleSystem Play()
         {
-            var ps = Play(parent.transform);
+            var ps = Play(Parent.transform);
             
             return ps;
         }
@@ -54,7 +64,7 @@ namespace DosinisSDK.Vfx
             return ps;
         }
 
-        public ParticleSystem Play(Transform parent)
+        public ParticleSystem Play(Transform newParent)
         {
             CleanupPool();
             
@@ -62,9 +72,9 @@ namespace DosinisSDK.Vfx
             {
                 if (particleSys.gameObject.activeSelf == false || particleSys.isPlaying == false)
                 {
-                    if (particleSys.transform.parent != parent)
+                    if (particleSys.transform.parent != newParent)
                     {
-                        particleSys.transform.SetParent(parent);
+                        particleSys.transform.SetParent(newParent);
                     }
                     
                     particleSys.transform.localPosition = Vector3.zero;
@@ -77,7 +87,7 @@ namespace DosinisSDK.Vfx
                 }
             }
 
-            var newParticleSys = Object.Instantiate(source, parent.transform);
+            var newParticleSys = Object.Instantiate(source, newParent.transform);
             newParticleSys.transform.localPosition = Vector3.zero;
             newParticleSys.transform.rotation = Quaternion.identity;
             
