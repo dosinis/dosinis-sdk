@@ -93,7 +93,7 @@ namespace DosinisSDK.Audio
         {
             foreach (AudioSource src in sources)
             {
-                if (src.isPlaying && src.clip == clip)
+                if (src && src.gameObject && src.isPlaying && src.clip == clip)
                 {
                     src.Stop();
                     break;
