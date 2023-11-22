@@ -8,10 +8,11 @@ namespace DosinisSDK.Core
     public sealed class SceneManager : BehaviourModule, ISceneManager
     {
         private AsyncOperation loadSceneOperation;
-        
+
         public event Action<(Scene, Scene)> OnSceneChanged;
         public event Action OnSceneAboutToChange;
-
+        public event Action OnSceneLoadStarted;
+        public bool SceneIsLoading { get; private set; }
         public float SceneLoadProgress { get; private set; }
         public Scene ActiveScene { get; private set; }
 
@@ -25,15 +26,18 @@ namespace DosinisSDK.Core
         public void SwitchLoadedScene()
         {
             loadSceneOperation.allowSceneActivation = true;
+            SceneIsLoading = false;
         }
 
         public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, float delay = 0f, Action done = null)
         {
+            OnSceneLoadStarted?.Invoke();
             StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, delay, done));
         }
         
         private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, float delay, Action done)
         {
+            SceneIsLoading = true;
             SceneLoadProgress = 0;
             
             yield return new WaitForSeconds(delay / 2f);
@@ -68,7 +72,8 @@ namespace DosinisSDK.Core
         {
             ActiveScene = newScene;
             OnSceneChanged?.Invoke((oldScene, newScene));
-            
+
+            SceneIsLoading = false;
             SceneLoadProgress = 0f;
         }
     }
