@@ -1,6 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using DosinisSDK.Core;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Assets
 {
@@ -10,7 +11,10 @@ namespace DosinisSDK.Assets
         
         protected override void OnInit(IApp app)
         {
-            
+            if (provider == null)
+            {
+                provider = new AssetProviderResources();
+            }
         }
 
         public void SetProvider(IAssetProvider provider)
@@ -23,7 +27,7 @@ namespace DosinisSDK.Assets
             return provider.GetAsset<T>(path);
         }
         
-        public void GetAssetAsync<T>(string path, System.Action<T> callback) where T : Object
+        public void GetAssetAsync<T>(string path, Action<T> callback) where T : Object
         {
             provider.GetAssetAsync(path, callback);
         }
