@@ -84,7 +84,7 @@ namespace DosinisSDK.Core
                 }
             }
 
-            LogError($"No Window {typeof(T).Name} is available!");
+            LogError($"No Window {wType.Name} is available!");
             return default;
         }
 
