@@ -6,6 +6,8 @@ namespace DosinisSDK.Core
 {
     public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
+        [SerializeField] private bool safeMode = true;
+        
         public Camera Camera { get; private set; }
 
         private readonly Dictionary<Type, IWindow> windows = new();
@@ -23,8 +25,8 @@ namespace DosinisSDK.Core
 
             foreach (var win in windows)
             {
-                win.Value.Init(app);
-
+                InitWindow(win.Value);
+                
                 if (win.Value is IProcessable proc)
                 {
                     processedWindows.Add(proc);
@@ -34,6 +36,25 @@ namespace DosinisSDK.Core
                 {
                     tickableWindows.Add(tickable);
                 }
+            }
+        }
+
+        private void InitWindow(IWindow window)
+        {
+            if (safeMode)
+            {
+                try
+                {
+                    window.Init(app);
+                }
+                catch(Exception ex)
+                {
+                    LogError($"Error while initializing {window.GetType().Name}! {ex.Message}. You can disable safe mode in UIManager component.");
+                }
+            }
+            else
+            {
+                window.Init(app);
             }
         }
 
@@ -118,7 +139,9 @@ namespace DosinisSDK.Core
             var window = GetWindow<T>();
 
             if (window.Initialized == false)
-                window.Init(app);
+            {
+                InitWindow(window);
+            }
 
             window.Show(callBack, onHidden, onBeforeHide);
         }
@@ -134,7 +157,9 @@ namespace DosinisSDK.Core
             var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
 
             if (window.Initialized == false)
-                window.Init(app);
+            {
+                InitWindow(window);
+            }
 
             window.Show(args, callBack, onHidden, onBeforeHide);
         }
