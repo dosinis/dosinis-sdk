@@ -48,7 +48,10 @@ namespace DosinisSDK.Audio
         
         public void StopMusic()
         {
-            musicSource.Stop();
+            if (musicSource)
+            {
+                musicSource.Stop();
+            }
         }
 
         public void PlayMusic(AudioClip clip, float volume = 1f)
