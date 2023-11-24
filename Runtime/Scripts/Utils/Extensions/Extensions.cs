@@ -127,6 +127,16 @@ namespace DosinisSDK.Utils
             
             return randomPoint;
         }
+        
+        public static void SetLayerRecursively(this Transform obj, int layer)
+        {
+            obj.gameObject.layer = layer;
+            
+            foreach (Transform child in obj.transform)
+            {
+                child.gameObject.SetLayerRecursively(layer);
+            }
+        }
 
         // Color
 
