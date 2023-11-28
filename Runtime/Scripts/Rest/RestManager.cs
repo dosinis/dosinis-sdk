@@ -24,37 +24,42 @@ namespace DosinisSDK.Rest
             coroutineManager.Begin(GetInternal(url, callback));
         }
         
-        public void Post<T>(string url, object data, Action<T> callback)
-        {
-            coroutineManager.Begin(PostInternal(url, data, callback));
-        }
-        
         public async Task<T> GetAsync<T>(string url)
         {
-            var request = UnityWebRequest.Get(url);
+            using var request = UnityWebRequest.Get(url);
+            
+            request.disposeDownloadHandlerOnDispose = true;
+            request.disposeUploadHandlerOnDispose = true;
+
             request.SendWebRequest();
 
             while (request.downloadHandler.isDone == false)
             {
                 await Task.Yield();
             }
-            
+
             LogOperation(request);
-            
+
             return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+        }
+        
+        public void Post<T>(string url, object data, Action<T> callback)
+        {
+            coroutineManager.Begin(PostInternal(url, data, callback));
         }
         
         public async Task<T> PostAsync<T>(string url, object data)
         {
-            var request = CreatePostRequest(url, data);
-
+            using var request = CreatePostRequest(url, data);
+            request.SendWebRequest();
+            
             while (request.downloadHandler.isDone == false)
             {
                 await Task.Yield();
             }
-            
+
             LogOperation(request);
-            
+
             return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
         }
         
@@ -62,7 +67,7 @@ namespace DosinisSDK.Rest
         
         private IEnumerator GetInternal<T>(string url, Action<T> callback)
         {
-            var request = UnityWebRequest.Get(url);
+            using var request = UnityWebRequest.Get(url);
             yield return request.SendWebRequest();
             
             LogOperation(request);
@@ -73,8 +78,7 @@ namespace DosinisSDK.Rest
         
         private IEnumerator PostInternal<T>(string url, object data, Action<T> callback)
         {
-            var request = CreatePostRequest(url, data);
-            
+            using var request = CreatePostRequest(url, data);
             yield return request.SendWebRequest();
             
             LogOperation(request);
@@ -89,7 +93,9 @@ namespace DosinisSDK.Rest
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SendWebRequest();
+            
+            request.disposeDownloadHandlerOnDispose = true;
+            request.disposeUploadHandlerOnDispose = true;
 
             return request;
         }
