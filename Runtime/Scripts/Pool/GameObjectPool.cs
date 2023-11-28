@@ -56,6 +56,14 @@ namespace DosinisSDK.Pool
             pool.Clear();
         }
 
+        public void Dispose()
+        {
+            if (gameObject)
+            {
+                DestroyImmediate(gameObject);
+            }
+        }
+
         public IEnumerable<T> GetAll<T>() where T : Component
         {
             foreach (var obj in pool)
