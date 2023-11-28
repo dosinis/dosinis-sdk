@@ -1,7 +1,7 @@
 {
   "name": "com.dosinis.sdk",
   "displayName": "DosinisSDK",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "unity": "2019.4",
   "keywords": ["Tools", "Framework", "SDK"],
   "description": "Lightweight SDK to help develop games on Unity Engine",
