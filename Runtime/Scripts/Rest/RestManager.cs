@@ -46,11 +46,7 @@ namespace DosinisSDK.Rest
         
         public async Task<T> PostAsync<T>(string url, object data)
         {
-            var request = new UnityWebRequest(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.SendWebRequest();
+            var request = CreatePostRequest(url, data);
 
             while (request.downloadHandler.isDone == false)
             {
@@ -77,10 +73,7 @@ namespace DosinisSDK.Rest
         
         private IEnumerator PostInternal<T>(string url, object data, Action<T> callback)
         {
-            var request = new UnityWebRequest(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
+            var request = CreatePostRequest(url, data);
             
             yield return request.SendWebRequest();
             
@@ -90,6 +83,17 @@ namespace DosinisSDK.Rest
             callback?.Invoke(result);
         }
 
+        private UnityWebRequest CreatePostRequest(string url, object data)
+        {
+            var request = new UnityWebRequest(url, "POST");
+            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+            request.SendWebRequest();
+
+            return request;
+        }
+        
         private void LogOperation(UnityWebRequest request)
         {
             if (request.result != UnityWebRequest.Result.Success)
