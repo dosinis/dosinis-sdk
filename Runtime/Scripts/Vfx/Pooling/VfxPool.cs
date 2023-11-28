@@ -11,6 +11,7 @@ namespace DosinisSDK.Vfx
         
         private const int PREWARM_SIZE = 1;
         private static GameObject parent;
+        
         private static GameObject Parent
         {
             get
