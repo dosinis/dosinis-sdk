@@ -14,8 +14,11 @@ namespace DosinisSDK.Vfx
         private readonly Dictionary<long, IVfx> forcedOrientationVfxCache = new();
         private readonly Dictionary<long, IVfx> effectsCache = new();
 
+        private ICoroutineManager coroutineManager;
+
         protected override void OnInit(IApp app)
         {
+            coroutineManager = app.Coroutine;
         }
 
         public void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
@@ -36,7 +39,7 @@ namespace DosinisSDK.Vfx
             
             if (done != null)
             {
-                app.Coroutine.Begin(WaitForEffect(ps, done));
+                coroutineManager.Begin(WaitForEffect(ps, done));
             }
         }
 
@@ -75,7 +78,7 @@ namespace DosinisSDK.Vfx
             
             if (done != null)
             {
-                app.Coroutine.Begin(WaitForEffect(ps, done));
+                coroutineManager.Begin(WaitForEffect(ps, done));
             }
 
             return h;
