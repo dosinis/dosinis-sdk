@@ -10,6 +10,8 @@ namespace DosinisSDK.Core
 #endif
         [SerializeField] protected Button closeButton;
 
+        protected IUIManager uiManager;
+        
         private IWindowTransition transition;
         private Widget[] widgets = { };
 
@@ -24,14 +26,13 @@ namespace DosinisSDK.Core
         private RectTransform rect;
         private Action hiddenCallback;
         private Action beforeHideCallback;
-        protected IApp app;
 
         void IWindow.Init(IApp app)
         {
             if (Initialized)
                 return;
-            
-            this.app = app;
+
+            uiManager = app.UIManager;
             
             if (TryGetComponent(out IWindowTransition t))
             {
@@ -118,7 +119,7 @@ namespace DosinisSDK.Core
 
         public void ForwardTo<T>(bool waitUntilHidden = true) where T : IWindow
         {
-            var window = app.UIManager.GetWindow<T>();
+            var window = uiManager.GetWindow<T>();
             
             if (waitUntilHidden)
             {
