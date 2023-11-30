@@ -11,10 +11,10 @@ namespace DosinisSDK.Core
     {
         // Private
 
-        private readonly Dictionary<Type, IModule> cachedModules = new Dictionary<Type, IModule>();
-        private readonly HashSet<IProcessable> processables = new HashSet<IProcessable>();
-        private readonly HashSet<ITickable> tickables = new HashSet<ITickable>();
-        private readonly HashSet<IFixedProcessable> fixedProcessables = new HashSet<IFixedProcessable>();
+        private readonly Dictionary<Type, IModule> cachedModules = new();
+        private readonly HashSet<IProcessable> processables = new();
+        private readonly HashSet<ITickable> tickables = new();
+        private readonly HashSet<IFixedProcessable> fixedProcessables = new();
 
         private ModuleManifestBase manifest;
         private float lastTick;
@@ -135,7 +135,7 @@ namespace DosinisSDK.Core
             return false;
         }
 
-        private void RegisterModule(IModule module, ModuleConfig mConfig = null)
+        private void RegisterModule(IModule module, ModuleConfig mConfig = null, bool init = true)
         {
             var mType = module.GetType();
 
@@ -146,22 +146,25 @@ namespace DosinisSDK.Core
             }
 
             cachedModules.Add(mType, module);
-            
-            if (manifest.safeMode)
+
+            if (init)
             {
-                try
+                if (manifest.safeMode)
+                {
+                    try
+                    {
+                        module.Init(this, mConfig);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. " +
+                                       $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
+                    }
+                }
+                else
                 {
                     module.Init(this, mConfig);
                 }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. " +
-                        $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
-                }
-            }
-            else
-            {
-                module.Init(this, mConfig);
             }
             
             if (module is IProcessable processable)
@@ -323,6 +326,8 @@ namespace DosinisSDK.Core
                 Array.Sort(sceneModules, (a, b) => b.InitPriority.CompareTo(a.InitPriority));
 
                 IUIManager foundUIManager = null;
+
+                var modules = new List<IModule>();
                 
                 foreach (var module in sceneModules)
                 {
@@ -332,28 +337,39 @@ namespace DosinisSDK.Core
                     }
                     else
                     {
-                        RegisterModule(module);
-
-                        if (module is IAsyncModule asyncModule)
-                        {
-                            await asyncModule.InitAsync(this);
-                        }
+                        modules.Add(module);
                     }
                 }
 
-                // Registering UIManager as the very last module
+                // Registering UIManager as the very first scene module for other scene modules to be able to cache it on Init
                 if (foundUIManager != null)
                 {
-                    RegisterModule(foundUIManager);
-
-                    if (foundUIManager is IAsyncModule asyncModule)
-                    {
-                        await asyncModule.InitAsync(this);
-                    }
+                    RegisterModule(foundUIManager, init: false);
                 }
                 else
                 {
                     Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
+                }
+
+                foreach (var module in modules)
+                {
+                    RegisterModule(module);
+
+                    if (module is IAsyncModule asyncModule)
+                    {
+                        await asyncModule.InitAsync(this);
+                    }
+                }
+
+                // Initializing UI as the last module for windows to be able to access other modules
+                if (foundUIManager != null)
+                {
+                    foundUIManager.Init(this, null);
+                    
+                    if (foundUIManager is IAsyncModule asyncModule)
+                    {
+                        await asyncModule.InitAsync(this);
+                    }
                 }
             }
 
