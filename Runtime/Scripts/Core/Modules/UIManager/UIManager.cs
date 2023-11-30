@@ -13,9 +13,11 @@ namespace DosinisSDK.Core
         private readonly Dictionary<Type, IWindow> windows = new();
         private readonly List<IProcessable> processedWindows = new();
         private readonly List<ITickable> tickableWindows = new();
+        private IApp app;
 
         protected override void OnInit(IApp app)
         {
+            this.app = app;
             Camera = GetComponentInChildren<Camera>();
             
             foreach (var win in GetComponentsInChildren<IWindow>(true))
