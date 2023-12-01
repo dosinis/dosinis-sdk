@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using DosinisSDK.Inspector;
 using DosinisSDK.Utils;
 using UnityEditor;
@@ -93,20 +94,29 @@ namespace DosinisSDK.Editor
             {
                 if (property.propertyType == SerializedPropertyType.Generic)
                 {
-                    var bigNumber = property.type == nameof(BigNumber);
-                    
                     Rect offsetPosition = position;
+
+                    var parentType = property.serializedObject.targetObject.GetType();
                     
-                    if (bigNumber)
+                    var field = parentType.GetField(property.propertyPath, BindingFlags.NonPublic
+                                                                           | BindingFlags.Instance | BindingFlags.Public);
+
+                    var fieldType = field.FieldType;
+                    
+                    var drawer = EditorHelper.GetPropertyDrawer(fieldType);
+                    
+                    var staticMethod = drawer.GetMethod("Draw", BindingFlags.Static | BindingFlags.Public);
+
+                    if (staticMethod != null)
                     {
                         var propLabel = new GUIContent(property?.displayName);
                         float childHeight = EditorGUI.GetPropertyHeight(property, propLabel);
                         offsetPosition.height = childHeight;
                         
-                        BigNumberDrawer.Draw(position, property, propLabel);
+                        staticMethod.Invoke(null, new object[] { position, property, propLabel });
                         return;
                     }
-                    
+                   
                     var children = property.GetEnumerator();
                     
                     while (children.MoveNext())
