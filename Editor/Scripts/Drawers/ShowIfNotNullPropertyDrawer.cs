@@ -78,10 +78,13 @@ namespace DosinisSDK.Editor
             {
                 if (property.propertyType == SerializedPropertyType.Generic)
                 {
-                    var children = property.GetEnumerator();
-
                     Rect offsetPosition = position;
-
+                    
+                    if (EditorHelper.DrawCustomProperty(property, position, ref offsetPosition)) 
+                        return;
+                    
+                    var children = property.GetEnumerator();
+                    
                     while (children.MoveNext())
                     {
                         SerializedProperty child = children.Current as SerializedProperty;

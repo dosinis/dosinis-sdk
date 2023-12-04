@@ -95,27 +95,9 @@ namespace DosinisSDK.Editor
                 if (property.propertyType == SerializedPropertyType.Generic)
                 {
                     Rect offsetPosition = position;
-
-                    var parentType = property.serializedObject.targetObject.GetType();
                     
-                    var field = parentType.GetField(property.propertyPath, BindingFlags.NonPublic
-                                                                           | BindingFlags.Instance | BindingFlags.Public);
-
-                    var fieldType = field.FieldType;
-                    
-                    var drawer = EditorHelper.GetPropertyDrawer(fieldType);
-                    
-                    var staticMethod = drawer.GetMethod("Draw", BindingFlags.Static | BindingFlags.Public);
-
-                    if (staticMethod != null)
-                    {
-                        var propLabel = new GUIContent(property?.displayName);
-                        float childHeight = EditorGUI.GetPropertyHeight(property, propLabel);
-                        offsetPosition.height = childHeight;
-                        
-                        staticMethod.Invoke(null, new object[] { position, property, propLabel });
+                    if (EditorHelper.DrawCustomProperty(property, position, ref offsetPosition)) 
                         return;
-                    }
                    
                     var children = property.GetEnumerator();
                     

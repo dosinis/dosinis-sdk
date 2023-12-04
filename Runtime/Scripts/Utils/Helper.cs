@@ -282,6 +282,28 @@ namespace DosinisSDK.Utils
             field.SetValue(targetObject, value);
         }
 
+        public static FieldInfo GetFieldWithReflection(string fieldName, Type type)
+        {
+            FieldInfo field = null;
+
+            var parentType = type;
+
+            while (field == null)
+            {
+                field = parentType.GetField(fieldName, BindingFlags.NonPublic
+                                                       | BindingFlags.Instance | BindingFlags.Public);
+                        
+                if (parentType.BaseType == null)
+                {
+                    break;
+                }
+                        
+                parentType = parentType.BaseType;
+            }
+            
+            return field;
+        }
+        
         public static void RotateDirSmooth(Transform transform, Vector3 dir, float relativeToEulerY, ref float rotationVelocity, float rotationSmoothTime)
         {
             var targetRotation = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg +
