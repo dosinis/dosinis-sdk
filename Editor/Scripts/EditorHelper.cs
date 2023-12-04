@@ -24,7 +24,7 @@ namespace DosinisSDK.Editor
         {
             var parentType = property.serializedObject.targetObject.GetType();
             
-            var field = Helper.GetFieldWithReflection(property.propertyPath, parentType);
+            var field = Helper.GetFieldInfoWithReflection(property.propertyPath, parentType);
             
             if (field != null)
             {

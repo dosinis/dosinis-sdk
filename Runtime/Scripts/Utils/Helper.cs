@@ -268,7 +268,22 @@ namespace DosinisSDK.Utils
 
             return json;
         }
-
+        
+        public static void RotateDirSmooth(Transform transform, Vector3 dir, float relativeToEulerY, ref float rotationVelocity, float rotationSmoothTime)
+        {
+            var targetRotation = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg +
+                                 relativeToEulerY;
+                
+            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref rotationVelocity,
+                rotationSmoothTime);
+                
+            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+        }
+        
+        // Reflection
+        
+        // TODO: Consider moving to ReflectionHelper
+        
         public static void SetFieldWithReflection<T>(object targetObject, string fieldName, object value)
         {
             var field = typeof(T).GetField(fieldName, BindingFlags.NonPublic
@@ -282,7 +297,20 @@ namespace DosinisSDK.Utils
             field.SetValue(targetObject, value);
         }
 
-        public static FieldInfo GetFieldWithReflection(string fieldName, Type type)
+        public static T GetValueWithReflection<T>(string fieldName, object targetObj)
+        {
+            var fieldInfo = GetFieldInfoWithReflection(fieldName, targetObj.GetType());
+            
+            if (fieldInfo == null)
+            {
+                Debug.LogError($"Field \"{fieldName}\" not found");
+                return default;
+            }
+            
+            return (T)fieldInfo.GetValue(targetObj);
+        }
+        
+        public static FieldInfo GetFieldInfoWithReflection(string fieldName, Type type)
         {
             FieldInfo field = null;
 
@@ -302,17 +330,6 @@ namespace DosinisSDK.Utils
             }
             
             return field;
-        }
-        
-        public static void RotateDirSmooth(Transform transform, Vector3 dir, float relativeToEulerY, ref float rotationVelocity, float rotationSmoothTime)
-        {
-            var targetRotation = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg +
-                                 relativeToEulerY;
-                
-            float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref rotationVelocity,
-                rotationSmoothTime);
-                
-            transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
     }
 }
