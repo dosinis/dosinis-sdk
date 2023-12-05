@@ -391,7 +391,11 @@ namespace DosinisSDK.Utils
         {
             var value = number.Value;
             
+            var sign = value > 0 ? "" : "-";
+            
             var str = value.ToString();
+            
+            str = str.Replace("-", "");
 
             var length = str.Length;
 
@@ -415,14 +419,18 @@ namespace DosinisSDK.Utils
             string res = fractional == 0 ? $"{integerPart}{Helper.GetStringModifier(numberOfThousands)}"
                 : $"{integerPart},{fractionalPart}{Helper.GetStringModifier(numberOfThousands)}";
             
-            return res;
+            return sign + res;
         }
 
         public static string ToPrettyString(this BigNumber number)
         {
             var value = number.Value;
+
+            var sign = value > 0 ? "" : "-";
             
             var str = value.ToString();
+            
+            str = str.Replace("-", "");
 
             var length = str.Length;
 
@@ -446,7 +454,7 @@ namespace DosinisSDK.Utils
             string res = fractional == 0 ? $"{integerPart}{Helper.GetStringModifier(numberOfThousands)}"
                 : $"{integerPart},{fractionalPart}{Helper.GetStringModifier(numberOfThousands)}";
 
-            return res;
+            return sign + res;
         }
 
         public static double PreciseDivideDouble(this BigNumber number, BigNumber divider, int precision = 1000)
