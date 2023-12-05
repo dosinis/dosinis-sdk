@@ -401,7 +401,7 @@ namespace DosinisSDK.Utils
 
             if (length < 4)
             {
-                return str;
+                return sign + str;
             }
 
             var integerPartLength = length % 3;
@@ -436,7 +436,7 @@ namespace DosinisSDK.Utils
 
             if (length < 4)
             {
-                return str;
+                return sign + str;
             }
 
             var integerPartLength = length % 3;
