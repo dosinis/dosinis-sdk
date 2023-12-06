@@ -391,7 +391,7 @@ namespace DosinisSDK.Utils
         {
             var value = number.Value;
             
-            var sign = value > 0 ? "" : "-";
+            var sign = value >= 0 ? "" : "-";
             
             var str = value.ToString();
             
@@ -426,7 +426,7 @@ namespace DosinisSDK.Utils
         {
             var value = number.Value;
 
-            var sign = value > 0 ? "" : "-";
+            var sign = value >= 0 ? "" : "-";
             
             var str = value.ToString();
             
