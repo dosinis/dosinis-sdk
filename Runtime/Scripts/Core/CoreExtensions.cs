@@ -199,14 +199,7 @@ namespace DosinisSDK.Core
 
         public static void AddOrSet<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
         {
-            if (dictionary.ContainsKey(key))
-            {
-                dictionary[key] = value;
-            }
-            else
-            {
-                dictionary.Add(key, value);
-            }
+            dictionary[key] = value;
         }
 
         public static void AddOrSetList<TKey, TValue>(this IDictionary<TKey, List<TValue>> dictionary, TKey key, TValue item)
@@ -218,6 +211,18 @@ namespace DosinisSDK.Core
             else
             {
                 dictionary.Add(key, new List<TValue> {item});
+            }
+        }
+
+        public static void Increment<TKey>(this IDictionary<TKey, int> dictionary, TKey key)
+        {
+            if (dictionary.ContainsKey(key))
+            {
+                dictionary[key]++;
+            }
+            else
+            {
+                dictionary.Add(key, 1);
             }
         }
 
