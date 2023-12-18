@@ -584,5 +584,10 @@ namespace DosinisSDK.Utils
             
             return number > 0 ? 1 : -1;
         }
+
+        public static int AsInt(this BigNumber number)
+        {
+            return (int) number.Value;
+        }
     }
 }
