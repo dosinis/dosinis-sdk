@@ -83,6 +83,7 @@ namespace DosinisSDK.Audio
             {
                 if (src.isPlaying == false)
                 {
+                    src.pitch = 1f;
                     src.clip = clip;
                     src.loop = true;
                     src.volume = volume;
@@ -155,6 +156,7 @@ namespace DosinisSDK.Audio
                 {
                     if (src.isPlaying == false)
                     {
+                        src.pitch = 1f;
                         src.PlayOneShot(clip, volume);
                         break;
                     }
@@ -164,6 +166,8 @@ namespace DosinisSDK.Audio
         
         public void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1)
         {
+            // TODO: Pool these objects
+            
             var go = new GameObject("One shot audio");
             go.transform.position = position;
             
@@ -174,6 +178,7 @@ namespace DosinisSDK.Audio
             audioSource.volume = volume;
             audioSource.minDistance = minDistance;
             audioSource.maxDistance = maxDistance;
+            audioSource.pitch = 1f;
             
             audioSource.Play();
             
