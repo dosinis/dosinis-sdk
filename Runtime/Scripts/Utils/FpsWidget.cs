@@ -10,6 +10,24 @@ namespace DosinisSDK.Utils
 
         private const float HUD_REFRESH_RATE = 1;
         private float timer;
+        
+        private static FpsWidget instance;
+
+        public static void Enable(bool value)
+        {
+            if (instance == null || instance.gameObject == null)
+            {
+                Debug.LogWarning("FpsWidget is not initialized");
+                return;
+            }
+
+            instance.gameObject.SetActive(value);
+        }
+
+        private void Awake()
+        {
+            instance = this;
+        }
 
 #if UNITY_EDITOR
         private void Reset()
