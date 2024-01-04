@@ -51,6 +51,18 @@ namespace DosinisSDK.Utils
 
         // Renderer
 
+        public static void InstantiateMaterials(this Renderer rend)
+        {
+            Material[] materials = rend.materials;
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i] = Object.Instantiate(materials[i]);
+            }
+
+            rend.materials = materials;
+        }
+        
         public static void SetInstanceMaterialColor(this Renderer rend, Color color)
         {
             Material[] materials = rend.materials;
