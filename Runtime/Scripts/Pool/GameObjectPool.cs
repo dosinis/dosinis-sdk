@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
 
@@ -98,11 +99,9 @@ namespace DosinisSDK.Pool
 
         public bool Contains<T>(Predicate<T> match) where T : Component
         {
-            foreach (var obj in pool)
+            foreach (var obj in GetAll<T>())
             {
-                var result = obj as T;
-                
-                if (match(result))
+                if (match(obj))
                 {
                     return true;
                 }
@@ -117,11 +116,9 @@ namespace DosinisSDK.Pool
             
             foreach (var obj in list)
             {
-                var result = obj;
-                
-                if (match(result))
+                if (match(obj))
                 {
-                    return result;
+                    return obj;
                 }
             }
             
