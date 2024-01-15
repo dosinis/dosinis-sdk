@@ -90,6 +90,30 @@ namespace DosinisSDK.Core
             
             return rangeList;
         }
+        
+        public static T RandomFromRange<T>(this List<T> list, int startIndex, int endIndex)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[UnityRandom.Range(startIndex, endIndex)];
+        }
+        
+        public static T RandomFromRange<T>(this T[] array, int startIndex, int endIndex)
+        {
+            if (array.Length == 0)
+                return default;
+
+            return array[UnityRandom.Range(startIndex, endIndex)];
+        }
+        
+        public static T RandomFromRange<T>(this IReadOnlyList<T> list, int startIndex, int endIndex)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[UnityRandom.Range(startIndex, endIndex)];
+        }
 
         public static int RandomIndex<T>(this T[] array)
         {
