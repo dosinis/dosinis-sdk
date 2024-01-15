@@ -86,14 +86,17 @@ namespace DosinisSDK.Utils
 
         // ScrollRect
         
-        public static void ScrollToChild(this ScrollRect scrollRect, RectTransform child)
+        public static void SnapToChild(this ScrollRect scrollRect, RectTransform child, bool ignoreX = false, bool ignoreY = false)
         {
             Canvas.ForceUpdateCanvases();
-            Vector2 viewportLocalPosition = scrollRect.viewport.localPosition;
-            Vector2 childLocalPosition   = child.localPosition;
             
-            scrollRect.content.localPosition = new Vector2(0 - (viewportLocalPosition.x + childLocalPosition.x), 
-                0 - (viewportLocalPosition.y + childLocalPosition.y));
+            Vector2 viewportLocalPosition = scrollRect.viewport.localPosition;
+            Vector2 childLocalPosition = child.localPosition;
+            
+            var target = new Vector2(ignoreX ? scrollRect.content.localPosition.x : 0 - (viewportLocalPosition.x + childLocalPosition.x),
+                ignoreY ? scrollRect.content.localPosition.y : 0 - (viewportLocalPosition.y + childLocalPosition.y));
+
+            scrollRect.content.localPosition = target;
         }
         
         // Rect
