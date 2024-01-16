@@ -14,6 +14,7 @@ namespace DosinisSDK.Vfx
         private readonly Dictionary<long, IVfx> forcedOrientationVfxCache = new();
         private readonly Dictionary<long, IVfx> effectsCache = new();
 
+        private readonly List<long> itemsToRemove = new();
         private ICoroutineManager coroutineManager;
 
         protected override void OnInit(IApp app)
@@ -118,7 +119,7 @@ namespace DosinisSDK.Vfx
 
         public void Process(in float delta)
         {
-            var itemsToRemove = new List<long>();
+            itemsToRemove.Clear();
             
             foreach (var effect in effectsCache)
             {
