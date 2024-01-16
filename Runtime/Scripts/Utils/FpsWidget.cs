@@ -7,9 +7,12 @@ namespace DosinisSDK.Utils
     public class FpsWidget : MonoBehaviour
     {
         [SerializeField] private TMP_Text text;
+        
+        private const float FPS_MEASURE_PERIOD = 0.5f;
 
-        private const float HUD_REFRESH_RATE = 1;
-        private float timer;
+        private int framesPassed = 0;
+        private float nextFrame = 0;
+        private int fps;
         
         private static FpsWidget instance;
 
@@ -38,12 +41,16 @@ namespace DosinisSDK.Utils
 
         private void Update()
         {
-            if (Time.unscaledTime > timer)
+            framesPassed++;
+            
+            if (Time.realtimeSinceStartup > nextFrame)
             {
-                int fps = (int)(1f / Time.unscaledDeltaTime);
-                text.text = "FPS: " + fps;
-                timer = Time.unscaledTime + HUD_REFRESH_RATE;
+                fps = (int)(framesPassed / FPS_MEASURE_PERIOD);
+                framesPassed = 0;
+                nextFrame += FPS_MEASURE_PERIOD;
             }
+
+            text.text = "FPS: " + fps;
         }
     }
 }
