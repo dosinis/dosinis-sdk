@@ -168,6 +168,19 @@ namespace DosinisSDK.Core
             return list[^1];
         }
 
+        public static T Find<T>(this IEnumerable<T> collection, Predicate<T> match)
+        {
+            foreach (var element in collection)
+            {
+                if (match(element))
+                {
+                    return element;
+                }
+            }
+
+            return default;
+        }
+
         public static void Shuffle<T>(this T[] array)
         {
             for (int i = 0; i < array.Length; i++)
