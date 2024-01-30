@@ -31,7 +31,13 @@ namespace DosinisSDK.Editor
                 var fieldType = field.FieldType;
                     
                 var drawer = GetPropertyDrawer(fieldType);
-                    
+
+                if (drawer == null)
+                {
+                    Debug.LogWarning("Cannot find drawer for: " + fieldType + " type. Using default drawer");
+                    return false;
+                }
+                
                 var staticMethod = drawer.GetMethod("Draw", BindingFlags.Static | BindingFlags.Public);
 
                 if (staticMethod == null) 
