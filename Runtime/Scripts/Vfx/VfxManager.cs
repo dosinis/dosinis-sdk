@@ -117,7 +117,7 @@ namespace DosinisSDK.Vfx
             done?.Invoke();
         }
 
-        public void Process(in float delta)
+        void IProcessable.Process(in float delta)
         {
             itemsToRemove.Clear();
             

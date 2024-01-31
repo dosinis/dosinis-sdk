@@ -37,7 +37,7 @@ namespace DosinisSDK.Utils
         {
         }
 
-        public void Process(in float delta)
+        void IProcessable.Process(in float delta)
         {
             if (mainThread == null)
             {
