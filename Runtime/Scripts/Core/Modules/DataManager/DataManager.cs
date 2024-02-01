@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
@@ -113,6 +114,7 @@ namespace DosinisSDK.Core
 
             if (HasData<T>())
             {
+                // ReSharper disable once RedundantAssignment
                 json = PlayerPrefs.GetString(dataKey);
             }
 
@@ -126,7 +128,16 @@ namespace DosinisSDK.Core
                 return new T();
             }
 #endif
-            return JsonConvert.DeserializeObject<T>(json) ?? new T();
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json) ?? new T();
+            }
+            catch (Exception ex)
+            {
+                LogError(ex.Message);
+            }
+            
+            return new T();
         }
 
         public void SaveData<T>(T data)
