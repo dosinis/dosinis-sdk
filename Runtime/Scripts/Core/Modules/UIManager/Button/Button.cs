@@ -17,14 +17,18 @@ namespace DosinisSDK.Core
             get => interactable;
             set
             {
-                buttonAnimation?.OnInteractableStateChanged(value);
+                if (interactable != value)
+                {
+                    buttonAnimation?.OnInteractableStateChanged(value);
+                }
+                
                 interactable = value;
             }
         }
 
         // Serialized
         
-        [SerializeField] protected bool interactable = true;
+        [SerializeField] private bool interactable = true;
 
         // Private
         
@@ -46,7 +50,7 @@ namespace DosinisSDK.Core
 
         protected virtual void ClickPerformed()
         {
-            if (interactable == false)
+            if (Interactable == false)
                 return;
 
             OnClick?.Invoke();
@@ -54,7 +58,7 @@ namespace DosinisSDK.Core
 
         public virtual void OnPointerDown(PointerEventData eventData)
         {
-            if (interactable == false)
+            if (Interactable == false)
                 return;
             
             heldDown = true;
@@ -65,7 +69,7 @@ namespace DosinisSDK.Core
 
         public virtual void OnPointerClick(PointerEventData eventData)
         {
-            if (interactable == false)
+            if (Interactable == false)
                 return;
             
             buttonAnimation?.ReleaseAnimation();
@@ -77,7 +81,7 @@ namespace DosinisSDK.Core
 
         public virtual void OnPointerExit(PointerEventData eventData)
         {
-            if (interactable == false)
+            if (Interactable == false)
                 return;
             
             OnPointerExited?.Invoke();
@@ -91,7 +95,7 @@ namespace DosinisSDK.Core
 
         public virtual void OnPointerEnter(PointerEventData eventData)
         {
-            if (interactable == false)
+            if (Interactable == false)
                 return;
             
             OnPointerEntered?.Invoke();
@@ -107,7 +111,7 @@ namespace DosinisSDK.Core
             image = GetComponent<Image>();
             
             buttonAnimation?.Init();
-            buttonAnimation?.OnInteractableStateChanged(interactable);
+            buttonAnimation?.OnInteractableStateChanged(Interactable);
         }
 
         private void OnEnable()
