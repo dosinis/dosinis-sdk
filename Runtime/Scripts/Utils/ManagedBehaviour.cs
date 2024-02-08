@@ -5,26 +5,10 @@ namespace DosinisSDK.Utils
 {
     public abstract class ManagedBehaviour : MonoBehaviour
     {
-        [SerializeField] private bool skipFrame = true;
-
-        private IApp app;
-        
-        private async void Awake()
+        private async void Start()
         {
             await App.Ready();
-            
-            if (skipFrame)
-            {
-                App.Core.Timer.SkipFrame(() =>
-                {
-                    OnInit(App.Core);
-                });
-                
-                return;
-            }
-
-            app = App.Core;
-            OnInit(app);
+            OnInit(App.Core);
         }
 
         /// <summary>
