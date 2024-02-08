@@ -15,6 +15,7 @@ namespace DosinisSDK.Core
         public bool SceneIsLoading { get; private set; }
         public float SceneLoadProgress { get; private set; }
         public Scene ActiveScene { get; private set; }
+        public int PreviousSceneIndex { get; private set; } = -1;
 
         protected override void OnInit(IApp app)
         {
@@ -32,6 +33,7 @@ namespace DosinisSDK.Core
         public void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, float delay = 0f, Action done = null)
         {
             OnSceneLoadStarted?.Invoke();
+            PreviousSceneIndex = ActiveScene.buildIndex;
             StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, delay, done));
         }
         

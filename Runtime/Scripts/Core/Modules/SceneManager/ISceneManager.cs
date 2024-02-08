@@ -11,6 +11,7 @@ namespace DosinisSDK.Core
         bool SceneIsLoading { get; }
         float SceneLoadProgress { get; }
         Scene ActiveScene { get; }
+        int PreviousSceneIndex { get; }
         void SwitchLoadedScene();
         void LoadScene(int sceneIndex, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, float delay = 0f,
             Action done = null);
