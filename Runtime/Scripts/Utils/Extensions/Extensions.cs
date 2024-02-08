@@ -149,7 +149,7 @@ namespace DosinisSDK.Utils
                 child.gameObject.SetLayerRecursively(layer);
             }
         }
-
+        
         // Color
 
         public static Color SetAlpha(ref this Color color, float alpha)
@@ -201,6 +201,25 @@ namespace DosinisSDK.Utils
         public static bool Contains(this LayerMask mask, int layer)
         {
             return mask == (mask | (1 << layer));
+        }
+        
+        // Rigidbody
+        
+        public static void Translate(this Rigidbody rb, Vector3 translation, Space relativeTo = Space.Self)
+        {
+            if (relativeTo == Space.Self)
+            {
+                rb.MovePosition(rb.position + rb.transform.TransformDirection(translation));
+            }
+            else
+            {
+                rb.MovePosition(rb.position + translation);
+            }
+        }
+
+        public static void Translate(this Rigidbody rb, float x, float y, float z, Space relativeTo = Space.Self)
+        {
+            rb.Translate(new Vector3(x, y, z), relativeTo);
         }
     }
 }
