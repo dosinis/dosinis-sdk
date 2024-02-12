@@ -20,6 +20,8 @@ namespace DosinisSDK.Vfx
         /// <returns></returns>
         long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default,
             Action done = null);
+        
+        bool IsPlaying(IVfx vfx, long hash);
 
         /// <summary>
         /// Stops the provided VFX

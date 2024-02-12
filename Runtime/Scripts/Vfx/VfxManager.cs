@@ -85,6 +85,21 @@ namespace DosinisSDK.Vfx
             return h;
         }
 
+        public bool IsPlaying(IVfx vfx, long hash)
+        {
+            if (effectPools.ContainsKey(vfx) == false)
+            {
+                return false;
+            }
+
+            if (effectsCache.ContainsKey(hash) == false)
+            {
+                return false;
+            }
+
+            return effectsCache[hash].IsAlive();
+        }
+
         public void Stop(IVfx vfx, long hash)
         {
             if (effectPools.ContainsKey(vfx) == false)
