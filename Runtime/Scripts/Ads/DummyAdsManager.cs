@@ -15,6 +15,8 @@ namespace DosinisSDK.Ads
         public override event Action OnBannerLoaded;
         public override event Action<string> OnInterstitialShown;
         public override event Action<string> OnRewardedShown;
+        public override float LastTimeAnyAdFullyShown { get; protected set; }
+        public override bool IsBannerDisplayed { get; protected set; }
 
         private ITimer timer;
 
@@ -40,6 +42,7 @@ namespace DosinisSDK.Ads
         public override void ShowInterstitial(string placement = "")
         {
             OnInterstitialShown?.Invoke(placement);
+            LastTimeAnyAdFullyShown = Time.time;
             Log($"Show interstitial ad {placement}");
         }
 
@@ -85,6 +88,7 @@ namespace DosinisSDK.Ads
                 LoadRewardedAds();
 
                 callBack(true);
+                LastTimeAnyAdFullyShown = Time.time;
             }, true);
         }
         

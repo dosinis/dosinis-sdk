@@ -24,8 +24,8 @@ namespace DosinisSDK.Ads
         public abstract event Action OnBannerLoaded;
         public abstract event Action<string> OnInterstitialShown;
         public abstract event Action<string> OnRewardedShown;
-        
-        public bool IsBannerDisplayed { get; set; }
+        public abstract float LastTimeAnyAdFullyShown { get; protected set; }
+        public abstract bool IsBannerDisplayed { get; protected set; }
 
         public abstract bool IsRewardAdReady();
         protected abstract void LoadRewardedAds();

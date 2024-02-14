@@ -8,7 +8,8 @@ namespace DosinisSDK.Ads
         event Action OnBannerLoaded;
         event Action<string> OnInterstitialShown;
         event Action<string> OnRewardedShown;
-        bool IsBannerDisplayed { get; set; }
+        float LastTimeAnyAdFullyShown { get; }
+        bool IsBannerDisplayed { get; }
         bool IsRewardAdReady();
         void ShowRewardedAd(string placement, Action<bool> callBack);
         void ShowInterstitial(string placement = "");
