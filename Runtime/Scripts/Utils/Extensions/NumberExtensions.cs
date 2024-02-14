@@ -110,12 +110,12 @@ namespace DosinisSDK.Utils
         // Float
 
         /// <summary>
-        /// Returns time string in F2 format (59.00).
+        /// Returns float string in F2 format (59.00).
         /// </summary>
         /// <returns></returns>
-        public static string ToTimerString(this float time)
+        public static string ToF2String(this float value)
         {
-            return $"{time:F2}";
+            return $"{value:F2}";
         }
 
         /// <summary>
