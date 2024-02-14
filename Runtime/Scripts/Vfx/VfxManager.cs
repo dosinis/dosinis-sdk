@@ -30,8 +30,11 @@ namespace DosinisSDK.Vfx
             }
 
             var ps = effectPools[vfx].Play(point);
-            
-            ps.Transform.forward = forward;
+
+            if (forward != Vector3.zero)
+            {
+                ps.Transform.forward = forward;
+            }
             
             if (sfx != null)
             {
