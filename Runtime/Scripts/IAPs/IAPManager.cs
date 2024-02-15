@@ -42,9 +42,9 @@ namespace DosinisSDK.IAPs
         {
             config = GetConfigAs<IAPConfig>();
 
-            foreach (var handler in config.purchaseHandlers)
+            foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.productId, handler.productType, handler.HandlePurchase);
+                RegisterProduct(handler.ProductId, handler.ProductType, handler.HandlePurchase);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
