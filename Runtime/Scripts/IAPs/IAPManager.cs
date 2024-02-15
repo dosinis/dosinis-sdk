@@ -44,6 +44,11 @@ namespace DosinisSDK.IAPs
         {
             config = GetConfigAs<IAPConfig>();
 
+            if (Application.isEditor)
+            {
+                StandardPurchasingModule.Instance().useFakeStoreUIMode = config.FakeStoreUIMode;
+            }
+            
             foreach (var handler in config.PurchaseHandlers)
             {
                 RegisterProduct(handler.ProductId, handler.ProductType, handler.HandlePurchase);
@@ -55,7 +60,7 @@ namespace DosinisSDK.IAPs
             {
                 builder.AddProduct(product.Key, product.Value.type);
             }
-
+            
             UnityPurchasing.Initialize(this, builder);
         }
 
@@ -70,25 +75,6 @@ namespace DosinisSDK.IAPs
 
         public void PurchaseProduct(string productId, Action<bool> onPurchased = null)
         {
-            if (Application.isEditor)
-            {
-                if (productsRegistry.TryGetValue(productId, out var data))
-                {
-                    data.purchaseCallback?.Invoke();
-                    OnProductPurchased?.Invoke(productId);
-                    onPurchased?.Invoke(true);
-                    
-                    Log($"PurchaseProduct: Complete. Product: {productId}");
-                }
-                else
-                {
-                    Warn($"PurchaseProduct: FAIL. {productId} not found product in registry");
-                    onPurchased?.Invoke(false);
-                }
-
-                return;
-            }
-
             if (Initialized)
             {
                 purchaseCallback = onPurchased;
@@ -227,26 +213,29 @@ namespace DosinisSDK.IAPs
 
             bool validPurchase = true;
 
-            var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
-
-            try
+            if (Application.isEditor == false)
             {
-                var result = validator.Validate(product.receipt);
+                var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
 
-                Log("Receipt is valid. Contents:");
-
-                foreach (var productReceipt in result)
+                try
                 {
-                    Log(productReceipt.productID);
-                    Log(productReceipt.purchaseDate.ToString());
-                    Log(productReceipt.transactionID);
+                    var result = validator.Validate(product.receipt);
+
+                    Log("Receipt is valid. Contents:");
+
+                    foreach (var productReceipt in result)
+                    {
+                        Log(productReceipt.productID);
+                        Log(productReceipt.purchaseDate.ToString());
+                        Log(productReceipt.transactionID);
+                    }
+                }
+                catch (IAPSecurityException)
+                {
+                    validPurchase = false;
                 }
             }
-            catch (IAPSecurityException)
-            {
-                validPurchase = false;
-            }
-
+            
             if (validPurchase == false)
             {
                 Warn("Couldn't validate purchase. Not granting any reward");
