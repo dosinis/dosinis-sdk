@@ -8,8 +8,10 @@ namespace DosinisSDK.IAPs
     {
         public bool Initialized { get; }
         event Action<string> OnProductPurchased;
-        void PurchaseProduct(string productId);
+        void PurchaseProduct(string productId, Action<bool> onPurchased);
         Product GetProductById(string productId);
+        string GetProductPrice(string productId);
+        string GetProductTitle(string productId);
         void RestorePurchases();
     }
 }

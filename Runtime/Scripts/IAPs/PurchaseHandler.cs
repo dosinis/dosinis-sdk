@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
@@ -9,7 +10,8 @@ namespace DosinisSDK.IAPs
         [SerializeField] private string productId;
         [SerializeField] private ProductType productType;
         [SerializeField] private PurchaseHandler[] extraHandlers;
-
+        [SerializeField] private string fallbackTitle;
+        
         public string ProductId => productId;
         public ProductType ProductType => productType;
         public IReadOnlyCollection<PurchaseHandler> ExtraHandlers => extraHandlers;
@@ -35,10 +37,18 @@ namespace DosinisSDK.IAPs
         }
 
         protected abstract void OnPurchased();
-
-        public virtual string GetValueString()
+        public abstract string GetValueString();
+        
+        public virtual string GetTitle()
         {
-            return "";
+            var title = App.Core.GetModule<IIAPManager>().GetProductTitle(productId);
+            
+            if (string.IsNullOrEmpty(title) || title == $"Fake title for {productId}")
+            {
+                return fallbackTitle;
+            }
+
+            return title;
         }
     }
 }

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Extension;
 using UnityEngine.Purchasing.Security;
 
 namespace DosinisSDK.IAPs
 {
-    public class IAPManager : Module, IIAPManager, IStoreListener
+    public class IAPManager : Module, IIAPManager, IDetailedStoreListener
     {
         // Private
 
         private IStoreController storeController;
         private IExtensionProvider storeExtensionProvider;
-        private readonly Dictionary<string, ProductData> productsRegistry = new Dictionary<string, ProductData>();
+        private readonly Dictionary<string, ProductData> productsRegistry = new();
         private IAPConfig config;
 
         // Properties
@@ -23,6 +24,7 @@ namespace DosinisSDK.IAPs
         // Events
 
         public event Action<string> OnProductPurchased;
+        private Action<bool> purchaseCallback;
 
         // Static
         
@@ -66,14 +68,22 @@ namespace DosinisSDK.IAPs
             });
         }
 
-        public void PurchaseProduct(string productId)
+        public void PurchaseProduct(string productId, Action<bool> onPurchased = null)
         {
             if (Application.isEditor)
             {
-                if (productsRegistry.ContainsKey(productId))
+                if (productsRegistry.TryGetValue(productId, out var data))
                 {
-                    productsRegistry[productId].purchaseCallback?.Invoke();
+                    data.purchaseCallback?.Invoke();
                     OnProductPurchased?.Invoke(productId);
+                    onPurchased?.Invoke(true);
+                    
+                    Log($"PurchaseProduct: Complete. Product: {productId}");
+                }
+                else
+                {
+                    Warn($"PurchaseProduct: FAIL. {productId} not found product in registry");
+                    onPurchased?.Invoke(false);
                 }
 
                 return;
@@ -81,6 +91,8 @@ namespace DosinisSDK.IAPs
 
             if (Initialized)
             {
+                purchaseCallback = onPurchased;
+                
                 var product = storeController.products.WithID(productId);
 
                 if (product != null && product.availableToPurchase)
@@ -117,6 +129,44 @@ namespace DosinisSDK.IAPs
             return default;
         }
 
+        public string GetProductPrice(string productId)
+        {
+            if (Initialized == false)
+            {
+                Warn("Store is not ready!");
+                return "";
+            }
+
+            var product = GetProductById(productId);
+
+            if (product == null)
+            {
+                Warn("Couldn't find product");
+                return "";
+            }
+
+            return product.metadata.localizedPriceString;
+        }
+
+        public string GetProductTitle(string productId)
+        {
+            if (Initialized == false)
+            {
+                Warn("Store is not ready!");
+                return "";
+            }
+
+            var product = GetProductById(productId);
+
+            if (product == null)
+            {
+                Warn("Couldn't find product");
+                return "";
+            }
+
+            return product.metadata.localizedTitle;
+        }
+
         public void RestorePurchases()
         {
 #if UNITY_IOS
@@ -151,31 +201,13 @@ namespace DosinisSDK.IAPs
 
         // IStoreListener implementation
 
-        public void OnInitialized(IStoreController controller, IExtensionProvider extensions)
-        {
-            Log("Initialized");
-            storeController = controller;
-            storeExtensionProvider = extensions;
-        }
-
-        public void OnInitializeFailed(InitializationFailureReason error)
-        {
-            Warn($"Initialize failed. InitializationFailureReason: {error}");
-        }
-
-        public void OnInitializeFailed(InitializationFailureReason error, string message)
-        {
-            Warn($"Initialize failed. InitializationFailureReason: {error} {message}");
-        }
-
-        public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
+        PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs args)
         {
             var product = args.purchasedProduct;
 
             bool validPurchase = true;
 
-            var validator = new CrossPlatformValidator(GooglePublicKeyHandler(),
-                ApplePublicKeyHandler(), Application.identifier);
+            var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
 
             try
             {
@@ -198,28 +230,76 @@ namespace DosinisSDK.IAPs
             if (validPurchase == false)
             {
                 Warn("Couldn't validate purchase. Not granting any reward");
+                purchaseCallback?.Invoke(false);
                 return PurchaseProcessingResult.Complete;
             }
 
             string productId = product.definition.id;
 
-            if (productsRegistry.ContainsKey(productId))
+            try
             {
-                productsRegistry[productId].purchaseCallback?.Invoke();
+                if (productsRegistry.TryGetValue(productId, out var data))
+                {
+                    data.purchaseCallback?.Invoke();
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError($"ProcessPurchase: Handler caused exception. {ex.Message}");
             }
 
             Log($"ProcessPurchase: Complete. Product: {args.purchasedProduct.definition.id} - {product.transactionID}");
 
-            OnProductPurchased?.Invoke(productId);
+            try
+            {
+                OnProductPurchased?.Invoke(productId);
+            }
+            catch (Exception ex)
+            {
+                LogError($"ProcessPurchase: OnProductPurchased event caused exception. {ex.Message}");
+            }
 
+            try
+            {
+                purchaseCallback?.Invoke(true);
+            }
+            catch (Exception ex)
+            {
+                LogError($"ProcessPurchase: purchaseCallback caused exception. {ex.Message}");
+            }
+           
             return PurchaseProcessingResult.Complete;
         }
-
-        public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        
+        void IStoreListener.OnInitialized(IStoreController controller, IExtensionProvider extensions)
         {
-            Warn($"OnPurchaseFailed: Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            Log("Initialized");
+            storeController = controller;
+            storeExtensionProvider = extensions;
         }
 
+        void IDetailedStoreListener.OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
+        {
+            Warn($"OnPurchaseFailed: Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureDescription.message}");
+            purchaseCallback?.Invoke(false);
+        }
+
+        void IStoreListener.OnInitializeFailed(InitializationFailureReason error)
+        {
+            Warn($"Initialize failed. InitializationFailureReason: {error}");
+        }
+
+        void IStoreListener.OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            Warn($"Initialize failed. InitializationFailureReason: {error} {message}");
+        }
+        
+        void IStoreListener.OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
+        {
+            Warn($"OnPurchaseFailed: Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
+            purchaseCallback?.Invoke(false);
+        }
+        
         private struct ProductData
         {
             public ProductType type;
