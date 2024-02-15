@@ -167,8 +167,29 @@ namespace DosinisSDK.IAPs
             return product.metadata.localizedTitle;
         }
 
+        public bool IsPurchased(string productId)
+        {
+            if (Initialized == false)
+            {
+                Warn("Store is not ready!");
+                return false;
+            }
+
+            var product = GetProductById(productId);
+
+            if (product == null)
+            {
+                Warn("Couldn't find product");
+                return false;
+            }
+            
+            return product.definition.type != ProductType.Consumable && product.hasReceipt;
+        }
+
         public void RestorePurchases()
         {
+            // NOTE: Restores all Non-consumable and Subscription products.
+            // Upon restore ProcessPurchase will be called for each restored purchase.
 #if UNITY_IOS
             storeExtensionProvider.GetExtension<IAppleExtensions>().RestoreTransactions((success, error) =>
             {
@@ -184,7 +205,6 @@ namespace DosinisSDK.IAPs
 #endif
 
 #if UNITY_ANDROID
-            // NOTE: if this won't work in Android, loop through all items in storeController and see if they have receipt, if they do - restore it
             storeExtensionProvider.GetExtension<IGooglePlayStoreExtensions>().RestoreTransactions((success, error) =>
             {
                 if (success)

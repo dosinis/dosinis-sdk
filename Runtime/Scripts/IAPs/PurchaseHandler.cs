@@ -15,7 +15,7 @@ namespace DosinisSDK.IAPs
         public string ProductId => productId;
         public ProductType ProductType => productType;
         public IReadOnlyCollection<PurchaseHandler> ExtraHandlers => extraHandlers;
-        public virtual bool IsListed => true;
+        public bool IsPurchased => App.Core.GetModule<IIAPManager>().IsPurchased(productId);
 
         internal void HandlePurchase()
         {
