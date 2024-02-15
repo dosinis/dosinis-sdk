@@ -1,5 +1,6 @@
 using DosinisSDK.Core;
 using System;
+using DosinisSDK.Inspector;
 using UnityEngine;
 
 namespace DosinisSDK.Ads
@@ -12,14 +13,14 @@ namespace DosinisSDK.Ads
 
     public abstract class AdsManager : BehaviourModule, IAdsManager
     {
-        [SerializeField] protected string rewardedId = "";
-        [SerializeField] protected string interstitialId = "";
-        [SerializeField] protected string bannerId = "";
+        [SerializeField] protected bool useTestAds;
+        
+        [SerializeField, ShowIf("useTestAds", false)] protected string rewardedId = "";
+        [SerializeField, ShowIf("useTestAds", false)] protected string interstitialId = "";
+        [SerializeField, ShowIf("useTestAds", false)] protected string bannerId = "";
 
         [SerializeField] protected bool showBanner;
         [SerializeField] protected BannerPosition bannerPosition;
-
-        [SerializeField] protected bool useTestAds;
 
         public abstract event Action OnBannerLoaded;
         public abstract event Action<string> OnInterstitialShown;
