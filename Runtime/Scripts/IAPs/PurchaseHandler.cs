@@ -1,51 +1,24 @@
-using System.Collections.Generic;
 using DosinisSDK.Core;
+using DosinisSDK.Utils;
 using UnityEngine;
 using UnityEngine.Purchasing;
 
 namespace DosinisSDK.IAPs
 {
-    public abstract class PurchaseHandler : ScriptableObject
+    public abstract class PurchaseHandler : Reward
     {
-        [SerializeField] private string productId;
         [SerializeField] private ProductType productType;
-        [SerializeField] private PurchaseHandler[] extraHandlers;
-        [SerializeField] private string fallbackTitle;
         
-        public string ProductId => productId;
         public ProductType ProductType => productType;
-        public IReadOnlyCollection<PurchaseHandler> ExtraHandlers => extraHandlers;
-        public virtual bool IsListed => App.Core.GetModule<IIAPManager>().IsPurchased(productId) == false;
+        public virtual bool IsListed => App.Core.GetModule<IIAPManager>().IsPurchased(Id) == false;
 
-        internal void HandlePurchase()
+        public override string GetTitle()
         {
-            OnPurchased();
+            var title = App.Core.GetModule<IIAPManager>().GetProductTitle(Id);
             
-            if (extraHandlers == null)
-                return;
-            
-            foreach (var handler in extraHandlers)
+            if (string.IsNullOrEmpty(title) || title == $"Fake title for {Id}")
             {
-                if (handler == this)
-                {
-                    Debug.LogError("PurchaseHandler: Extra handler is referencing to itself");
-                    continue;    
-                }
-
-                handler.HandlePurchase();
-            }
-        }
-
-        protected abstract void OnPurchased();
-        public abstract string GetValueString();
-        
-        public virtual string GetTitle()
-        {
-            var title = App.Core.GetModule<IIAPManager>().GetProductTitle(productId);
-            
-            if (string.IsNullOrEmpty(title) || title == $"Fake title for {productId}")
-            {
-                return fallbackTitle;
+                return base.GetTitle();
             }
 
             return title;

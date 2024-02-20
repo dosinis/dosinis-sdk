@@ -51,7 +51,7 @@ namespace DosinisSDK.IAPs
             
             foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.ProductId, handler.ProductType, handler.HandlePurchase);
+                RegisterProduct(handler.Id, handler.ProductType, handler.GrantReward);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
