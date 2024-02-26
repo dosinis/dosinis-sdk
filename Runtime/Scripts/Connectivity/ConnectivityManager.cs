@@ -8,7 +8,7 @@ namespace DosinisSDK.Connectivity
 {
     public class ConnectivityManager : Module, IConnectivityManager
     {
-        private Observable<bool> connected;
+        private readonly Observable<bool> connected = new(true);
         private ICoroutineManager coroutineManager;
         
         public IObservable<bool> Connected => connected;
