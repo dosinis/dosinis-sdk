@@ -109,7 +109,10 @@ namespace DosinisSDK.Core
         {
             buttonAnimation = GetComponent<IButtonAnimation>();
             image = GetComponent<Image>();
-            
+        }
+
+        private void Start()
+        {
             buttonAnimation?.Init();
             buttonAnimation?.OnInteractableStateChanged(Interactable);
         }
