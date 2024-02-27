@@ -11,6 +11,8 @@ namespace DosinisSDK.Core
         event Action OnAppRestart;
         void Restart();
         
+        float CurrentFrameRate { get; }
+        
         // Core Modules
         
         public ICoroutineManager Coroutine => GetModule<ICoroutineManager>();

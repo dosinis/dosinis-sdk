@@ -18,7 +18,10 @@ namespace DosinisSDK.Core
 
         private ModuleManifestBase manifest;
         private float lastTick;
-
+        private int framesPassed;
+        private float nextFrame;
+        private const float FPS_MEASURE_PERIOD = 0.5f;
+        
         // Events
 
         public event Action<bool> OnAppPaused;
@@ -41,15 +44,17 @@ namespace DosinisSDK.Core
         public static bool Initialized { get; private set; }
         public static IApp Core { get; private set; }
         public const string MANIFEST_PATH = "ModuleManifest";
-
+        
         // App
+        
+        public float CurrentFrameRate { get; private set; }
         
         public void Restart()
         {
             OnAppRestart?.Invoke();
             SceneManager.LoadScene(0);
         }
-        
+
         public T GetModule<T>() where T : class, IModule
         {
             var mType = typeof(T);
@@ -426,6 +431,15 @@ namespace DosinisSDK.Core
                 {
                     tickable.Tick();
                 }
+            }
+            
+            framesPassed++;
+            
+            if (Time.realtimeSinceStartup > nextFrame)
+            {
+                CurrentFrameRate = (int)(framesPassed / FPS_MEASURE_PERIOD);
+                framesPassed = 0;
+                nextFrame += FPS_MEASURE_PERIOD;
             }
         }
 

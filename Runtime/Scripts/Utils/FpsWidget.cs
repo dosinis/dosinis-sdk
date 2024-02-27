@@ -1,3 +1,4 @@
+using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
@@ -7,12 +8,6 @@ namespace DosinisSDK.Utils
     public class FpsWidget : MonoBehaviour
     {
         [SerializeField] private TMP_Text text;
-        
-        private const float FPS_MEASURE_PERIOD = 0.5f;
-
-        private int framesPassed = 0;
-        private float nextFrame = 0;
-        private int fps;
         
         private static FpsWidget instance;
 
@@ -41,16 +36,7 @@ namespace DosinisSDK.Utils
 
         private void Update()
         {
-            framesPassed++;
-            
-            if (Time.realtimeSinceStartup > nextFrame)
-            {
-                fps = (int)(framesPassed / FPS_MEASURE_PERIOD);
-                framesPassed = 0;
-                nextFrame += FPS_MEASURE_PERIOD;
-            }
-
-            text.text = "FPS: " + fps;
+            text.text = "FPS: " + App.Core.CurrentFrameRate;
         }
     }
 }
