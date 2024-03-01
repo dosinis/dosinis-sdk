@@ -9,17 +9,13 @@ namespace DosinisSDK.Audio
     public class AudioManager : BehaviourModule, IAudioManager
     {
         private float musicVolume = 1f;
-
-        private const int POOL_SIZE = 10;
-
-        private List<AudioSource> sources = new List<AudioSource>();
-
+        private readonly List<AudioSource> sources = new();
         private AudioSource musicSource;
-
         private AudioData data;
-
         private bool silencingMusic = false;
 
+        private const int POOL_SIZE = 10;
+        
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
 
@@ -29,15 +25,16 @@ namespace DosinisSDK.Audio
 
             for (int i = 0; i < POOL_SIZE; i++)
             {
-                var source = new GameObject();
-                source.transform.SetParent(transform);
-                source.name = "Source";
-                sources.Add(source.AddComponent<AudioSource>());
+                var sourceGo = new GameObject("Source");
+                sourceGo.transform.SetParent(transform);
+                
+                var src = sourceGo.AddComponent<AudioSource>();
+                src.playOnAwake = false;
+                sources.Add(src);
             }
 
-            var mSource = new GameObject();
+            var mSource = new GameObject("MusicSource");
             mSource.transform.SetParent(transform);
-            mSource.name = "MusicSource";
 
             musicSource = mSource.AddComponent<AudioSource>();
             musicSource.loop = true;
