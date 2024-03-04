@@ -30,6 +30,7 @@ namespace DosinisSDK.Audio
                 
                 var src = sourceGo.AddComponent<AudioSource>();
                 src.playOnAwake = false;
+                src.Stop(); // NOTE: hack to overcome Unity issue, where AudioSource isPlaying up until Start() is called.
                 sources.Add(src);
             }
 
