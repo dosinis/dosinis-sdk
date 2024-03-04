@@ -105,14 +105,16 @@ namespace DosinisSDK.Core
             buttonAnimation?.Highlight(true);
         }
         
-        protected virtual void Awake()
+        private void Awake()
         {
-            buttonAnimation = GetComponent<IButtonAnimation>();
             image = GetComponent<Image>();
         }
 
         private void Start()
         {
+            OnInit(App.Core);
+            
+            buttonAnimation = GetComponent<IButtonAnimation>();
             buttonAnimation?.Init();
             buttonAnimation?.OnInteractableStateChanged(Interactable);
         }
@@ -125,6 +127,10 @@ namespace DosinisSDK.Core
         public virtual void OnPointerUp(PointerEventData eventData)
         {
             OnReleased?.Invoke();
+        }
+        
+        protected virtual void OnInit(IApp app)
+        {
         }
     }
 }
