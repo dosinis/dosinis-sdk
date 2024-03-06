@@ -97,19 +97,19 @@ namespace DosinisSDK.Rest
 
         #region POST
 
-        public void Post<T>(string url, object parameter, Action<Response<T>> callback)
+        public void Post<T>(string url, object parameter, Action<Response<T>> callback, params Header[] headers)
         {
-            coroutineManager.Begin(PostInternal(url, parameter, callback));
+            coroutineManager.Begin(PostInternal(url, parameter, callback, headers));
         }
 
-        public void Post<T>(string url, Action<Response<T>> callback)
+        public void Post<T>(string url, Action<Response<T>> callback, params Header[] headers)
         {
-            coroutineManager.Begin(PostInternal(url, null, callback));
+            coroutineManager.Begin(PostInternal(url, null, callback, headers));
         }
 
-        public async Task<Response<T>> PostAsync<T>(string url, object parameter)
+        public async Task<Response<T>> PostAsync<T>(string url, object parameter, params Header[] headers)
         {
-            using var request = CreatePostRequest(url, parameter);
+            using var request = CreatePostRequest(url, parameter, headers);
             request.SendWebRequest();
 
             while (request.downloadHandler.isDone == false)
@@ -122,9 +122,9 @@ namespace DosinisSDK.Rest
             return CreateResponse<T>(request);
         }
 
-        public async Task<Response<T>> PostAsync<T>(string url)
+        public async Task<Response<T>> PostAsync<T>(string url, params Header[] headers)
         {
-            return await PostAsync<T>(url, null);
+            return await PostAsync<T>(url, null, headers);
         }
 
         #endregion
@@ -189,9 +189,9 @@ namespace DosinisSDK.Rest
             callback?.Invoke(new Response<Texture>(myTexture, request.responseCode, request.result, request.error));
         }
 
-        private IEnumerator PostInternal<T>(string url, object parameter, Action<Response<T>> callback)
+        private IEnumerator PostInternal<T>(string url, object parameter, Action<Response<T>> callback, params Header[] headers)
         {
-            using var request = CreatePostRequest(url, parameter);
+            using var request = CreatePostRequest(url, parameter, headers);
             yield return request.SendWebRequest();
 
             LogOperation(request);
@@ -199,7 +199,7 @@ namespace DosinisSDK.Rest
             callback?.Invoke(CreateResponse<T>(request));
         }
 
-        private UnityWebRequest CreatePostRequest(string url, object parameter)
+        private UnityWebRequest CreatePostRequest(string url, object parameter, params Header[] headers)
         {
             var request = new UnityWebRequest(url, "POST");
 
@@ -209,8 +209,11 @@ namespace DosinisSDK.Rest
                     new UploadHandlerRaw(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(parameter)));
                 request.SetRequestHeader("Content-Type", "application/json");
             }
-
-            request.SetRequestHeader("accept", "application/json");
+            
+            foreach (var header in headers)
+            {
+                request.SetRequestHeader(header.key, header.value);
+            }
 
             request.downloadHandler = new DownloadHandlerBuffer();
 
