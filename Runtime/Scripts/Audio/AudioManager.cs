@@ -51,8 +51,28 @@ namespace DosinisSDK.Audio
                 musicSource.Stop();
             }
         }
+        
+        public void PauseMusic()
+        {
+            musicSource.Pause();
+        }
 
-        public void PlayMusic(AudioClip clip, float volume = 1f)
+        public void ResumeMusic()
+        {
+            musicSource.Play();
+        }
+
+        public void PlayMusic(AudioClip clip)
+        {
+            musicSource.clip = clip;
+            
+            if (data.isMusicEnabled)
+                musicSource.volume = musicVolume;
+
+            musicSource.Play();
+        }
+
+        public void PlayMusic(AudioClip clip, float volume)
         {
             musicVolume = volume;
             musicSource.clip = clip;

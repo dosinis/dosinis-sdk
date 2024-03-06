@@ -8,7 +8,10 @@ namespace DosinisSDK.Audio
         void PlayOneShot(AudioClip clip, float volume = 1f, bool silentMusic = false);
         void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1);
         void StopMusic();
-        void PlayMusic(AudioClip clip, float volume = 1f);
+        void PauseMusic();
+        void ResumeMusic();
+        void PlayMusic(AudioClip clip);
+        void PlayMusic(AudioClip clip, float volume);
         void SetPlayingClipPitch(AudioClip clip, float pitch);
         void PlayLoop(AudioClip clip, float volume = 1f);
         void StopLoop(AudioClip clip);
