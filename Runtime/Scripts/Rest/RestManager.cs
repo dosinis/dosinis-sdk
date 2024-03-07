@@ -236,7 +236,7 @@ namespace DosinisSDK.Rest
         {
             if (request.result != UnityWebRequest.Result.Success)
             {
-                LogError($"Request {request.result}. {request.responseCode}: {request.error}");
+                LogError($"Request {request.result}. {request.responseCode}: {request.error}. Text: {request.downloadHandler.text}");
             }
 
             if (request.result == UnityWebRequest.Result.Success)
