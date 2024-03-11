@@ -7,15 +7,17 @@ namespace DosinisSDK.Core
     {
         private Coroutine coroutine;
         private readonly IEnumerator enumerator;
+        private readonly ICoroutineManager coroutineManager;
 
-        public TimedAction(IEnumerator enumerator)
+        public TimedAction(IEnumerator enumerator, ICoroutineManager coroutineManager)
         {
+            this.coroutineManager = coroutineManager;
             this.enumerator = enumerator;
         }
 
         public ITimedAction Start()
         {
-            coroutine = App.Core.Coroutine.Begin(enumerator, () =>
+            coroutine = coroutineManager.Begin(enumerator, () =>
             {
                 coroutine = null;
             });
@@ -25,7 +27,7 @@ namespace DosinisSDK.Core
 
         public void Stop()
         {
-            App.Core.Coroutine.Stop(ref coroutine);
+            coroutineManager.Stop(ref coroutine);
         }
         
         // IEnumerator implementation

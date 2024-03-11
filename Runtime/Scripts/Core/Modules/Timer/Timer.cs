@@ -18,7 +18,7 @@ namespace DosinisSDK.Core
         public ITimedAction Delay(float delay, Action done, bool realtime = false)
         {
             var enumerator = DelayCoroutine(delay, done, realtime);
-            var action = new TimedAction(enumerator);
+            var action = new TimedAction(enumerator, coroutineManager);
             
             action.Start();
 
@@ -28,7 +28,7 @@ namespace DosinisSDK.Core
         public ITimedAction CreateDelayAction(float delay, Action done, bool realtime = false)
         {
             var enumerator = DelayCoroutine(delay, done, realtime);
-            var action = new TimedAction(enumerator);
+            var action = new TimedAction(enumerator, coroutineManager);
 
             return action;
         }
@@ -36,7 +36,7 @@ namespace DosinisSDK.Core
         public ITimedAction Sequence(Action done = null, params ITimedAction[] actions)
         {
             var enumerator = SequenceCoroutine(done, actions);
-            var action = new TimedAction(enumerator);
+            var action = new TimedAction(enumerator, coroutineManager);
             
             action.Start();
             
@@ -46,7 +46,7 @@ namespace DosinisSDK.Core
         public ITimedAction Repeat(float frequency, int times, Action<int> onTick, float initDelay = 0f)
         {
             var enumerator = RepeatCoroutine(frequency, times, initDelay, onTick);
-            var action = new TimedAction(enumerator);
+            var action = new TimedAction(enumerator, coroutineManager);
             
             action.Start();
             
@@ -66,7 +66,7 @@ namespace DosinisSDK.Core
         public ITimedAction WaitUntil(Func<bool> condition, Action onComplete)
         {
             var enumerator = WaitUntilCoroutine(condition, onComplete);
-            var action = new TimedAction(enumerator);
+            var action = new TimedAction(enumerator, coroutineManager);
             
             action.Start();
             
