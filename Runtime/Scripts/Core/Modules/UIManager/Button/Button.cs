@@ -110,8 +110,9 @@ namespace DosinisSDK.Core
             image = GetComponent<Image>();
         }
 
-        private void Start()
+        private async void Start()
         {
+            await App.Ready();
             OnInit(App.Core);
             
             buttonAnimation = GetComponent<IButtonAnimation>();
