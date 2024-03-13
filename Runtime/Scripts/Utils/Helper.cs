@@ -280,6 +280,37 @@ namespace DosinisSDK.Utils
             transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
         }
         
+        public static void TurnToTargetTween(Vector3 target, Transform transform, float time = 0.1f, Action done = null)
+        {
+            App.Core.Coroutine.Begin(TurnToTargetCoroutine(target, transform, time, done));
+        }
+
+        private static IEnumerator TurnToTargetCoroutine(Vector3 target, Transform transform, float time, Action done)
+        {
+            var startRotation = transform.rotation;
+            var direction = (target - transform.position).normalized;
+            direction.y = 0;
+            var targetRotation = Quaternion.LookRotation(direction);
+            
+            var elapsedTime = 0f;
+            
+            while (elapsedTime < time)
+            {
+                transform.rotation = Quaternion.Slerp(startRotation, targetRotation, elapsedTime / time);
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+            
+            done?.Invoke();
+        }
+        
+        public static void TurnToTargetInstant(Vector3 targetPoint, Transform transform)
+        {
+            var direction = (targetPoint - transform.position).normalized;
+            direction.y = 0;
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
+        
         // Reflection
         
         // TODO: Consider moving to ReflectionHelper
