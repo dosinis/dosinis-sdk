@@ -8,7 +8,7 @@ namespace DosinisSDK.Editor
 {
     public static class EditorHelper
     {
-        public static Type GetPropertyDrawer(Type classType)
+        public static Type GetPropertyDrawerType(Type classType)
         {
             var assembly = Assembly.GetAssembly(typeof(UnityEditor.Editor));
             var scriptAttributeUtility = assembly.CreateInstance("UnityEditor.ScriptAttributeUtility");
@@ -30,24 +30,27 @@ namespace DosinisSDK.Editor
             {
                 var fieldType = field.FieldType;
                     
-                var drawer = GetPropertyDrawer(fieldType);
+                var drawerType = GetPropertyDrawerType(fieldType);
 
-                if (drawer == null)
+                if (drawerType == null)
                 {
-                    Debug.LogWarning("Cannot find drawer for: " + fieldType + " type. Using default drawer");
+                    Debug.LogWarning($"Cannot find drawer for: {fieldType} type. Using default drawer");
                     return false;
                 }
                 
-                var staticMethod = drawer.GetMethod("Draw", BindingFlags.Static | BindingFlags.Public);
+                var guiMethod = drawerType.GetMethod("OnGUI", BindingFlags.Instance | BindingFlags.Public);
 
-                if (staticMethod == null) 
+                if (guiMethod == null)
+                {
+                    Debug.LogWarning($"No OnGUI method found for {drawerType}. Shouldn't be possible");
                     return false;
+                }
+
+                var drawer = (PropertyDrawer)Activator.CreateInstance(drawerType);
                 
-                var propLabel = new GUIContent(property?.displayName);
-                float childHeight = EditorGUI.GetPropertyHeight(property, propLabel);
-                offsetPosition.height = childHeight;
-                        
-                staticMethod.Invoke(null, new object[] { position, property, propLabel });
+                offsetPosition.size = new Vector2(offsetPosition.size.x, offsetPosition.size.y / 2);
+                
+                guiMethod.Invoke(drawer, new object[] { offsetPosition, property, new GUIContent(property.displayName) });
                 return true;
             }
 

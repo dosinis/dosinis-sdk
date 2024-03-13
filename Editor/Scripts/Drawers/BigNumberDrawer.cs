@@ -10,11 +10,6 @@ namespace DosinisSDK.Editor
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            Draw(position, property, label);
-        }
-
-        public static void Draw(Rect position, SerializedProperty property, GUIContent label)
-        {
             SerializedProperty prop = property.FindPropertyRelative("stringValue");
             
             if (prop != null)

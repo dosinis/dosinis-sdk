@@ -43,8 +43,7 @@ namespace DosinisSDK.Editor
 
             return EditorGUI.GetPropertyHeight(property, label);
         }
-
-
+        
         private bool Show(SerializedProperty property)
         {
             showIf = attribute as ShowIfAttribute;
@@ -98,14 +97,13 @@ namespace DosinisSDK.Editor
                     
                     if (EditorHelper.DrawCustomProperty(property, position, ref offsetPosition)) 
                         return;
-                   
+                    
                     var children = property.GetEnumerator();
                     
                     while (children.MoveNext())
                     {
-                        SerializedProperty child = children.Current as SerializedProperty;
-                        
-                        GUIContent childLabel = new GUIContent(child?.displayName);
+                        var child = children.Current as SerializedProperty;
+                        var childLabel = new GUIContent(child?.displayName);
 
                         float childHeight = EditorGUI.GetPropertyHeight(child, childLabel);
                         offsetPosition.height = childHeight;
