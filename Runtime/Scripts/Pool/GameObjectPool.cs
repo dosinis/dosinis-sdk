@@ -9,7 +9,6 @@ namespace DosinisSDK.Pool
     public class GameObjectPool : MonoBehaviour
     {
         [SerializeField] private GameObject source;
-        [SerializeField] private Transform parent;
 
         private readonly List<Component> pool = new();
 
@@ -136,7 +135,7 @@ namespace DosinisSDK.Pool
                 }
             }
 
-            var newObj = Instantiate(source, parent ? parent : transform).GetComponent<T>();
+            var newObj = Instantiate(source, transform).GetComponent<T>();
             pool.Add(newObj);
 
             newObj.gameObject.SetActive(true);
