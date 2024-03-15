@@ -8,6 +8,11 @@ namespace DosinisSDK.Assets
     [Serializable]
     public class AssetLink
     {
+        public AssetLink(string path)
+        {
+            this.path = path;
+        }
+        
         public string path;
         
         public T GetAsset<T>() where T : Object
