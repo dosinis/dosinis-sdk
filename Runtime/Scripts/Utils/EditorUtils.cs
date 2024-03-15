@@ -32,6 +32,18 @@ namespace DosinisSDK.Utils
             EditorUtility.SetDirty(targetObj);
             AssetDatabase.SaveAssets();
         }
+
+        public static string GetAssetPath(Object obj)
+        {
+            var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
+            
+            if (path.StartsWith("Assets/Resources/"))
+            {
+                path = path.Replace("Assets/Resources/", "").Replace(".asset", "");
+            }
+
+            return path;
+        }
     }
 }
 #endif

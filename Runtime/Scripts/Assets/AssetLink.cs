@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using DosinisSDK.Core;
+using DosinisSDK.Utils;
 using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Assets
@@ -8,6 +9,17 @@ namespace DosinisSDK.Assets
     [Serializable]
     public class AssetLink
     {
+#if UNITY_EDITOR
+        /// <summary>
+        /// This constructor is EDITOR ONLY
+        /// </summary>
+        /// <param name="obj"></param>
+        public AssetLink(Object obj)
+        {
+            path = EditorUtils.GetAssetPath(obj);
+        }
+#endif
+            
         public AssetLink(string path)
         {
             this.path = path;
