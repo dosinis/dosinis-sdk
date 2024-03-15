@@ -39,7 +39,8 @@ namespace DosinisSDK.Utils
             
             if (path.StartsWith("Assets/Resources/"))
             {
-                path = path.Replace("Assets/Resources/", "").Replace(".asset", "");
+                path = path.Replace("Assets/Resources/", "");
+                path = path.RemovePathExtension();
             }
 
             return path;

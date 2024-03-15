@@ -1,4 +1,5 @@
 using DosinisSDK.Assets;
+using DosinisSDK.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,15 +54,8 @@ namespace DosinisSDK.Editor
             pathProperty.stringValue = AssetDatabase.GetAssetPath(loadedObj);
                     
             // TODO: Implement Addressables support
-            
-            if (pathProperty.stringValue.StartsWith("Assets/Resources/"))
-            {
-                pathProperty.stringValue = pathProperty.stringValue.Replace("Assets/Resources/", "").Replace(".asset", "");
-            }
-            else
-            {
-                Debug.LogWarning("Asset should be in Resources folder: " + pathProperty.stringValue);
-            }
+
+            pathProperty.stringValue = EditorUtils.GetAssetPath(loadedObj);
                 
             property.serializedObject.ApplyModifiedProperties();
         }
