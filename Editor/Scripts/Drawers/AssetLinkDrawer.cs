@@ -17,11 +17,19 @@ namespace DosinisSDK.Editor
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
-            const int OFFSET = 200;
+            const int OFFSET = 150;
             
-            var idRect = new Rect(position.x, position.y, position.width - OFFSET, position.height);
-            var objRect = new Rect(position.x + position.width - OFFSET, position.y, position.width - idRect.width, position.height);
-
+            var labelPos = new Rect(position.x, position.y, 100, position.height);
+            var idRect = new Rect(position.x + labelPos.width, position.y, position.width - labelPos.width - OFFSET, position.height);
+            var objRect = new Rect(position.x + idRect.width + labelPos.width, position.y, position.width - idRect.width - labelPos.width, position.height);
+            
+            if (label.text == pathProperty.stringValue)
+            {
+                label.text = "Path";
+            }
+            
+            EditorGUI.LabelField(labelPos, label);
+            
             loadedObj = EditorGUI.ObjectField(objRect, loadedObj, typeof(Object), false);
             EditorGUI.PropertyField(idRect, pathProperty, GUIContent.none);
 
@@ -32,16 +40,10 @@ namespace DosinisSDK.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             var pathProperty = property.FindPropertyRelative("path");
+            var guidProperty = property.FindPropertyRelative("guid");
 
-            if (pathProperty == null)
-                return;
-
-            var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(pathProperty.stringValue);
-
-            if (loadedObj == null)
-            {
-                loadedObj = Resources.Load<Object>(pathProperty.stringValue);
-            }
+            var assetPath = AssetDatabase.GUIDToAssetPath(guidProperty.stringValue);
+            var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
             
             Draw(ref loadedObj, position, property, label);
            
@@ -50,12 +52,12 @@ namespace DosinisSDK.Editor
                 property.serializedObject.ApplyModifiedProperties();
                 return;
             }
-            
-            pathProperty.stringValue = AssetDatabase.GetAssetPath(loadedObj);
-                    
-            // TODO: Implement Addressables support
 
-            pathProperty.stringValue = EditorUtils.GetAssetPath(loadedObj);
+            var loadedObjPath = AssetDatabase.GetAssetPath(loadedObj);
+            guidProperty.stringValue = AssetDatabase.AssetPathToGUID(loadedObjPath);
+            
+            // TODO: Implement Addressables support
+            pathProperty.stringValue = EditorUtils.GetAssetPathResourcesAdjusted(loadedObjPath);
                 
             property.serializedObject.ApplyModifiedProperties();
         }

@@ -9,6 +9,8 @@ namespace DosinisSDK.Assets
     [Serializable]
     public class AssetLink
     {
+        public string path;
+        
 #if UNITY_EDITOR
         /// <summary>
         /// This constructor is EDITOR ONLY
@@ -16,16 +18,12 @@ namespace DosinisSDK.Assets
         /// <param name="obj"></param>
         public AssetLink(Object obj)
         {
-            path = EditorUtils.GetAssetPath(obj);
+            path = EditorUtils.GetAssetPathResourcesAdjusted(obj);
+            guid = UnityEditor.AssetDatabase.AssetPathToGUID(UnityEditor.AssetDatabase.GetAssetPath(obj));
         }
+
+        public string guid;
 #endif
-            
-        public AssetLink(string path)
-        {
-            this.path = path;
-        }
-        
-        public string path;
         
         public T GetAsset<T>() where T : Object
         {

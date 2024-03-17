@@ -33,17 +33,21 @@ namespace DosinisSDK.Utils
             AssetDatabase.SaveAssets();
         }
 
-        public static string GetAssetPath(Object obj)
+        public static string GetAssetPathResourcesAdjusted(string assetPath)
         {
-            var path = UnityEditor.AssetDatabase.GetAssetPath(obj);
-            
-            if (path.StartsWith("Assets/Resources/"))
+            if (assetPath.StartsWith("Assets/Resources/"))
             {
-                path = path.Replace("Assets/Resources/", "");
-                path = path.RemovePathExtension();
+                assetPath = assetPath.Replace("Assets/Resources/", "");
+                assetPath = assetPath.RemovePathExtension();
             }
 
-            return path;
+            return assetPath;
+        }
+        public static string GetAssetPathResourcesAdjusted(Object obj)
+        {
+            var path = AssetDatabase.GetAssetPath(obj);
+            
+            return GetAssetPathResourcesAdjusted(path);
         }
     }
 }
