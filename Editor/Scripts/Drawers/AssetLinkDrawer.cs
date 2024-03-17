@@ -31,7 +31,15 @@ namespace DosinisSDK.Editor
             EditorGUI.LabelField(labelPos, label);
             
             loadedObj = EditorGUI.ObjectField(objRect, loadedObj, typeof(Object), false);
-            EditorGUI.PropertyField(idRect, pathProperty, GUIContent.none);
+            
+            if (AssetDatabase.GetAssetPath(loadedObj).StartsWith("Assets/Resources/") == false) // && not addressable
+            {
+                EditorGUI.HelpBox(idRect, $"Asset is invalid (should be in Resources folder or Addressable)", MessageType.Error);
+            }
+            else
+            {
+                EditorGUI.PropertyField(idRect, pathProperty, GUIContent.none);
+            }
 
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
