@@ -155,7 +155,20 @@ namespace DosinisSDK.IAPs
                 return "";
             }
 
-            return product.metadata.localizedTitle;
+            var title = product.metadata.localizedTitle;
+            
+#if UNITY_ANDROID
+            
+            // NOTE: Remove "(app_name)" from title that is added by Google Play
+            int lastIndex = title.LastIndexOf("(", StringComparison.Ordinal);
+            
+            if (lastIndex > -1)
+            {
+                title = title.Substring(0, lastIndex - 1).Trim();
+            }
+#endif
+
+            return title;
         }
 
         public bool IsPurchased(string productId)
@@ -179,6 +192,8 @@ namespace DosinisSDK.IAPs
 
         public void RestorePurchases()
         {
+            Log("Attempting to restore purchases");
+            
             // NOTE: Restores all Non-consumable and Subscription products.
             // Upon restore ProcessPurchase will be called for each restored purchase.
 #if UNITY_IOS
