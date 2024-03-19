@@ -49,6 +49,11 @@ namespace DosinisSDK.IAPs
                 StandardPurchasingModule.Instance().useFakeStoreUIMode = config.FakeStoreUIMode;
             }
             
+            if (GooglePublicKeyHandler == null || ApplePublicKeyHandler == null)
+            {
+                Warn("Public Key Handlers are not set. Please set it before initializing IAPManager");
+            }
+            
             foreach (var handler in config.PurchaseHandlers)
             {
                 RegisterProduct(handler.Id, handler.ProductType, handler.GrantReward);
@@ -212,7 +217,7 @@ namespace DosinisSDK.IAPs
             var product = args.purchasedProduct;
 
             bool validPurchase = true;
-
+            
             if (Application.isEditor == false)
             {
                 var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
