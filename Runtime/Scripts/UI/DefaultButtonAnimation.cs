@@ -31,10 +31,7 @@ namespace DosinisSDK.UI
 
             if (clickSfx && audioManager == null)
             {
-                App.Ready(() =>
-                {
-                    audioManager = App.Core.GetModule<IAudioManager>();
-                });
+                audioManager = App.Core.GetModule<IAudioManager>();
             }
         }
 
@@ -90,7 +87,7 @@ namespace DosinisSDK.UI
 
             while (t < 1)
             {
-                t += Time.deltaTime / animationDuration;
+                t += Time.unscaledDeltaTime / animationDuration;
                 button.Image.color = Color.Lerp(initColor, highlightColor, t);
                 yield return null;
             }
@@ -102,7 +99,7 @@ namespace DosinisSDK.UI
 
             while (t < 1)
             {
-                t += Time.deltaTime / animationDuration;
+                t += Time.unscaledDeltaTime / animationDuration;
                 button.Image.color = Color.Lerp(highlightColor, initColor, t);
                 yield return null;
             }
@@ -117,7 +114,7 @@ namespace DosinisSDK.UI
             while (t < 1)
             {
                 transform.localScale = Vector3.Lerp(initScale, startScale, t);
-                t += Time.deltaTime / animationDuration;
+                t += Time.unscaledDeltaTime / animationDuration;
                 yield return null;
             }
 
@@ -131,7 +128,7 @@ namespace DosinisSDK.UI
             while (t < 1)
             {
                 transform.localScale = Vector3.Lerp(startScale, startScale * scaleRatio, t);
-                t += Time.deltaTime / animationDuration;
+                t += Time.unscaledDeltaTime / animationDuration;
                 yield return null;
             }
         }
