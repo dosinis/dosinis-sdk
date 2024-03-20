@@ -52,7 +52,28 @@ namespace DosinisSDK.Core
         public void Restart()
         {
             OnAppRestart?.Invoke();
-            SceneManager.LoadScene(0);
+            
+            SceneManager.OnSceneAboutToChange -= CleanupSceneModules;
+            SceneManager.OnSceneChanged -= OnSceneChanged;
+            
+            foreach (var module in cachedModules)
+            {
+                if (module.Value is BehaviourModule behaviourModule)
+                {
+                    DestroyImmediate(behaviourModule);
+                }
+            }
+            
+            cachedModules.Clear();
+            processables.Clear();
+            tickables.Clear();
+            fixedProcessables.Clear();
+            
+            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            
+            Core = null;
+
+            Init(manifest);
         }
 
         public T GetModule<T>() where T : class, IModule
@@ -291,6 +312,60 @@ namespace DosinisSDK.Core
             }
         }
         
+        private async Task SetupScene(Scene scene)
+        {
+            var sceneModules = FindObjectsOfType<SceneModule>();
+                
+            Array.Sort(sceneModules, (a, b) => b.InitPriority.CompareTo(a.InitPriority));
+
+            IUIManager foundUIManager = null;
+
+            var modules = new List<IModule>();
+                
+            foreach (var module in sceneModules)
+            {
+                if (module is IUIManager uiManager)
+                {
+                    foundUIManager = uiManager;
+                }
+                else
+                {
+                    modules.Add(module);
+                }
+            }
+
+            // Registering UIManager as the very first scene module for other scene modules to be able to cache it on Init
+            if (foundUIManager != null)
+            {
+                RegisterModule(foundUIManager, init: false);
+            }
+            else
+            {
+                Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
+            }
+
+            foreach (var module in modules)
+            {
+                RegisterModule(module);
+
+                if (module is IAsyncModule asyncModule)
+                {
+                    await asyncModule.InitAsync(this);
+                }
+            }
+
+            // Initializing UI as the last module for windows to be able to access other modules
+            if (foundUIManager != null)
+            {
+                foundUIManager.Init(this, null);
+                    
+                if (foundUIManager is IAsyncModule asyncModule)
+                {
+                    await asyncModule.InitAsync(this);
+                }
+            }
+        }
+        
         private async void Init(ModuleManifestBase manifest)
         {
             if (Core != null)
@@ -299,7 +374,7 @@ namespace DosinisSDK.Core
                                  $"Make sure there's only one instance of the {nameof(App)}");
 
                 if (this != (App)Core)
-                    Destroy(this);
+                    DestroyImmediate(gameObject);
 
                 return;
             }
@@ -324,77 +399,24 @@ namespace DosinisSDK.Core
 
             Debug.Log("Setting up scene modules...");
 
-            async Task setupScene(Scene scene)
-            {
-                var sceneModules = FindObjectsOfType<SceneModule>();
-                
-                Array.Sort(sceneModules, (a, b) => b.InitPriority.CompareTo(a.InitPriority));
-
-                IUIManager foundUIManager = null;
-
-                var modules = new List<IModule>();
-                
-                foreach (var module in sceneModules)
-                {
-                    if (module is IUIManager uiManager)
-                    {
-                        foundUIManager = uiManager;
-                    }
-                    else
-                    {
-                        modules.Add(module);
-                    }
-                }
-
-                // Registering UIManager as the very first scene module for other scene modules to be able to cache it on Init
-                if (foundUIManager != null)
-                {
-                    RegisterModule(foundUIManager, init: false);
-                }
-                else
-                {
-                    Debug.LogWarning($"{scene.name} doesn't have {nameof(UIManager)}. Ignore if it's intended");
-                }
-
-                foreach (var module in modules)
-                {
-                    RegisterModule(module);
-
-                    if (module is IAsyncModule asyncModule)
-                    {
-                        await asyncModule.InitAsync(this);
-                    }
-                }
-
-                // Initializing UI as the last module for windows to be able to access other modules
-                if (foundUIManager != null)
-                {
-                    foundUIManager.Init(this, null);
-                    
-                    if (foundUIManager is IAsyncModule asyncModule)
-                    {
-                        await asyncModule.InitAsync(this);
-                    }
-                }
-            }
-
             await Task.Delay(1); // Tiny delay for scene to be completely loaded (next frame)
             
-            await setupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+            await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
             SceneManager.OnSceneAboutToChange += CleanupSceneModules;
-            
-            SceneManager.OnSceneChanged += async (args) =>
-            {
-                Debug.Log($"Scene was changed into {args.newScene.name}");
-                await setupScene(args.newScene);
-            };
+            SceneManager.OnSceneChanged += OnSceneChanged;
 
             Initialized = true;
 
             onAppInitialized?.Invoke();
 
             Debug.Log($"{nameof(App)} initialized");
+        }
+
+        private async void OnSceneChanged((Scene oldScene, Scene newScene) args)
+        {
+            Debug.Log($"Scene was changed into {args.newScene.name}");
+            await SetupScene(args.newScene);
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
