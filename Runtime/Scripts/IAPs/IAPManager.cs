@@ -162,7 +162,7 @@ namespace DosinisSDK.IAPs
             // NOTE: Remove "(app_name)" from title that is added by Google Play
             int lastIndex = title.LastIndexOf("(", StringComparison.Ordinal);
             
-            if (lastIndex > -1)
+            if (lastIndex > 2)
             {
                 title = title.Substring(0, lastIndex - 1).Trim();
             }
@@ -235,10 +235,10 @@ namespace DosinisSDK.IAPs
             
             if (Application.isEditor == false)
             {
-                var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
-
                 try
                 {
+                    var validator = new CrossPlatformValidator(GooglePublicKeyHandler(), ApplePublicKeyHandler(), Application.identifier);
+                    
                     var result = validator.Validate(product.receipt);
 
                     Log("Receipt is valid. Contents:");
