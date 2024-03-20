@@ -8,9 +8,12 @@ namespace DosinisSDK.Core
 {
     public class DataManager : Module, IDataManager
     {
-        private readonly Dictionary<string, object> dataRegistry = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> dataCache = new();
+        private List<string> registeredKeys = new();
 
+        // ReSharper disable once InconsistentNaming
         private readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
+        private const string REGISTERED_KEYS_KEY = "keys_registry";
 
         protected override void OnInit(IApp app)
         {
@@ -18,6 +21,11 @@ namespace DosinisSDK.Core
             app.OnAppPaused += OnAppPaused;
             app.OnAppQuit += OnAppQuit;
 
+            if (PlayerPrefs.HasKey(REGISTERED_KEYS_KEY))
+            {
+                registeredKeys = JsonConvert.DeserializeObject<List<string>>(PlayerPrefs.GetString(REGISTERED_KEYS_KEY));
+            }
+            
 #if UNITY_EDITOR
 
             if (Directory.Exists(EDITOR_SAVE_PATH) == false)
@@ -51,7 +59,7 @@ namespace DosinisSDK.Core
 
         public void SaveAll()
         {
-            foreach (var pair in dataRegistry)
+            foreach (var pair in dataCache)
             {
                 SaveRawData(pair.Value, pair.Key);
             }
@@ -61,6 +69,13 @@ namespace DosinisSDK.Core
         {
             string json = JsonConvert.SerializeObject(data);
             PlayerPrefs.SetString(key, json);
+            
+            if (registeredKeys.Contains(key) == false)
+            {
+                registeredKeys.Add(key);
+                PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
+            }
+            
             PlayerPrefs.Save();
 
 #if UNITY_EDITOR
@@ -70,12 +85,26 @@ namespace DosinisSDK.Core
 
         private void DeleteRawData(string key)
         {
+            bool save = false;
+            
             if (PlayerPrefs.HasKey(key))
             {
                 PlayerPrefs.DeleteKey(key);
-                PlayerPrefs.Save();
+                save = true;
+            }
+            
+            if (registeredKeys.Contains(key))
+            {
+                registeredKeys.Remove(key);
+                PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
+                save = true;
             }
 
+            if (save)
+            {
+                PlayerPrefs.Save();
+            }
+            
 #if UNITY_EDITOR
             if (File.Exists(GetEditorSavePath(key)))
             {
@@ -91,7 +120,7 @@ namespace DosinisSDK.Core
 
         public T GetOrCreateData<T>() where T : class, IData, new()
         {
-            if (dataRegistry.TryGetValue(typeof(T).Name, out object data) == false)
+            if (dataCache.TryGetValue(typeof(T).Name, out object data) == false)
             {
                 data = LoadRawData<T>();
                 RegisterData(data);
@@ -102,7 +131,9 @@ namespace DosinisSDK.Core
 
         public void RegisterData<T>(T data)
         {
-            dataRegistry.Add(data.GetType().Name, data);
+            var key = data.GetType().Name;
+            dataCache.Add(key, data);
+            registeredKeys.Add(key);
             SaveData(data);
         }
 
@@ -136,7 +167,7 @@ namespace DosinisSDK.Core
             {
                 LogError(ex.Message);
             }
-            
+
             return new T();
         }
 
@@ -152,18 +183,21 @@ namespace DosinisSDK.Core
 
         public void DeleteData<T>() where T : class, IData, new()
         {
-            dataRegistry.Remove(typeof(T).Name);
-            DeleteRawData(typeof(T).Name);
+            var key = typeof(T).Name;
+            dataCache.Remove(key);
+            DeleteRawData(key);
         }
 
         public void DeleteAllData()
         {
-            foreach (var pair in dataRegistry)
-            {
-                DeleteRawData(pair.Key);
-            }
+            var keys = new List<string>(registeredKeys);
             
-            dataRegistry.Clear();
+            foreach (var key in keys)
+            {
+                DeleteRawData(key);
+            }
+
+            dataCache.Clear();
         }
     }
 }
