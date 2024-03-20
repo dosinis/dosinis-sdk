@@ -152,7 +152,18 @@ namespace DosinisSDK.Core
 
         public void DeleteData<T>() where T : class, IData, new()
         {
+            dataRegistry.Remove(typeof(T).Name);
             DeleteRawData(typeof(T).Name);
+        }
+
+        public void DeleteAllData()
+        {
+            foreach (var pair in dataRegistry)
+            {
+                DeleteRawData(pair.Key);
+            }
+            
+            dataRegistry.Clear();
         }
     }
 }

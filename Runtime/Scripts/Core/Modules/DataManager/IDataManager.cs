@@ -9,6 +9,7 @@ namespace DosinisSDK.Core
         bool HasData<T>();
         void RegisterData<T>(T data);
         void DeleteData<T>() where T : class, IData, new();
+        void DeleteAllData();
     }
 
 }
