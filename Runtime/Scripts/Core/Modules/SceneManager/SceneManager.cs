@@ -34,18 +34,39 @@ namespace DosinisSDK.Core
         {
             OnSceneLoadStarted?.Invoke();
             PreviousSceneIndex = ActiveScene.buildIndex;
-            StartCoroutine(LoadSceneCoroutine(sceneIndex, mode, switchLoadedScene, delay, done));
+            StartCoroutine(LoadSceneCoroutine("", sceneIndex, mode, switchLoadedScene, delay, done));
+        }
+
+        public void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true,
+            float delay = 0, Action done = null)
+        {
+            OnSceneLoadStarted?.Invoke();
+            PreviousSceneIndex = ActiveScene.buildIndex;
+           
+            StartCoroutine(LoadSceneCoroutine(sceneName, -1, mode, switchLoadedScene, delay, done));
         }
         
-        private IEnumerator LoadSceneCoroutine(int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, float delay, Action done)
+        private IEnumerator LoadSceneCoroutine(string sceneName, int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, float delay, Action done)
         {
             SceneIsLoading = true;
             SceneLoadProgress = 0;
             
             yield return new WaitForSeconds(delay / 2f);
+
+            if (string.IsNullOrEmpty(sceneName) && sceneIndex == -1)
+            {
+                throw new ArgumentException("Scene name or index must be provided!");
+            }
             
-            loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
-            
+            if (string.IsNullOrEmpty(sceneName) == false)
+            {
+                loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneName, mode);
+            }
+            else
+            {
+                loadSceneOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(sceneIndex, mode);
+            }
+
             loadSceneOperation.allowSceneActivation = false;
             
             while (loadSceneOperation.isDone == false && loadSceneOperation.progress < 0.9f)
