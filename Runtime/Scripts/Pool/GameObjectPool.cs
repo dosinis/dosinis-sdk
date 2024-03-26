@@ -124,6 +124,14 @@ namespace DosinisSDK.Pool
             return default;
         }
 
+        public void Prewarm<T>(int amount) where T : Component
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                ReturnToPool(Take<T>());
+            }
+        }
+
         public T Take<T>() where T : Component
         {
             foreach (var obj in pool)
