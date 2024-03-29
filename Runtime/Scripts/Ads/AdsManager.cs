@@ -19,23 +19,25 @@ namespace DosinisSDK.Ads
         [SerializeField, ShowIf("useTestAds", false)] protected string interstitialId = "";
         [SerializeField, ShowIf("useTestAds", false)] protected string bannerId = "";
 
-        [SerializeField] protected bool showBanner;
+        [SerializeField] protected bool preLoadAds = true;
+        [SerializeField] protected bool showBannerOnInit;
         [SerializeField] protected BannerPosition bannerPosition;
-
+        
+        
         public abstract event Action OnBannerLoaded;
         public abstract event Action<string> OnInterstitialShown;
         public abstract event Action<string> OnRewardedShown;
         public abstract float LastTimeAnyAdFullyShown { get; protected set; }
         public abstract bool IsBannerDisplayed { get; protected set; }
-
+        
         public abstract bool IsRewardAdReady();
-        protected abstract void LoadRewardedAds();
+        public abstract void LoadRewardedAds();
         public abstract void ShowRewardedAd(string placement, Action<bool> callBack);
-        protected abstract void LoadInterstitialAds();
+        public abstract void LoadInterstitialAds();
         public abstract void ShowInterstitial(string placement = "");
         public abstract void ShowBanner();
         public abstract void HideBanner();
-        protected abstract void LoadBanner();
+        public abstract void LoadBanner();
     }
 }
 

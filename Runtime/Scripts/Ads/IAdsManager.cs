@@ -12,9 +12,12 @@ namespace DosinisSDK.Ads
         bool IsBannerDisplayed { get; }
         bool IsRewardAdReady();
         void ShowRewardedAd(string placement, Action<bool> callBack);
+        void LoadRewardedAds();
         void ShowInterstitial(string placement = "");
+        void LoadInterstitialAds();
         void ShowBanner();
         void HideBanner();
+        void LoadBanner();
     }
 }
 

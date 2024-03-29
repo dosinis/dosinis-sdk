@@ -23,10 +23,14 @@ namespace DosinisSDK.Ads
         protected override void OnInit(IApp app)
         {
             this.timer = app.Timer;
-            LoadRewardedAds();
-            LoadInterstitialAds();
 
-            if (showBanner)
+            if (preLoadAds)
+            {      
+                LoadRewardedAds();
+                LoadInterstitialAds();
+            }
+            
+            if (showBannerOnInit)
             {
                 LoadBanner();
                 ShowBanner();
@@ -46,7 +50,7 @@ namespace DosinisSDK.Ads
             Log($"Show interstitial ad {placement}");
         }
 
-        protected override void LoadInterstitialAds()
+        public override void LoadInterstitialAds()
         {
             Log("Loading interstitial ads");
         }
@@ -92,7 +96,7 @@ namespace DosinisSDK.Ads
             }, true);
         }
         
-        protected override void LoadRewardedAds()
+        public override void LoadRewardedAds()
         {
             Log("Loading rewarded ads");
             timer.Delay(3f, () =>
@@ -109,7 +113,7 @@ namespace DosinisSDK.Ads
 
         // Banner
         
-        protected override void LoadBanner()
+        public override void LoadBanner()
         {
             Log("Loading banner ads");
 
