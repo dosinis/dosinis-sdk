@@ -12,7 +12,7 @@ namespace DosinisSDK.Core
         private List<string> registeredKeys = new();
 
         // ReSharper disable once InconsistentNaming
-        private readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
+        private static readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
         private const string REGISTERED_KEYS_KEY = "keys_registry";
 
         protected override void OnInit(IApp app)

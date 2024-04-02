@@ -45,10 +45,10 @@ namespace DosinisSDK.Rest
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                return new Response<Texture>(null, request.responseCode, request.result, request.error);
+                return new Response<Texture>(null, request.responseCode, (Result)request.result, request.error);
             }
             
-            return new Response<Texture>(((DownloadHandlerTexture)request.downloadHandler).texture, request.responseCode, request.result, request.error);
+            return new Response<Texture>(((DownloadHandlerTexture)request.downloadHandler).texture, request.responseCode, (Result)request.result, request.error);
         }
 
         public void Get(string url, Action<Response> callback)
@@ -90,7 +90,7 @@ namespace DosinisSDK.Rest
 
             LogOperation(request);
 
-            return new Response(request.downloadHandler.text, request.responseCode, request.result, request.error);
+            return new Response(request.downloadHandler.text, request.responseCode, (Result)request.result, request.error);
         }
 
         #endregion
@@ -145,7 +145,7 @@ namespace DosinisSDK.Rest
                 LogError(e.Message);
             }
 
-            var response = new Response<T>(resultObject, request.responseCode, request.result, request.error);
+            var response = new Response<T>(resultObject, request.responseCode, (Result)request.result, request.error);
 
             return response;
         }
@@ -167,7 +167,7 @@ namespace DosinisSDK.Rest
 
             LogOperation(request);
 
-            callback?.Invoke(new Response(request.downloadHandler.text, request.responseCode, request.result,
+            callback?.Invoke(new Response(request.downloadHandler.text, request.responseCode, (Result)request.result,
                 request.error));
         }
 
@@ -181,12 +181,12 @@ namespace DosinisSDK.Rest
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                callback?.Invoke(new Response<Texture>(null, request.responseCode, request.result, request.error));
+                callback?.Invoke(new Response<Texture>(null, request.responseCode, (Result)request.result, request.error));
                 yield break;
             }
 
             Texture myTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-            callback?.Invoke(new Response<Texture>(myTexture, request.responseCode, request.result, request.error));
+            callback?.Invoke(new Response<Texture>(myTexture, request.responseCode, (Result)request.result, request.error));
         }
 
         private IEnumerator PostInternal<T>(string url, object parameter, Action<Response<T>> callback, params Header[] headers)
