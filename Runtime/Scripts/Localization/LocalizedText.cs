@@ -23,7 +23,10 @@ namespace DosinisSDK.Localization
 
         private void OnDestroy()
         {
-            localizationManager.OnLanguageChanged -= OnLanguageChanged;
+            if (localizationManager != null)
+            {
+                localizationManager.OnLanguageChanged -= OnLanguageChanged;
+            }
         }
 
         private void OnLanguageChanged()

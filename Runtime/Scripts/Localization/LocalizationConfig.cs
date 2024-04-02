@@ -12,7 +12,7 @@ namespace DosinisSDK.Localization
     public class LocalizationConfig : ModuleConfig
     {
         [SerializeField] private string tsvUrl;
-        [SerializeField, TextArea] private string localizationTsv;
+        [SerializeField, TextArea(5, 30)] private string localizationTsv;
         
         public string TsvUrl => tsvUrl;
         public string CachedLocalizationTsv => localizationTsv;
