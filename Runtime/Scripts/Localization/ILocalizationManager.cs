@@ -10,6 +10,7 @@ namespace DosinisSDK.Localization
         string CurrentLanguage { get; }
         void SetLanguage(string language);
         string GetLocalizedString(string key, string fallback = "");
+        string GetLocalizedStringWithArgs(string key, params string[] args);
         event Action OnLanguageChanged;
     }
 }

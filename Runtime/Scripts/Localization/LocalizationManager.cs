@@ -121,5 +121,11 @@ namespace DosinisSDK.Localization
 
             return string.IsNullOrEmpty(fallback) == false ? fallback : key;
         }
+        
+        public string GetLocalizedStringWithArgs(string key, params string[] args)
+        {
+            var localizedString = GetLocalizedString(key);
+            return string.Format(localizedString, args);
+        }
     }
 }
