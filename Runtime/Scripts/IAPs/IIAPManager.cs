@@ -6,6 +6,7 @@ namespace DosinisSDK.IAPs
 {
     public interface IIAPManager : IModule
     {
+        event Action OnStoreInitialized;
         public bool Initialized { get; }
         event Action<string> OnProductPurchased;
         void PurchaseProduct(string productId, Action<bool> onPurchased);

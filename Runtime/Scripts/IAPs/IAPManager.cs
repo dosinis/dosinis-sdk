@@ -18,7 +18,8 @@ namespace DosinisSDK.IAPs
         private IAPConfig config;
 
         // Properties
-        
+
+        public event Action OnStoreInitialized;
         public bool Initialized => storeController != null && storeExtensionProvider != null;
 
         // Events
@@ -305,6 +306,8 @@ namespace DosinisSDK.IAPs
             Log("Initialized");
             storeController = controller;
             storeExtensionProvider = extensions;
+            
+            OnStoreInitialized?.Invoke();
         }
 
         void IDetailedStoreListener.OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
