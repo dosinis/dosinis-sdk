@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace DosinisSDK.Utils
 {
-    public class AutoSaver : ManagedBehaviour
+    public class AutoSaver : Module
     {
-        [SerializeField] private int autoSaveInterval = 30;
+        private const int AUTO_SAVE_INTERVAL = 60;
 
         private WaitForSeconds waitInterval;
         private IDataManager dataManager;
@@ -18,15 +18,14 @@ namespace DosinisSDK.Utils
                 yield return waitInterval;
                 dataManager.SaveAll();
             }
+            // ReSharper disable once IteratorNeverReturns
         }
 
         protected override void OnInit(IApp app)
         {
             dataManager = app.GetModule<IDataManager>();
-
-            waitInterval = new WaitForSeconds(autoSaveInterval);
-            
-            StartCoroutine(AutoSaveCoroutine());
+            waitInterval = new WaitForSeconds(AUTO_SAVE_INTERVAL);
+            app.Coroutine.Begin(AutoSaveCoroutine());
         }
     }
 }
