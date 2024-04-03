@@ -10,6 +10,7 @@ namespace DosinisSDK.Audio
     {
         private float musicVolume = 1f;
         private readonly List<AudioSource> sources = new();
+        private readonly List<AudioSource> worldSources = new();
         private AudioSource musicSource;
         private AudioData data;
         private bool silencingMusic = false;
@@ -27,11 +28,18 @@ namespace DosinisSDK.Audio
             {
                 var sourceGo = new GameObject("Source");
                 sourceGo.transform.SetParent(transform);
-                
                 var src = sourceGo.AddComponent<AudioSource>();
                 src.playOnAwake = false;
                 src.Stop(); // NOTE: hack to overcome Unity issue, where AudioSource isPlaying up until Start() is called.
                 sources.Add(src);
+                
+                var worldSourceGo = new GameObject("WorldSource");
+                worldSourceGo.transform.SetParent(transform);
+                var worldSrc = worldSourceGo.AddComponent<AudioSource>();
+                worldSrc.playOnAwake = false;
+                worldSrc.spatialBlend = 1;
+                worldSrc.Stop(); // NOTE: hack to overcome Unity issue, where AudioSource isPlaying up until Start() is called.
+                worldSources.Add(worldSrc);
             }
 
             var mSource = new GameObject("MusicSource");
@@ -172,35 +180,34 @@ namespace DosinisSDK.Audio
             {
                 foreach (AudioSource src in sources)
                 {
-                    if (src.isPlaying == false)
-                    {
-                        src.pitch = 1f;
-                        src.PlayOneShot(clip, volume);
-                        break;
-                    }
+                    if (src.isPlaying) 
+                        continue;
+                    
+                    src.pitch = 1f;
+                    src.PlayOneShot(clip, volume);
+                    break;
                 }
             }
         }
         
         public void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1)
         {
-            // TODO: Pool these objects
+            foreach (var src in worldSources)
+            {
+                if (src.isPlaying)
+                    continue;
+                
+                src.transform.position = position;
+                
+                src.clip = clip;
+                src.volume = volume;
+                src.minDistance = minDistance;
+                src.maxDistance = maxDistance;
+                src.pitch = 1f;
             
-            var go = new GameObject("One shot audio");
-            go.transform.position = position;
-            
-            var audioSource = (AudioSource) go.AddComponent(typeof(AudioSource));
-            
-            audioSource.clip = clip;
-            audioSource.spatialBlend = 1;
-            audioSource.volume = volume;
-            audioSource.minDistance = minDistance;
-            audioSource.maxDistance = maxDistance;
-            audioSource.pitch = 1f;
-            
-            audioSource.Play();
-            
-            Destroy(go, clip.length * (Time.timeScale < 0.009999999776482582 ? 0.01f : Time.timeScale));
+                src.Play();
+                break;
+            }
         }
 
         public void SetSfxEnabled(bool value)
