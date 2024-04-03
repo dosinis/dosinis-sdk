@@ -1,16 +1,19 @@
 using System.Collections.Generic;
+using DosinisSDK.Inspector;
 using UnityEngine;
 
 namespace DosinisSDK.Utils
 {
     public abstract class Reward : ScriptableObject
     {
+        [SerializeField, ShowSprite] private Sprite mainIcon;
         [SerializeField] private string id;
         [SerializeField] private string fallbackTitle;
         [SerializeField] private Reward[] extraRewards;
-        
+
         public IReadOnlyCollection<Reward> ExtraRewards => extraRewards;
         public string Id => id;
+        public Sprite MainIcon => mainIcon;
 
         private void OnValidate()
         {
