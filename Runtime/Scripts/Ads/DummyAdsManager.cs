@@ -43,8 +43,9 @@ namespace DosinisSDK.Ads
 
         // Interstitial
         
-        public override void ShowInterstitial(string placement = "")
+        public override void ShowInterstitial(string placement = "", Action done = null)
         {
+            done?.Invoke();
             OnInterstitialShown?.Invoke(placement);
             LastTimeAnyAdFullyShown = Time.time;
             Log($"Show interstitial ad {placement}");

@@ -34,7 +34,7 @@ namespace DosinisSDK.Ads
         public abstract void LoadRewardedAds();
         public abstract void ShowRewardedAd(string placement, Action<bool> callBack);
         public abstract void LoadInterstitialAds();
-        public abstract void ShowInterstitial(string placement = "");
+        public abstract void ShowInterstitial(string placement = "", Action done = null);
         public abstract void ShowBanner();
         public abstract void HideBanner();
         public abstract void LoadBanner();
