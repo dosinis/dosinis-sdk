@@ -1,3 +1,4 @@
+using System;
 using DosinisSDK.Core;
 using UnityEngine;
 
@@ -7,16 +8,33 @@ namespace DosinisSDK.Notifications
     public class NotificationsConfig : ModuleConfig
     {
         public int minDelayForNotification;
+        public ReturnNotification[] returnNotifications;
         
         [Header("Android")]
-        
         public NotificationChannelWrapper defaultChannel;
 
         public string androidSmallIcon = "small_icon";
         public string androidLargeIcon = "large_icon";
     }
+    
+    [Serializable]
+    public struct ReturnNotification
+    {
+        public string id;
+        public string title;
+        public string text;
+        public ScheduleType scheduleType;
+        public long fireAfter;
+        public string extraData;
+    }
 
-    [System.Serializable]
+    public enum ScheduleType
+    {
+        OnAppStart,
+        OnAppQuit
+    }
+
+    [Serializable]
     public class NotificationChannelWrapper
     {
         public string id;

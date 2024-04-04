@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DosinisSDK.Core;
 using Unity.Notifications.Android;
+using UnityEngine.Android;
 
 namespace DosinisSDK.Notifications
 {
@@ -10,22 +12,22 @@ namespace DosinisSDK.Notifications
         private NotificationsConfig config;
         private NotificationsData data;
         private readonly Dictionary<string, int> cachedNotifications = new();
-
+        private readonly List<ReturnNotification> returnNotifications = new();
+        
         public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
         
         protected override void OnInit(IApp app)
-        {
+        { 
             config = GetConfigAs<NotificationsConfig>();
-            data = app.GetModule<IDataManager>().GetOrCreateData<NotificationsData>();
+            data = app.DataManager.GetOrCreateData<NotificationsData>();
 
             AndroidNotificationCenter.Initialize();
             
-            //? This is for Android 13+ (when targeting API level 33)
-            // if (Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS") == false)
-            // {
-            //     Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
-            // }
+            if (Permission.HasUserAuthorizedPermission("android.permission.POST_NOTIFICATIONS") == false)
+            {
+                Permission.RequestUserPermission("android.permission.POST_NOTIFICATIONS");
+            }
             
             AndroidNotificationCenter.RegisterNotificationChannel(BuildChannel(config.defaultChannel));
             
@@ -37,6 +39,51 @@ namespace DosinisSDK.Notifications
             }
 
             AndroidNotificationCenter.CancelAllNotifications();
+            
+            foreach (var notification in config.returnNotifications)
+            {
+                if (notification.scheduleType == ScheduleType.OnAppStart)
+                {
+                    ScheduleNotification(notification.id, notification.title, notification.text, notification.fireAfter, null, notification.extraData);
+                }
+                else
+                {
+                    returnNotifications.Add(notification);
+                }
+            }
+            
+            app.OnAppFocus += OnAppFocus;
+            app.OnAppPaused += OnAppPaused;
+            app.OnAppQuit += OnAppQuit;
+        }
+        
+        private void ScheduleReturnNotifications()
+        {
+            foreach (var notification in returnNotifications)
+            {
+                ScheduleNotification(notification.id, notification.title, notification.text, notification.fireAfter, null, notification.extraData);
+            }
+        }
+        
+        private void OnAppPaused(bool paused)
+        {
+            if (paused)
+            {
+                ScheduleReturnNotifications();
+            }
+        }
+
+        private void OnAppFocus(bool focus)
+        {
+            if (!focus)
+            {
+                ScheduleReturnNotifications();
+            }
+        }
+
+        private void OnAppQuit()
+        {
+            ScheduleReturnNotifications();
         }
 
         public void SetEnabled(bool value)

@@ -9,14 +9,15 @@ namespace DosinisSDK.Notifications
     {
         private NotificationsConfig config;
         private NotificationsData data;
-
+        private readonly List<ReturnNotification> returnNotifications = new();
+        
         public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
-        
+
         protected override async void OnInit(IApp app)
         {
             config = GetConfigAs<NotificationsConfig>();
-            data = app.GetModule<IDataManager>().GetOrCreateData<NotificationsData>();
+            data = app.DataManager.GetOrCreateData<NotificationsData>();
             
             using var req = new AuthorizationRequest(AuthorizationOption.Alert | AuthorizationOption.Badge, false);
             
@@ -29,6 +30,51 @@ namespace DosinisSDK.Notifications
             {
                 OpenFromNotificationData = d;
             }
+            
+            foreach (var notification in config.returnNotifications)
+            {
+                if (notification.scheduleType == ScheduleType.OnAppStart)
+                {
+                    ScheduleNotification(notification.id, notification.title, notification.text, notification.fireAfter, null, notification.extraData);
+                }
+                else
+                {
+                    returnNotifications.Add(notification);
+                }
+            }
+            
+            app.OnAppFocus += OnAppFocus;
+            app.OnAppPaused += OnAppPaused;
+            app.OnAppQuit += OnAppQuit;
+        }
+        
+        private void ScheduleReturnNotifications()
+        {
+            foreach (var notification in returnNotifications)
+            {
+                ScheduleNotification(notification.id, notification.title, notification.text, notification.fireAfter, null, notification.extraData);
+            }
+        }
+        
+        private void OnAppPaused(bool paused)
+        {
+            if (paused)
+            {
+                ScheduleReturnNotifications();
+            }
+        }
+
+        private void OnAppFocus(bool focus)
+        {
+            if (!focus)
+            {
+                ScheduleReturnNotifications();
+            }
+        }
+
+        private void OnAppQuit()
+        {
+            ScheduleReturnNotifications();
         }
         
         public void SetEnabled(bool value)
