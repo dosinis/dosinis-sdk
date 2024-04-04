@@ -23,7 +23,6 @@ namespace DosinisSDK.Ads
         [SerializeField] protected bool showBannerOnInit;
         [SerializeField] protected BannerPosition bannerPosition;
         
-        
         public abstract event Action OnBannerLoaded;
         public abstract event Action<string> OnInterstitialShown;
         public abstract event Action<string> OnRewardedShown;

@@ -6,7 +6,7 @@ namespace DosinisSDK.Audio
     public interface IAudioManager : IModule
     {
         void PlayOneShot(AudioClip clip, float volume = 1f, bool silentMusic = false);
-        void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1);
+        void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 3f, float maxDistance = 100f, float volume = 1);
         void StopMusic();
         void PauseMusic();
         void ResumeMusic();
