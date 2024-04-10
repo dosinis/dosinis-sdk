@@ -108,16 +108,16 @@ namespace DosinisSDK.Core
         private void Awake()
         {
             image = GetComponent<Image>();
+            
+            buttonAnimation = GetComponent<IButtonAnimation>();
+            buttonAnimation?.Init();
+            buttonAnimation?.OnInteractableStateChanged(Interactable);
         }
 
         private async void Start()
         {
             await App.Ready();
             OnInit(App.Core);
-            
-            buttonAnimation = GetComponent<IButtonAnimation>();
-            buttonAnimation?.Init();
-            buttonAnimation?.OnInteractableStateChanged(Interactable);
         }
 
         private void OnEnable()

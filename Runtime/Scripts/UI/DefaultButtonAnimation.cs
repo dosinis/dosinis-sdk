@@ -34,6 +34,12 @@ namespace DosinisSDK.UI
                 audioManager = App.Core.GetModule<IAudioManager>();
             }
         }
+        
+        public void SetStartScale(Vector3 scale)
+        {
+            startScale = scale;
+            transform.localScale = startScale;
+        }
 
         public void PressAnimation()
         {
