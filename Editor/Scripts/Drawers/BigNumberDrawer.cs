@@ -1,4 +1,3 @@
-using System.Numerics;
 using DosinisSDK.Utils;
 using UnityEditor;
 using UnityEngine;
@@ -15,10 +14,6 @@ namespace DosinisSDK.Editor
             if (prop != null)
             {
                 EditorGUI.PropertyField(position, prop, label);
-                if (BigInteger.TryParse(prop.stringValue, out BigInteger v))
-                {
-                    prop.stringValue = v.ToString();
-                }
             }
         }
     }
