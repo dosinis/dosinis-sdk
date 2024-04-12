@@ -1,7 +1,6 @@
 using System;
-using System.Reflection;
+using System.IO;
 using DosinisSDK.Inspector;
-using DosinisSDK.Utils;
 using UnityEditor;
 using UnityEngine;
 
@@ -54,7 +53,7 @@ namespace DosinisSDK.Editor
             }
 
             string path = property.propertyPath.Contains(".")
-                ? System.IO.Path.ChangeExtension(property.propertyPath, showIf.FieldName)
+                ? Path.ChangeExtension(property.propertyPath, showIf.FieldName)
                 : showIf.FieldName;
 
             comparedProperty = property.serializedObject.FindProperty(path);
@@ -86,7 +85,7 @@ namespace DosinisSDK.Editor
                     return true;
             }
         }
-
+        
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (Show(property))
@@ -98,18 +97,14 @@ namespace DosinisSDK.Editor
                     if (EditorHelper.DrawCustomProperty(property, position, ref offsetPosition)) 
                         return;
                     
-                    var children = property.GetEnumerator();
-                    
-                    while (children.MoveNext())
+                    foreach (var child in property.GetChildren())
                     {
-                        var child = children.Current as SerializedProperty;
                         var childLabel = new GUIContent(child?.displayName);
 
                         float childHeight = EditorGUI.GetPropertyHeight(child, childLabel);
                         offsetPosition.height = childHeight;
                         
                         EditorGUI.PropertyField(offsetPosition, child, childLabel);
-                        
                         offsetPosition.y += childHeight + EditorGUIUtility.standardVerticalSpacing;
                     }
                 }
