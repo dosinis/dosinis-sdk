@@ -14,8 +14,8 @@ namespace DosinisSDK.Utils
 
         private BigInteger? bigValue;
 
-        private static readonly BigInteger MAX_FLOAT = new BigInteger(float.MaxValue);
-        private static readonly BigInteger MAX_DOULBE = new BigInteger(double.MaxValue);
+        private static readonly BigInteger MAX_FLOAT = new(float.MaxValue);
+        private static readonly BigInteger MAX_DOULBE = new(double.MaxValue);
 
         // Properties
 

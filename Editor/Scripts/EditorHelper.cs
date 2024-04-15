@@ -48,7 +48,7 @@ namespace DosinisSDK.Editor
 
                 var drawer = (PropertyDrawer)Activator.CreateInstance(drawerType);
                 
-                offsetPosition.size = new Vector2(offsetPosition.size.x, offsetPosition.size.y / 2);
+                offsetPosition.size = new Vector2(offsetPosition.size.x, offsetPosition.size.y);
                 
                 guiMethod.Invoke(drawer, new object[] { offsetPosition, property, new GUIContent(property.displayName) });
                 return true;
