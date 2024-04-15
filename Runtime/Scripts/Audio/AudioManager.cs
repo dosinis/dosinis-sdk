@@ -102,7 +102,28 @@ namespace DosinisSDK.Audio
                 }
             }
         }
-        
+
+        public bool IsPlaying(AudioClip clip)
+        {
+            foreach (var src in sources)
+            {
+                if (src.isPlaying && src.clip == clip)
+                {
+                    return true;
+                }
+            }
+
+            foreach (var src in worldSources)
+            {
+                if (src.isPlaying && src.clip == clip)
+                {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+
         public void PlayLoop(AudioClip clip, float volume = 1f)
         {
             foreach (AudioSource src in sources)
