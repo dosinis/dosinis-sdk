@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace DosinisSDK.Core
 {
     [RequireComponent(typeof(Image))]
-    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
+    public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, IButton
     {
         // Properties
         
