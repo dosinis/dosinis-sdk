@@ -125,6 +125,11 @@ namespace DosinisSDK.Core
             buttonAnimation?.ReleaseAnimation();
         }
 
+        private void OnDisable()
+        {
+            OnReleased?.Invoke();
+        }
+
         public virtual void OnPointerUp(PointerEventData eventData)
         {
             OnReleased?.Invoke();
