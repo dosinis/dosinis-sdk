@@ -25,7 +25,7 @@ namespace DosinisSDK.Core
             return this;
         }
 
-        public void Stop()
+        public void Cancel()
         {
             coroutineManager.Stop(ref coroutine);
         }
