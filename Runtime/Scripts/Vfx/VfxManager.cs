@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Vfx
 {
-    public class VfxManager : BehaviourModule, IVfxManager, IProcessable
+    public class VfxManager : BehaviourModule, IVfxManager, ILateProcessable
     {
         private readonly Dictionary<IVfx, VfxPool> effectPools = new();
 
@@ -135,7 +135,7 @@ namespace DosinisSDK.Vfx
             done?.Invoke();
         }
 
-        void IProcessable.Process(in float delta)
+        void ILateProcessable.LateProcess(in float delta)
         {
             itemsToRemove.Clear();
             
