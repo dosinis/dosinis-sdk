@@ -15,6 +15,7 @@ namespace DosinisSDK.Core
         private readonly HashSet<IProcessable> processables = new();
         private readonly HashSet<ITickable> tickables = new();
         private readonly HashSet<IFixedProcessable> fixedProcessables = new();
+        private readonly HashSet<ILateProcessable> lateProcessables = new();
 
         private ModuleManifestBase manifest;
         private float lastTick;
@@ -66,9 +67,10 @@ namespace DosinisSDK.Core
             
             cachedModules.Clear();
             processables.Clear();
-            tickables.Clear();
             fixedProcessables.Clear();
-            
+            lateProcessables.Clear();
+            tickables.Clear();
+
             UnityEngine.SceneManagement.SceneManager.LoadScene(0);
             
             Core = null;
@@ -197,12 +199,17 @@ namespace DosinisSDK.Core
             {
                 processables.Add(processable);
             }
-
+            
             if (module is IFixedProcessable fixedProcessable)
             {
                 fixedProcessables.Add(fixedProcessable);
             }
 
+            if (module is ILateProcessable lateProcessable)
+            {
+                lateProcessables.Add(lateProcessable);
+            }
+            
             if (module is ITickable tickable)
             {
                 tickables.Add(tickable);
@@ -294,15 +301,20 @@ namespace DosinisSDK.Core
                 {
                     processables.Remove(processable);
                 }
-
-                if (sceneModule is ITickable tickable)
-                {
-                    tickables.Remove(tickable);
-                }
                 
                 if (sceneModule is IFixedProcessable fixedProcessable)
                 {
                     fixedProcessables.Remove(fixedProcessable);
+                }
+                
+                if (sceneModule is ILateProcessable lateProcessable)
+                {
+                    lateProcessables.Remove(lateProcessable);
+                }
+                
+                if (sceneModule is ITickable tickable)
+                {
+                    tickables.Remove(tickable);
                 }
             }
 
@@ -470,6 +482,14 @@ namespace DosinisSDK.Core
             foreach (var fp in fixedProcessables)
             {
                 fp.FixedProcess(Time.fixedDeltaTime);
+            }
+        }
+        
+        private void LateUpdate()
+        {
+            foreach (var lp in lateProcessables)
+            {
+                lp.LateProcess(Time.deltaTime);
             }
         }
 
