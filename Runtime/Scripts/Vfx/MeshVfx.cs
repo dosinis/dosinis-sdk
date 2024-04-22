@@ -52,7 +52,7 @@ namespace DosinisSDK.Vfx
 
         public override bool Expired()
         {
-            return gameObject == null;
+            return this == null || gameObject == null;
         }
 
         public override bool IsPlaying => IsAlive();
