@@ -15,5 +15,6 @@ namespace DosinisSDK.IAPs
         string GetProductTitle(string productId);
         bool IsPurchased(string productId);
         void RestorePurchases();
+        bool IsSubscribed(string productId);
     }
 }

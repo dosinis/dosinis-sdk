@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DosinisSDK.Core;
 using UnityEngine;
 using UnityEngine.Purchasing;
@@ -8,7 +9,7 @@ using UnityEngine.Purchasing.Security;
 
 namespace DosinisSDK.IAPs
 {
-    public class IAPManager : Module, IIAPManager, IDetailedStoreListener
+    public class IAPManager : Module, IIAPManager, IDetailedStoreListener, IAsyncModule
     {
         // Private
 
@@ -16,6 +17,7 @@ namespace DosinisSDK.IAPs
         private IExtensionProvider storeExtensionProvider;
         private readonly Dictionary<string, ProductData> productsRegistry = new();
         private IAPConfig config;
+        private bool moduleReady;
 
         // Properties
 
@@ -26,7 +28,7 @@ namespace DosinisSDK.IAPs
 
         public event Action<string> OnProductPurchased;
         private Action<bool> purchaseCallback;
-
+        
         // Static
         
         /// <summary>
@@ -70,6 +72,14 @@ namespace DosinisSDK.IAPs
             UnityPurchasing.Initialize(this, builder);
         }
 
+        public async Task InitAsync(IApp app)
+        {
+            while (moduleReady == false)
+            {
+                await Task.Yield();
+            }
+        }
+        
         private void RegisterProduct(string productId, ProductType productType, Action purchaseCallback)
         {
             productsRegistry.Add(productId, new ProductData
@@ -226,6 +236,41 @@ namespace DosinisSDK.IAPs
 #endif
         }
 
+        public bool IsSubscribed(string productId)
+        {
+            if (Initialized == false)
+            {
+                Warn("Store is not ready!");
+                return false;
+            }
+            
+            var product = GetProductById(productId);
+
+            if (product == null)
+            {
+                Warn("Couldn't find product");
+                return false;
+            }
+
+            if (product.definition.type != ProductType.Subscription)
+            {
+                Warn($"Product {productId} is not a subscription.");
+                return false;
+            }
+            
+            if (product.hasReceipt)
+            {
+                return false;
+            }
+            
+            // NOTE: The intro_json parameter is optional and is only used for the App Store to get introductory information.
+            var subscriptionManager = new SubscriptionManager(product, null);
+
+            var info = subscriptionManager.getSubscriptionInfo();
+
+            return info.isSubscribed() == Result.True;
+        }
+
         // IStoreListener implementation
 
         PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs args)
@@ -301,35 +346,38 @@ namespace DosinisSDK.IAPs
             return PurchaseProcessingResult.Complete;
         }
         
-        void IStoreListener.OnInitialized(IStoreController controller, IExtensionProvider extensions)
-        {
-            Log("Initialized");
-            storeController = controller;
-            storeExtensionProvider = extensions;
-            
-            OnStoreInitialized?.Invoke();
-        }
-
         void IDetailedStoreListener.OnPurchaseFailed(Product product, PurchaseFailureDescription failureDescription)
         {
             Warn($"OnPurchaseFailed: Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureDescription.message}");
             purchaseCallback?.Invoke(false);
-        }
-
-        void IStoreListener.OnInitializeFailed(InitializationFailureReason error)
-        {
-            Warn($"Initialize failed. InitializationFailureReason: {error}");
-        }
-
-        void IStoreListener.OnInitializeFailed(InitializationFailureReason error, string message)
-        {
-            Warn($"Initialize failed. InitializationFailureReason: {error} {message}");
         }
         
         void IStoreListener.OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
         {
             Warn($"OnPurchaseFailed: Product: '{product.definition.storeSpecificId}', PurchaseFailureReason: {failureReason}");
             purchaseCallback?.Invoke(false);
+        }
+        
+        void IStoreListener.OnInitialized(IStoreController controller, IExtensionProvider extensions)
+        {
+            Log("Initialized");
+            storeController = controller;
+            storeExtensionProvider = extensions;
+            moduleReady = true;
+            
+            OnStoreInitialized?.Invoke();
+        }
+
+        void IStoreListener.OnInitializeFailed(InitializationFailureReason error)
+        {
+            Warn($"Initialize failed. InitializationFailureReason: {error}");
+            moduleReady = true;
+        }
+
+        void IStoreListener.OnInitializeFailed(InitializationFailureReason error, string message)
+        {
+            Warn($"Initialize failed. InitializationFailureReason: {error} {message}");
+            moduleReady = true;
         }
         
         private struct ProductData
