@@ -263,12 +263,21 @@ namespace DosinisSDK.IAPs
                 return false;
             }
             
-            // NOTE: The intro_json parameter is optional and is only used for the App Store to get introductory information.
-            var subscriptionManager = new SubscriptionManager(product, null);
+            try
+            {
+                // NOTE: The intro_json parameter is optional and is only used for the App Store to get introductory information.
+                var subscriptionManager = new SubscriptionManager(product, null);
 
-            var info = subscriptionManager.getSubscriptionInfo();
+                var info = subscriptionManager.getSubscriptionInfo();
 
-            return info.isSubscribed() == Result.True;
+                return info.isSubscribed() == Result.True;
+            }
+            catch (Exception ex)
+            {
+                LogError($"IsSubscribed: {ex.Message}");
+            }
+            
+            return false;
         }
 
         // IStoreListener implementation
