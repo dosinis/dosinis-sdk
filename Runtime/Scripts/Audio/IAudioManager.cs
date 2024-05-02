@@ -1,3 +1,4 @@
+using System;
 using DosinisSDK.Core;
 using UnityEngine;
 
@@ -5,6 +6,8 @@ namespace DosinisSDK.Audio
 {
     public interface IAudioManager : IModule
     {
+        event Action<bool> OnMusicEnabled;
+        event Action<bool> OnSfxEnabled;
         void PlayOneShot(AudioClip clip, float volume = 1f, bool silentMusic = false);
         void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 3f, float maxDistance = 100f, float volume = 1);
         void StopMusic();

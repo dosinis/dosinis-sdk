@@ -19,6 +19,9 @@ namespace DosinisSDK.Audio
         
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
+        
+        public event Action<bool> OnMusicEnabled;
+        public event Action<bool> OnSfxEnabled;
 
         protected override void OnInit(IApp app)
         {
@@ -239,6 +242,13 @@ namespace DosinisSDK.Audio
             {
                 src.volume = value ? 1 : 0;
             }
+
+            foreach (var src in worldSources)
+            {
+                src.volume = value ? 1 : 0;
+            }
+            
+            OnSfxEnabled?.Invoke(value);
         }
 
         public void SetTimeScale(float value, float lerpDuration = 0.1f)
@@ -286,6 +296,8 @@ namespace DosinisSDK.Audio
             data.isMusicEnabled = value;
 
             musicSource.volume = value ? musicVolume : 0;
+            
+            OnMusicEnabled?.Invoke(value);
         }
 
         public void SetMusicPitch(float value)
