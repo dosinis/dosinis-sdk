@@ -7,6 +7,7 @@ namespace DosinisSDK.Audio
     [RequireComponent(typeof(AudioSource))]
     public class ManagedAudioSource : ManagedBehaviour
     {
+        [SerializeField] private bool music = false;
         [SerializeField] private AudioSource audioSource;
 
         private float initVolume;
@@ -23,23 +24,36 @@ namespace DosinisSDK.Audio
 
             audioManager = app.GetModule<IAudioManager>();
             audioManager.OnSfxEnabled += OnSfxEnabled;
-            
+            audioManager.OnMusicEnabled += OnMusicEnabled;
+
             SetupVolume();
         }
-
+        
         private void OnDestroy()
         {
             audioManager.OnSfxEnabled -= OnSfxEnabled;
+            audioManager.OnMusicEnabled -= OnMusicEnabled;
         }
 
         private void Reset()
         {
             audioSource = GetComponent<AudioSource>();
         }
+        
+        private void OnMusicEnabled(bool obj)
+        {
+            if (music)
+            {
+                SetupVolume();
+            }
+        }
 
         private void OnSfxEnabled(bool value)
         {
-            SetupVolume();
+            if (!music)
+            {
+                SetupVolume();
+            }
         }
 
         private void SetupVolume()
