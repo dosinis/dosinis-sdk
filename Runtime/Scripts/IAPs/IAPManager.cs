@@ -258,7 +258,7 @@ namespace DosinisSDK.IAPs
                 return false;
             }
             
-            if (product.hasReceipt)
+            if (product.hasReceipt == false)
             {
                 return false;
             }
@@ -269,7 +269,7 @@ namespace DosinisSDK.IAPs
                 var subscriptionManager = new SubscriptionManager(product, null);
 
                 var info = subscriptionManager.getSubscriptionInfo();
-
+                
                 return info.isSubscribed() == Result.True;
             }
             catch (Exception ex)
