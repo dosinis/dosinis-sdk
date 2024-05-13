@@ -70,6 +70,15 @@ namespace DosinisSDK.IAPs
             }
             
             UnityPurchasing.Initialize(this, builder);
+
+            app.Timer.Delay(4f, () =>
+            {
+                if (moduleReady == false)
+                {
+                    LogError("Initialization is taking too long. Module will be marked as ready.");
+                    moduleReady = true;
+                }
+            });
         }
 
         public async Task InitAsync(IApp app)
