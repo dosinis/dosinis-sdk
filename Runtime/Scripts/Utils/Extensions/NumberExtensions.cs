@@ -55,7 +55,7 @@ namespace DosinisSDK.Utils
 
             // Days
 
-            return $"{time / 86400}d";
+            return $"{Mathf.RoundToInt(time / 86400f)}d";
         }
 
         // Int
