@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public abstract class Module : IModule
+    public abstract class Module : IModule, IDisposable
     {
         protected ModuleConfig mainConfig;
         
@@ -37,6 +38,15 @@ namespace DosinisSDK.Core
         {
             if (mainConfig == null || mainConfig && mainConfig.enableLogs)
                 Debug.LogWarning($"[{GetType().Name}] {message}");
+        }
+
+        protected virtual void OnDispose()
+        {
+        }
+        
+        void IDisposable.Dispose()
+        {
+            OnDispose();
         }
     }
 }

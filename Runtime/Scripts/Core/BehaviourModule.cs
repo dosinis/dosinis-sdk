@@ -16,6 +16,15 @@ namespace DosinisSDK.Core
 
         protected abstract void OnInit(IApp app);
 
+        private void OnDestroy()
+        {
+            OnDispose();
+        }
+
+        protected virtual void OnDispose()
+        {
+        }
+        
         public T GetConfigAs<T>() where T : ModuleConfig
         {
             return mainConfig as T;

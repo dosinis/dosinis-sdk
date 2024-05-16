@@ -6,15 +6,5 @@ namespace DosinisSDK.Core
     {
         [Tooltip("higher priority will be initialized first")]
         [field: SerializeField] public int InitPriority { get; private set; }
-
-        private void OnDestroy()
-        {
-            OnDispose();
-        }
-
-        protected virtual void OnDispose()
-        {
-            
-        }
     }
 }

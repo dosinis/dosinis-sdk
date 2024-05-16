@@ -63,6 +63,11 @@ namespace DosinisSDK.Core
                 {
                     DestroyImmediate(behaviourModule);
                 }
+                
+                if (module.Value is IDisposable disposableModule)
+                {
+                    disposableModule.Dispose();
+                }
             }
             
             cachedModules.Clear();
