@@ -11,12 +11,15 @@ namespace DosinisSDK.Core
         public long TimeInactive => Now - LastTimeActive;
         
         // LocalClock
-        
+
+        private IApp app;
+        private IDataManager dataManager;
         private LocalClockData data;
         
         protected override void OnInit(IApp app)
         {
-            var dataManager = app.GetModule<IDataManager>();
+            this.app = app;
+            dataManager = app.GetModule<IDataManager>();
             
             data = dataManager.GetOrCreateData<LocalClockData>();
 
@@ -25,29 +28,40 @@ namespace DosinisSDK.Core
                 data.lastTimeActive = Now;
             }
 
-            app.OnAppFocus += focus =>
-            {
-                if (focus == false)
-                {
-                    data.lastTimeActive = Now;
-                    dataManager.SaveData(data);
-                }
-            };
+            app.OnAppFocus += OnAppFocus;
+            app.OnAppPaused += OnAppPaused;
+            app.OnAppQuit += OnAppQuit;
+        }
 
-            app.OnAppPaused += paused =>
-            {
-                if (paused)
-                {
-                    data.lastTimeActive = Now;
-                    dataManager.SaveData(data);
-                }
-            };
+        protected override void OnDispose()
+        {
+            app.OnAppFocus -= OnAppFocus;
+            app.OnAppPaused -= OnAppPaused;
+            app.OnAppQuit -= OnAppQuit;
+        }
 
-            app.OnAppQuit += () =>
+        private void OnAppQuit()
+        {
+            data.lastTimeActive = Now;
+            dataManager.SaveData(data);
+        }
+
+        private void OnAppPaused(bool paused)
+        {
+            if (paused)
             {
                 data.lastTimeActive = Now;
                 dataManager.SaveData(data);
-            };
+            }
+        }
+
+        private void OnAppFocus(bool focus)
+        {
+            if (focus == false)
+            {
+                data.lastTimeActive = Now;
+                dataManager.SaveData(data);
+            }
         }
     }
 }

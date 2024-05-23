@@ -40,6 +40,9 @@ namespace DosinisSDK.Core
                 Debug.LogWarning($"[{GetType().Name}] {message}");
         }
 
+        /// <summary>
+        /// Used to dispose resources for stuff that is out of the scope of the framework modules lifecycle
+        /// </summary>
         protected virtual void OnDispose()
         {
         }

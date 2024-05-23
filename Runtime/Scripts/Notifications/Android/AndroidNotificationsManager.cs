@@ -16,9 +16,12 @@ namespace DosinisSDK.Notifications
         
         public string OpenFromNotificationData { get; private set; }
         public bool Enabled => data.enabled;
+
+        private IApp app;
         
         protected override void OnInit(IApp app)
-        { 
+        {
+            this.app = app;
             config = GetConfigAs<NotificationsConfig>();
             data = app.DataManager.GetOrCreateData<NotificationsData>();
 
@@ -56,7 +59,14 @@ namespace DosinisSDK.Notifications
             app.OnAppPaused += OnAppPaused;
             app.OnAppQuit += OnAppQuit;
         }
-        
+
+        protected override void OnDispose()
+        {
+            app.OnAppFocus -= OnAppFocus;
+            app.OnAppPaused -= OnAppPaused;
+            app.OnAppQuit -= OnAppQuit;
+        }
+
         private void ScheduleReturnNotifications()
         {
             foreach (var notification in returnNotifications)

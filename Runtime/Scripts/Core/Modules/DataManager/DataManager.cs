@@ -15,8 +15,12 @@ namespace DosinisSDK.Core
         private static readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
         private const string REGISTERED_KEYS_KEY = "keys_registry";
 
+        private IApp app;
+        
         protected override void OnInit(IApp app)
         {
+            this.app = app;
+            
             app.OnAppFocus += OnAppFocus;
             app.OnAppPaused += OnAppPaused;
             app.OnAppQuit += OnAppQuit;
@@ -34,6 +38,13 @@ namespace DosinisSDK.Core
                 Directory.CreateDirectory(EDITOR_SAVE_PATH);
             }
 #endif
+        }
+
+        protected override void OnDispose()
+        {
+            app.OnAppFocus -= OnAppFocus;
+            app.OnAppPaused -= OnAppPaused;
+            app.OnAppQuit -= OnAppQuit;
         }
 
         private void OnAppPaused(bool paused)
