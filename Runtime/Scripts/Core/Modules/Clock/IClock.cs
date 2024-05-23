@@ -7,5 +7,6 @@ namespace DosinisSDK.Core
         public long Now { get; }
         public long NowMilliseconds { get; }
         public long TimeInactive { get; }
+        long GetTimeOfDay(int dayOfYear, int hour, int minute);
     }
 }

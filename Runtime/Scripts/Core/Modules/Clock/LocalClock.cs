@@ -39,6 +39,12 @@ namespace DosinisSDK.Core
             app.OnAppPaused -= OnAppPaused;
             app.OnAppQuit -= OnAppQuit;
         }
+        
+        public long GetTimeOfDay(int dayOfYear, int hour, int minute)
+        {
+            var date = new DateTimeOffset(DateTimeOffset.UtcNow.Year, 1, 1, hour, minute, 0, TimeSpan.Zero);
+            return date.AddDays(dayOfYear - 1).ToUnixTimeSeconds();
+        }
 
         private void OnAppQuit()
         {
