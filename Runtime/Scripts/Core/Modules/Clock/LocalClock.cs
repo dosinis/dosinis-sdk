@@ -4,6 +4,7 @@ namespace DosinisSDK.Core
 {
     public class LocalClock : Module, IClock
     {
+        public int DayOfYear => DateTimeOffset.UtcNow.DayOfYear;
         public long LastTimeActive => data.lastTimeActive;
         public long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         public long NowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
