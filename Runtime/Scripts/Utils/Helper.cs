@@ -75,7 +75,7 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
-        /// Returns uid of such length and format '4a9d0f06'
+        /// Returns 32bits uid in base-16 format
         /// </summary>
         /// <returns></returns>
         public static string ShortUid()
@@ -84,12 +84,19 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
-        /// Returns uid of such length and format '4a9d0f064a9d0f06'
+        /// Returns lenght * 32bits uid in base-16 format (default is 64bits)
         /// </summary>
         /// <returns></returns>
-        public static string Uid()
+        public static string Uid(int length = 2)
         {
-            return Random.Range(long.MinValue, long.MaxValue).ToString("x");
+            string uid = "";
+            
+            for (int i = 0; i < length; i++)
+            {
+                uid += Random.Range(int.MinValue, int.MaxValue).ToString("x");
+            }
+
+            return uid;
         }
 
         public static long GetRandomLong()
