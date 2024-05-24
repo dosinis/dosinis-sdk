@@ -89,8 +89,7 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static string Uid()
         {
-            return Random.Range(int.MinValue, int.MaxValue).ToString("x") +
-                   Random.Range(int.MinValue, int.MaxValue).ToString("x");
+            return Random.Range(long.MinValue, long.MaxValue).ToString("x");
         }
 
         public static long GetRandomLong()
