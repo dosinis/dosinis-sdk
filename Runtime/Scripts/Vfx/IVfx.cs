@@ -5,7 +5,7 @@ namespace DosinisSDK.Vfx
     public interface IVfx
     {
         void Play();
-        void Stop(bool withChildren = true);
+        void Stop(bool withChildren = true, bool clear = true);
         bool IsAlive();
         bool Expired();
         bool IsPlaying { get; }

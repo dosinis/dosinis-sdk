@@ -5,7 +5,7 @@ namespace DosinisSDK.Vfx
     public abstract class VfxBase : MonoBehaviour, IVfx
     {
         public abstract void Play();
-        public abstract void Stop(bool withChildren = true);
+        public abstract void Stop(bool withChildren = true, bool clear = true);
         public abstract bool IsAlive();
         public abstract bool Expired();
         public abstract bool IsPlaying { get; }

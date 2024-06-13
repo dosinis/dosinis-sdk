@@ -20,8 +20,13 @@ namespace DosinisSDK.Vfx
             particleSystem.Play();
         }
 
-        public override void Stop(bool withChildren = true)
+        public override void Stop(bool withChildren = true, bool clear = true)
         {
+            if (clear)
+            {
+                particleSystem.Clear(withChildren);
+            }
+            
             particleSystem.Stop(withChildren);
         }
         

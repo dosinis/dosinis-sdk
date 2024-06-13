@@ -20,16 +20,21 @@ namespace DosinisSDK.Vfx
             }
         }
 
-        public override void Stop(bool withChildren = true)
+        public override void Stop(bool withChildren = true, bool clear = true)
         {
             foreach (var mesh in meshes)
             {
                 mesh.enabled = false;
             }
-            
+
             foreach (var particle in particles)
             {
-                particle.Stop();
+                particle.Stop(withChildren);
+
+                if (clear)
+                {
+                    particle.Clear(withChildren);
+                }
             }
         }
 

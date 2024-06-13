@@ -103,19 +103,21 @@ namespace DosinisSDK.Vfx
             return effectsCache[key].IsAlive();
         }
 
-        public void Stop(IVfx vfx, long key)
+        public void Stop(IVfx vfx, long key, bool clearParticles = true)
         {
             if (effectPools.ContainsKey(vfx) == false)
             {
+                Debug.LogWarning($"Vfx not found {vfx.GameObject.name}");
                 return;
             }
 
             if (effectsCache.ContainsKey(key) == false)
             {
+                Debug.LogWarning($"Vfx not found {key}");
                 return;
             }
-
-            effectsCache[key].Stop();
+            
+            effectsCache[key].Stop(clear: clearParticles);
         }
         
         public void StopAll(IVfx vfx)
