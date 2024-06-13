@@ -67,12 +67,12 @@ namespace DosinisSDK.Vfx
 
             ps.Transform.localPosition += offset;
 
-            var h = Helper.GetRandomLong();
-            effectsCache.Add(h, ps);
+            var key = Helper.GetRandomLong();
+            effectsCache.Add(key, ps);
 
             if (forceKeepOrientation)
             {
-                forcedOrientationVfxCache.Add(h, ps);
+                forcedOrientationVfxCache.Add(key, ps);
             }
 
             if (sfx != null)
@@ -85,37 +85,37 @@ namespace DosinisSDK.Vfx
                 coroutineManager.Begin(WaitForEffect(ps, done));
             }
 
-            return h;
+            return key;
         }
 
-        public bool IsPlaying(IVfx vfx, long hash)
+        public bool IsPlaying(IVfx vfx, long key)
         {
             if (effectPools.ContainsKey(vfx) == false)
             {
                 return false;
             }
 
-            if (effectsCache.ContainsKey(hash) == false)
+            if (effectsCache.ContainsKey(key) == false)
             {
                 return false;
             }
 
-            return effectsCache[hash].IsAlive();
+            return effectsCache[key].IsAlive();
         }
 
-        public void Stop(IVfx vfx, long hash)
+        public void Stop(IVfx vfx, long key)
         {
             if (effectPools.ContainsKey(vfx) == false)
             {
                 return;
             }
 
-            if (effectsCache.ContainsKey(hash) == false)
+            if (effectsCache.ContainsKey(key) == false)
             {
                 return;
             }
 
-            effectsCache[hash].Stop();
+            effectsCache[key].Stop();
         }
         
         public void StopAll(IVfx vfx)
