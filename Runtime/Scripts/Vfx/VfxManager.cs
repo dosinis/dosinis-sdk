@@ -38,7 +38,7 @@ namespace DosinisSDK.Vfx
             
             if (sfx != null)
             {
-                sfx.PlayOneShotSafe();
+                sfx.PlayOneShotSafeAtPoint(point);
             }
             
             if (done != null)
