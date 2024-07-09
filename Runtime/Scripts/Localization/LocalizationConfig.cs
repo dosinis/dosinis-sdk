@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DosinisSDK.Core;
 using DosinisSDK.Inspector;
 using DosinisSDK.Rest;
@@ -13,9 +14,11 @@ namespace DosinisSDK.Localization
     {
         [SerializeField] private string tsvUrl;
         [SerializeField, TextArea(5, 30)] private string localizationTsv;
+        [SerializeField] private LocalizedAudioClips[] audioClips;
         
         public string TsvUrl => tsvUrl;
         public string CachedLocalizationTsv => localizationTsv;
+        public IEnumerable<LocalizedAudioClips> AudioClips => audioClips;
 
 #if UNITY_EDITOR
         [Button]

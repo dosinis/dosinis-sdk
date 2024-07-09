@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DosinisSDK.Core;
+using UnityEngine;
 
 namespace DosinisSDK.Localization
 {
@@ -11,6 +12,7 @@ namespace DosinisSDK.Localization
         void SetLanguage(string language);
         string GetLocalizedString(string key, string fallback = "");
         string GetLocalizedStringWithArgs(string key, params string[] args);
+        AudioClip GetLocalizedAudioClip(string key);
         event Action OnLanguageChanged;
     }
 }

@@ -10,12 +10,14 @@ namespace DosinisSDK.Localization
     {
         private LocalizationConfig config;
         private LocalizationData data;
-
-        // key -> value
+        
+        // key - translation
         private readonly Dictionary<string, string> localizationTable = new();
+        // key - audio clip
+        private readonly Dictionary<string, AudioClip> localizedAudio = new();
         private readonly List<string> availableLanguages = new();
         private string downloadedTsv;
-        
+
         public event Action OnLanguageChanged;
         
         // Properties
@@ -36,19 +38,21 @@ namespace DosinisSDK.Localization
             
             CurrentLanguage = data.language;
             
-            PopulateDictionary(config.CachedLocalizationTsv);
+            PopulateTextTable(config.CachedLocalizationTsv);
 
             var result = await restManager.GetAsync(config.TsvUrl);
             
             if (result.result == Result.Success)
             {
                 downloadedTsv = result.resultString;
-                PopulateDictionary(downloadedTsv);
+                PopulateTextTable(downloadedTsv);
             }
             else
             {
                 LogError("Failed to download localization data: " + result.error);
             }
+
+            CacheAudio();
         }
         
         /// <summary>
@@ -57,7 +61,7 @@ namespace DosinisSDK.Localization
         /// #key    translation1    translation2    translation3...
         /// </summary>
         /// <param name="tsv"></param>
-        private void PopulateDictionary(string tsv)
+        private void PopulateTextTable(string tsv)
         {
             localizationTable.Clear();
             availableLanguages.Clear();
@@ -95,6 +99,16 @@ namespace DosinisSDK.Localization
             }
         }
 
+        private async void CacheAudio()
+        {
+            foreach (var localizedAudioClip in config.AudioClips)
+            {
+                var language = Enum.Parse<SystemLanguage>(CurrentLanguage);
+                var clip = await localizedAudioClip.GetLocalizedAudioClip(language).GetAssetAsync<AudioClip>();
+                localizedAudio[localizedAudioClip.Key] = clip;
+            }
+        }
+
         public void SetLanguage(string language)
         {
             data.language = language;
@@ -102,16 +116,28 @@ namespace DosinisSDK.Localization
             
             if (string.IsNullOrEmpty(downloadedTsv) == false)
             {
-                PopulateDictionary(downloadedTsv);
+                PopulateTextTable(downloadedTsv);
             }
             else
             {
-                PopulateDictionary(config.CachedLocalizationTsv);
+                PopulateTextTable(config.CachedLocalizationTsv);
             }
+
+            CacheAudio();
             
             OnLanguageChanged?.Invoke();
         }
 
+        public AudioClip GetLocalizedAudioClip(string key)
+        {
+            if (localizedAudio.TryGetValue(key, out var audioClip))
+            {
+                return audioClip;
+            }
+
+            return null;
+        }
+        
         public string GetLocalizedString(string key, string fallback = "")
         {
             if (localizationTable.TryGetValue(key, out var value))
