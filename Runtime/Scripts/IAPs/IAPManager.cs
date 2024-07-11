@@ -71,7 +71,7 @@ namespace DosinisSDK.IAPs
             
             UnityPurchasing.Initialize(this, builder);
 
-            app.Timer.Delay(4f, () =>
+            app.Timer.Delay(5f, () =>
             {
                 if (moduleReady == false)
                 {
