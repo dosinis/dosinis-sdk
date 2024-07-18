@@ -8,10 +8,10 @@ namespace DosinisSDK.Localization
     public class LocalizedAudioWrapper
     {
         [SerializeField] private SystemLanguage language;
-        [SerializeField] private AssetLink audioClip;
+        [SerializeField] private AssetLink<AudioClip> audioClip;
 
         public SystemLanguage SystemLanguage => language;
-        public AssetLink AudioClip => audioClip;
+        public AssetLink<AudioClip> AudioClip => audioClip;
     }
     
     [Serializable] 
@@ -22,7 +22,7 @@ namespace DosinisSDK.Localization
 
         public string Key => key;
         
-        public AssetLink GetLocalizedAudioClip(SystemLanguage language)
+        public AssetLink<AudioClip> GetLocalizedAudioClip(SystemLanguage language)
         {
             foreach (var localizedAudioClip in localizedAudioClips)
             {
