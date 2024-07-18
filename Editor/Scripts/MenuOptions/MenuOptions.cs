@@ -17,8 +17,11 @@ namespace DosinisSDK.Editor
         private static void ValidateAssetLinks()
         {
             var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            
+
             Debug.Log("Starting...");
+            
+            const int MAX_NESTED_LEVEL = 3;
+            
             var scriptableObjects = EditorUtils.GetAssetsOfType<ScriptableObject>();
 
             foreach (var so in scriptableObjects)
@@ -43,7 +46,7 @@ namespace DosinisSDK.Editor
                 {
                     if (component == null)
                     {
-                        Debug.LogError($"Found null component on {go.name}", go);
+                        Debug.LogWarning($"Found null component on {go.name}", go);
                         continue;
                     }
                     
@@ -61,14 +64,39 @@ namespace DosinisSDK.Editor
                 return new AssetLink(loadedObj);
             }
 
+            object refreshLinkGeneric(AssetLink assetLink, Type type)
+            {
+                var guid = assetLink.guid;
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+                var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
+                
+                return Activator.CreateInstance(type, args: loadedObj);
+            }
+
             void setup(FieldInfo[] fields, object obj, ref bool hasAssetLink, int nestedLevel)
             {
                 foreach (var field in fields)
                 {
-                    if (field.FieldType.GetInterfaces().Contains(typeof(IList<AssetLink>)))
+                    var fieldType = field.FieldType;
+                    var isGeneric = fieldType.IsGenericType;
+                    Type elementType = null;
+                    Type genericDef = null;
+                    Type[] genericArgs = null;
+
+                    if (isGeneric)
+                    {
+                        genericDef = fieldType.GetGenericTypeDefinition();
+                        genericArgs = fieldType.GetGenericArguments();
+                    }
+
+                    if (fieldType.IsArray)
+                    {
+                        elementType = fieldType.GetElementType();
+                    }
+                    
+                    if (fieldType.GetInterfaces().Contains(typeof(IList<AssetLink>)))
                     {
                         var elements = field.GetValue(obj) as IList<AssetLink>;
-                        
                         var foundAssets = new List<AssetLink>();
                         
                         foreach (var link in elements)
@@ -83,15 +111,30 @@ namespace DosinisSDK.Editor
                             field.SetValue(obj, elements);
                         }
                     }
-                    else if (field.FieldType == typeof(AssetLink))
+                    else if (isGeneric && genericDef == typeof(List<>) 
+                                       && genericArgs[0].IsGenericType && genericArgs[0].GetGenericTypeDefinition() == typeof(AssetLink<>))
+                    {
+                        var genericType = fieldType.GetGenericArguments()[0];
+                        setupGenericCollection(ref hasAssetLink, genericType);
+                    }
+                    else if (fieldType.IsArray && elementType != null && elementType.IsGenericType && elementType.GetGenericTypeDefinition() == typeof(AssetLink<>))
+                    {
+                        setupGenericCollection(ref hasAssetLink, elementType);
+                    }
+                    else if (fieldType == typeof(AssetLink))
                     {
                         hasAssetLink = true;
                         field.SetValue(obj, refreshLink((AssetLink)field.GetValue(obj)));
                     }
-                    else // check for AssetLink in nested fields (3 levels deep)
+                    else if (isGeneric && genericDef == typeof(AssetLink<>))
                     {
+                        hasAssetLink = true;
+                        field.SetValue(obj, refreshLinkGeneric((AssetLink)field.GetValue(obj), fieldType));
+                    }
+                    else // check for AssetLink in nested fields (3 levels deep)
+                    {  
                         // if field is IList<SomeClass> and SomeClass has AssetLink nested
-                        if (field.FieldType.GetInterfaces().Contains(typeof(IList)))
+                        if (fieldType.GetInterfaces().Contains(typeof(IList)))
                         {
                             var elements = field.GetValue(obj) as IList;
                             
@@ -109,8 +152,8 @@ namespace DosinisSDK.Editor
                         }
                         else // if it's simple field of SomeClass that contains AssetList as nested field
                         {
-                            var nestedFields = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                            if (nestedLevel < 3)
+                            var nestedFields = fieldType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                            if (nestedLevel < MAX_NESTED_LEVEL)
                             {
                                 var target = field.GetValue(obj);
                                 
@@ -119,6 +162,24 @@ namespace DosinisSDK.Editor
                                 
                                 setup(nestedFields, field.GetValue(obj), ref hasAssetLink, ++nestedLevel);
                             }
+                        }
+                    }
+                    
+                    void setupGenericCollection(ref bool hasAssetLink, Type linkType)
+                    {
+                        var elements = field.GetValue(obj) as IList;
+                        var foundAssets = new List<object>();
+                
+                        foreach (var link in elements)
+                        {
+                            hasAssetLink = true;
+                            foundAssets.Add(refreshLinkGeneric((AssetLink)link, linkType));
+                        }
+                
+                        for (int i = 0; i < foundAssets.Count; i++)
+                        {
+                            elements[i] = foundAssets[i];
+                            field.SetValue(obj, elements);
                         }
                     }
                 }
