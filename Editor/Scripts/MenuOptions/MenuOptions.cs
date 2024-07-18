@@ -27,7 +27,7 @@ namespace DosinisSDK.Editor
                 setupAssets(type, so);   
             }
             
-            Debug.Log("Finished scriptable Objects. Starting prefabs...");
+            Debug.Log("Finished scanning ScriptableObject. Starting prefabs...");
             AssetDatabase.SaveAssets();
             
             var prefabs = AssetDatabase.FindAssets("t:prefab");
@@ -41,6 +41,12 @@ namespace DosinisSDK.Editor
             
                 foreach (var component in components)
                 {
+                    if (component == null)
+                    {
+                        Debug.LogError($"Found null component on {go.name}", go);
+                        continue;
+                    }
+                    
                     var type = component.GetType();
                     setupAssets(type, component);
                 }
