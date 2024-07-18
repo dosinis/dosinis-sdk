@@ -7,6 +7,31 @@ using Object = UnityEngine.Object;
 namespace DosinisSDK.Assets
 {
     [Serializable]
+    public class AssetLink<T> : AssetLink where T : Object
+    {
+#if UNITY_EDITOR
+        public AssetLink(Object obj) : base(obj)
+        {
+        }
+#endif
+        
+        public T GetAsset()
+        {
+            return base.GetAsset<T>();
+        }
+        
+        public void GetAssetAsync(Action<T> callback)
+        {
+            base.GetAssetAsync(callback);
+        }
+        
+        public async Task<T> GetAssetAsync()
+        {
+            return await base.GetAssetAsync<T>();
+        }
+    }
+    
+    [Serializable]
     public class AssetLink
     {
         public string path;

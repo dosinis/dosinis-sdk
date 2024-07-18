@@ -1,11 +1,14 @@
+using System;
+using System.Collections.Generic;
 using DosinisSDK.Assets;
 using DosinisSDK.Utils;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Editor
 {
-    [CustomPropertyDrawer(typeof(AssetLink))]
+    [CustomPropertyDrawer(typeof(AssetLink), true)]
     public class AssetLinkDrawer : PropertyDrawer
     {
         private void Draw(ref Object loadedObj, Rect position, SerializedProperty property, GUIContent label)
@@ -30,7 +33,51 @@ namespace DosinisSDK.Editor
             
             EditorGUI.LabelField(labelPos, label);
             
-            loadedObj = EditorGUI.ObjectField(objRect, loadedObj, typeof(Object), false);
+            if (fieldInfo.FieldType.IsArray)
+            {
+                var elementType = fieldInfo.FieldType.GetElementType();
+                
+                if (elementType != null && elementType.IsGenericType)
+                {
+                    var type = elementType.GetGenericArguments()[0];
+                    drawGenericObject(ref loadedObj, type);
+                }
+                else
+                {
+                    drawGenericObject(ref loadedObj, typeof(Object));
+                }
+            }
+            else if (fieldInfo.FieldType.IsGenericType && fieldInfo.FieldType.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var elementType = fieldInfo.FieldType.GetGenericArguments()[0];
+                
+                if (elementType.IsGenericType)
+                {
+                    var type = elementType.GetGenericArguments()[0];
+                    drawGenericObject(ref loadedObj, type);
+                }
+                else
+                {
+                    drawGenericObject(ref loadedObj, typeof(Object));
+                }
+            }
+            else
+            {
+                if (fieldInfo.FieldType.IsGenericType)
+                {
+                    var genericType = fieldInfo.FieldType.GetGenericArguments()[0];
+                    drawGenericObject(ref loadedObj, genericType);
+                }
+                else
+                {
+                    drawGenericObject(ref loadedObj, typeof(Object));
+                }
+            }
+
+            void drawGenericObject(ref Object loadedObj, Type type)
+            {
+                loadedObj = EditorGUI.ObjectField(objRect, loadedObj, type, false);
+            }
             
             if (AssetDatabase.GetAssetPath(loadedObj).StartsWith("Assets/Resources/") == false) // && not addressable
             {
