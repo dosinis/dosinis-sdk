@@ -149,6 +149,34 @@ namespace DosinisSDK.Utils
                 child.gameObject.SetLayerRecursively(layer);
             }
         }
+
+        /// <summary>
+        /// Returns the corrected Euler angles for the transform (same as displayed in the inspector).
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public static Vector3 GetCorrectEulerAngles(this Transform transform)
+        {
+            var x = Helper.TranslateEulerAngles(transform.eulerAngles.x);
+            var y = Helper.TranslateEulerAngles(transform.eulerAngles.y);
+            var z = Helper.TranslateEulerAngles(transform.eulerAngles.z);
+            
+            return new Vector3(x, y, z);
+        }
+        
+        /// <summary>
+        /// Returns the corrected local Euler angles for the transform (same as displayed in the inspector).
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public static Vector3 GetCorrectLocalEulerAngles(this Transform transform)
+        {
+            var x = Helper.TranslateEulerAngles(transform.localEulerAngles.x);
+            var y = Helper.TranslateEulerAngles(transform.localEulerAngles.y);
+            var z = Helper.TranslateEulerAngles(transform.localEulerAngles.z);
+            
+            return new Vector3(x, y, z);
+        }
         
         // Color
 
