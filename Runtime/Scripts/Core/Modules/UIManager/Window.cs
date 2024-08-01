@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Window : MonoBehaviour, IWindow
+    public abstract class Window : MonoBehaviour, IWindow
     {
 #if UNITY_ANDROID || UNITY_IOS
         [SerializeField] protected bool ignoreSafeArea = false;
@@ -73,9 +73,7 @@ namespace DosinisSDK.Core
             }
         }
 
-        protected virtual void OnInit(IApp app)
-        {
-        }
+        protected abstract void OnInit(IApp app);
 
         protected virtual void OnDispose()
         {

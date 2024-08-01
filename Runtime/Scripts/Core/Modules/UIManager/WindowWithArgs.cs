@@ -2,7 +2,7 @@ using System;
 
 namespace DosinisSDK.Core
 {
-    public class WindowWithArgs<T> : Window, IWindowWithArgs<T>
+    public abstract class WindowWithArgs<T> : Window, IWindowWithArgs<T>
     {
         protected T args;
         
