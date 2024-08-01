@@ -233,6 +233,32 @@ namespace DosinisSDK.Audio
                 break;
             }
         }
+        
+        public void PlayClip(AudioClip clip, float volume = 1)
+        {
+            foreach (var src in sources)
+            {
+                if (src.isPlaying == false)
+                {
+                    src.pitch = 1f;
+                    src.clip = clip;
+                    src.volume = volume;
+                    src.Play();
+                    break;
+                }
+            }
+        }
+
+        public void StopClip(AudioClip clip)
+        {
+            foreach (var src in sources)
+            {
+                if (src.isPlaying && src.clip == clip)
+                {
+                    src.Stop();
+                }
+            }
+        }
 
         public void SetSfxEnabled(bool value)
         {

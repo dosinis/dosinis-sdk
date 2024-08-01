@@ -19,6 +19,8 @@ namespace DosinisSDK.Audio
         bool IsPlaying(AudioClip clip);
         void PlayLoop(AudioClip clip, float volume = 1f);
         void StopLoop(AudioClip clip);
+        void PlayClip(AudioClip clip, float volume = 1f);
+        void StopClip(AudioClip clip);
         void SetMusicPitch(float value);
         void SetSfxEnabled(bool value);
         void SetMusicEnabled(bool value);
