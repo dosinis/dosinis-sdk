@@ -38,8 +38,8 @@ namespace DosinisSDK.Editor
 
         private MemberInfo[] GetMethods()
         {
-            return targetObject.GetType().GetMembers(BindingFlags.Instance | BindingFlags.Instance
-                | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
+            return targetObject.GetType().GetMembers(flags);
         }
 
         private IEnumerable<MemberInfo> GetMethodsWithAttribute(Type attributeType)
