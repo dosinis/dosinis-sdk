@@ -120,12 +120,12 @@ namespace DosinisSDK.Core
             OnInit(App.Core);
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             buttonAnimation?.ReleaseAnimation();
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             OnReleased?.Invoke();
         }
