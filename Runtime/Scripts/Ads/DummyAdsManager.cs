@@ -11,10 +11,13 @@ namespace DosinisSDK.Ads
         private bool rewardAdReady = false;
 
         private Canvas canvas;
-
+        // TODO: Implement fully
+        private readonly Observable<bool> rewardedAdLoadingToShow = new (false);
+        
         public override event Action OnBannerLoaded;
         public override event Action<string> OnInterstitialShown;
         public override event Action<string> OnRewardedShown;
+        public override Utils.IObservable<bool> RewardedAdLoadingToShow => rewardedAdLoadingToShow;
         public override float LastTimeAnyAdFullyShown { get; protected set; }
         public override bool IsBannerDisplayed { get; protected set; }
 

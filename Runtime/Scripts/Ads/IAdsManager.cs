@@ -8,6 +8,7 @@ namespace DosinisSDK.Ads
         event Action OnBannerLoaded;
         event Action<string> OnInterstitialShown;
         event Action<string> OnRewardedShown;
+        Utils.IObservable<bool> RewardedAdLoadingToShow { get; }
         float LastTimeAnyAdFullyShown { get; }
         bool IsBannerDisplayed { get; }
         bool IsRewardAdReady();
