@@ -416,7 +416,10 @@ namespace DosinisSDK.Core
 
             Debug.Log("Setting up scene modules...");
 
+#if !UNITY_WEBGL
+// WebGL doesn't have support for Threads - UniTask seems to be a possible solution to add in case would be needed in the future
             await Task.Delay(1); // Tiny delay for scene to be completely loaded (next frame)
+#endif
             
             await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
