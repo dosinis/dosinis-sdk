@@ -135,5 +135,10 @@ namespace DosinisSDK.Utils
         {
             return ((long)time).ToDurationString();
         }
+        
+        public static string ToPrettyString(this float number)
+        {
+            return ((int)number).ToPrettyString();
+        }
     }
 }
