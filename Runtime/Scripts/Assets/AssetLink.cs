@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Assets
@@ -34,9 +35,11 @@ namespace DosinisSDK.Assets
     [Serializable]
     public class AssetLink
     {
-        public string path;
+        [SerializeField] private string path;
         
 #if UNITY_EDITOR
+        [SerializeField] private string guid;
+        
         /// <summary>
         /// This constructor is EDITOR ONLY
         /// </summary>
@@ -46,9 +49,10 @@ namespace DosinisSDK.Assets
             path = EditorUtils.GetAssetPathResourcesAdjusted(obj);
             guid = UnityEditor.AssetDatabase.AssetPathToGUID(UnityEditor.AssetDatabase.GetAssetPath(obj));
         }
-
-        public string guid;
+        
+        public string Guid => guid;
 #endif
+        public string Path => path;
         
         public T GetAsset<T>() where T : Object
         {
@@ -63,6 +67,21 @@ namespace DosinisSDK.Assets
         public async Task<T> GetAssetAsync<T>() where T : Object
         {
             return await App.Core.GetModule<GlobalAssetsManager>().GetAssetAsync<T>(path);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is AssetLink other)
+            {
+                return path == other.path;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return 17 * 31 + Path.GetHashCode();
         }
     }
 }

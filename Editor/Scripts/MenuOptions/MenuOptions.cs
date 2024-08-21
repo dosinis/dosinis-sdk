@@ -57,7 +57,7 @@ namespace DosinisSDK.Editor
 
             AssetLink refreshLink(AssetLink assetLink)
             {
-                var guid = assetLink.guid;
+                var guid = assetLink.Guid;
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
 
@@ -66,7 +66,7 @@ namespace DosinisSDK.Editor
 
             object refreshLinkGeneric(AssetLink assetLink, Type type)
             {
-                var guid = assetLink.guid;
+                var guid = assetLink.Guid;
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
                 
