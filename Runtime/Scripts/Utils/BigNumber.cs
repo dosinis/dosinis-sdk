@@ -110,7 +110,7 @@ namespace DosinisSDK.Utils
 
         public override int GetHashCode()
         {
-            return 1101458105 + Value.GetHashCode();
+            return 17 * 31 + Value.GetHashCode();
         }
 
         // Compression
