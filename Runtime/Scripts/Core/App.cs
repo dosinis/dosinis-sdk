@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -416,18 +417,28 @@ namespace DosinisSDK.Core
 
             Debug.Log("Setting up scene modules...");
 
-            await Task.Delay(1); // Tiny delay for scene to be completely loaded (next frame)
+            StartCoroutine(SkipFrameNative(continueScenesInit)); // Tiny delay for scene to be completely loaded (next frame)
+
+            async void continueScenesInit()
+            {
+                await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
-            await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                SceneManager.OnSceneAboutToChange += CleanupSceneModules;
+                SceneManager.OnSceneChanged += OnSceneChanged;
+
+                Initialized = true;
+
+                onAppInitialized?.Invoke();
+
+                Debug.Log($"{nameof(App)} initialized");
+            }
+        }
+
+        private IEnumerator SkipFrameNative(Action done)
+        {
+            yield return new WaitForEndOfFrame();
             
-            SceneManager.OnSceneAboutToChange += CleanupSceneModules;
-            SceneManager.OnSceneChanged += OnSceneChanged;
-
-            Initialized = true;
-
-            onAppInitialized?.Invoke();
-
-            Debug.Log($"{nameof(App)} initialized");
+            done?.Invoke();
         }
 
         private async void OnSceneChanged((Scene oldScene, Scene newScene) args)
