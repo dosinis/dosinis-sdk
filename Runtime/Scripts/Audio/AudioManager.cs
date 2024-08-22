@@ -96,7 +96,7 @@ namespace DosinisSDK.Audio
 
         public void SetPlayingClipPitch(AudioClip clip, float pitch)
         {
-            foreach (AudioSource src in sources)
+            foreach (var src in sources)
             {
                 if (src.isPlaying && src.clip == clip)
                 {
@@ -129,7 +129,7 @@ namespace DosinisSDK.Audio
 
         public void PlayLoop(AudioClip clip, float volume = 1f)
         {
-            foreach (AudioSource src in sources)
+            foreach (var src in sources)
             {
                 if (src.isPlaying == false)
                 {
@@ -145,7 +145,7 @@ namespace DosinisSDK.Audio
 
         public void StopLoop(AudioClip clip)
         {
-            foreach (AudioSource src in sources)
+            foreach (var src in sources)
             {
                 if (src && src.gameObject && src.isPlaying && src.clip == clip)
                 {
@@ -202,7 +202,7 @@ namespace DosinisSDK.Audio
 
             void play()
             {
-                foreach (AudioSource src in sources)
+                foreach (var src in sources)
                 {
                     if (src.isPlaying) 
                         continue;
