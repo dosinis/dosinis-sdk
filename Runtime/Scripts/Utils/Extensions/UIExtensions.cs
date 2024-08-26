@@ -83,6 +83,30 @@ namespace DosinisSDK.Utils
         {
             return LayoutUtility.GetPreferredWidth(rectTransform) > rectTransform.rect.width;
         }
+        
+        public static bool IsWithinBounds(this RectTransform targetRectTransform, RectTransform boundsRectTransform, float offsetY)
+        {
+            var boundsCorners = new Vector3[4];
+            boundsRectTransform.GetWorldCorners(boundsCorners);
+
+            var boundsLeft = boundsCorners[0].x;
+            var boundsBot = boundsCorners[0].y - offsetY;
+            var boundsRight = boundsCorners[2].x;
+            var boundsTop = boundsCorners[2].y + offsetY;
+
+            var targetCorners = new Vector3[4];
+            targetRectTransform.GetWorldCorners(targetCorners);
+
+            var left = targetCorners[0].x;
+            var bot = targetCorners[0].y;
+            var right = targetCorners[2].x;
+            var top = targetCorners[2].y;
+
+            var isWithinXBounds = (left >= boundsLeft) && (right <= boundsRight);
+            var isWithinYBounds = (bot >= boundsBot) && (top <= boundsTop);
+
+            return isWithinXBounds && isWithinYBounds;
+        }
 
         // ScrollRect
         
