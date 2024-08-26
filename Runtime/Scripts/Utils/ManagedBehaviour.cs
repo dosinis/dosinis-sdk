@@ -5,10 +5,14 @@ namespace DosinisSDK.Utils
 {
     public abstract class ManagedBehaviour : MonoBehaviour
     {
+        protected bool initialized = false;
+        
         private async void Start()
         {
             await App.Ready();
             OnInit(App.Core);
+
+            initialized = true;
         }
 
         /// <summary>
