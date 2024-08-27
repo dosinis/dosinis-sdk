@@ -58,6 +58,35 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
+        /// Get random point in annulus (ring) shaped area
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="minRadius"></param>
+        /// <param name="maxRadius"></param>
+        /// <param name="minAngle"></param>
+        /// <param name="maxAngle"></param>
+        /// <returns></returns>
+        public static Vector2 GetRandomPointInRing(Vector2 origin, float minRadius, float maxRadius, float minAngle = 0, float maxAngle = 360)
+        {
+            minRadius = Mathf.Abs(minRadius);
+            
+            if (minRadius > maxRadius)
+            {
+                throw new Exception("Min radius can't be greater than max radius");
+            }
+            
+            var angle = Random.Range(minAngle, maxAngle) * Mathf.Deg2Rad;
+
+            // Generate a random radius with uniform distribution over the area
+            var radius = Mathf.Sqrt(Random.Range(minRadius * minRadius, maxRadius * maxRadius));
+            
+            var xOffset = Mathf.Cos(angle) * radius;
+            var yOffset = Mathf.Sin(angle) * radius;
+            
+            return origin + new Vector2(xOffset, yOffset);
+        }
+
+        /// <summary>
         /// Returns -1 when targetPoint is to the left, 1 to the right
         /// </summary>
         /// <returns></returns>

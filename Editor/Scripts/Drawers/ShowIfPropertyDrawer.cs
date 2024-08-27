@@ -60,7 +60,7 @@ namespace DosinisSDK.Editor
 
             if (comparedProperty == null)
             {
-                Debug.LogError("Cannot find property with name: " + path);
+                Debug.LogWarning("Cannot find property with name: " + path);
                 return true;
             }
 
