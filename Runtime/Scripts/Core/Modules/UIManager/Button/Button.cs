@@ -33,11 +33,10 @@ namespace DosinisSDK.Core
         // Private
         
         protected IButtonAnimation buttonAnimation;
-        private ScrollRect scrollRectParent;
         private Image image;
-        protected bool heldDown = false;
-        protected bool mouseOverObject = false;
-
+        public bool HeldDown { get; protected set; }
+        public bool MouseOverObject { get; protected set; }
+        
         // Events
 
         public event Action OnClick;
@@ -61,7 +60,7 @@ namespace DosinisSDK.Core
             if (Interactable == false)
                 return;
             
-            heldDown = true;
+            HeldDown = true;
             OnPressedIn?.Invoke();
             
             buttonAnimation?.PressAnimation();
@@ -76,7 +75,7 @@ namespace DosinisSDK.Core
 
             ClickPerformed();
 
-            heldDown = false;
+            HeldDown = false;
         }
 
         public virtual void OnPointerExit(PointerEventData eventData)
@@ -86,8 +85,8 @@ namespace DosinisSDK.Core
             
             OnPointerExited?.Invoke();
 
-            mouseOverObject = false;
-            heldDown = false;
+            MouseOverObject = false;
+            HeldDown = false;
             
             buttonAnimation?.ReleaseAnimation();
             buttonAnimation?.Highlight(false);
@@ -100,7 +99,7 @@ namespace DosinisSDK.Core
             
             OnPointerEntered?.Invoke();
 
-            mouseOverObject = true;
+            MouseOverObject = true;
             
             buttonAnimation?.Highlight(true);
         }
