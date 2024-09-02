@@ -10,7 +10,7 @@ namespace DosinisSDK.Editor
         private static readonly List<Object> selectedAssets = new List<Object>();
         private static int selectionIndex = -1;
         
-        [MenuItem("Assets/NavigateBack %q")]
+        [MenuItem("Assets/Dosinis/NavigateBack %q")]
         private static void NavigateBack()
         {
             if (selectionIndex > 0)
@@ -20,7 +20,7 @@ namespace DosinisSDK.Editor
             }
         }
 
-        [MenuItem("Assets/NavigateForward %e")]
+        [MenuItem("Assets/Dosinis/NavigateForward %e")]
         private static void NavigateForward()
         {
             if (selectionIndex < selectedAssets.Count - 1)
