@@ -33,14 +33,14 @@ namespace DosinisSDK.Utils
         }
         
         /// <summary>
-        /// Returns time string in 59; 59:59; 00:59:59; 30d format.
+        /// Returns time string in 00:59; 59:59; 00:59:59; 30d format.
         /// </summary>
         /// <returns></returns>
         public static string ToDurationString(this long time)
         {
             if (time < 60) // Seconds
             {
-                return $"{time:00}";
+                return $"00:{time:00}";
             }
 
             if (time < 3600) // Minutes Seconds
