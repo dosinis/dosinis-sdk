@@ -9,17 +9,14 @@ namespace DosinisSDK.Editor
         [MenuItem("Assets/Dosinis/MoveToRoot %g")]
         private static void MoveToRoot()
         {
-            if (PrefabStageUtility.GetCurrentPrefabStage() != null)
-            {
-                Debug.LogWarning("Can't move to root in prefab context mode!");
-                return;
-            }
-            
             Transform root = null;
             
             foreach (var s in Selection.transforms)
             {
-                root = s.root;
+                var prefabStage = PrefabStageUtility.GetPrefabStage(s.gameObject);
+
+                root = prefabStage != null ? prefabStage.prefabContentsRoot.transform : s.root;
+              
                 s.SetParent(root);
                 s.SetAsFirstSibling();
             }
