@@ -16,7 +16,7 @@ namespace DosinisSDK.Utils
         }
 
         /// <summary>
-        /// Essentially Awake(), but called once/if App is initialized
+        /// Essentially Start(), but called once/if App is initialized
         /// </summary>
         protected abstract void OnInit(IApp app);
     }
