@@ -107,13 +107,12 @@ namespace DosinisSDK.Vfx
         {
             if (effectPools.ContainsKey(vfx) == false)
             {
-                Debug.LogWarning($"Vfx not found {vfx.GameObject.name}");
+                Debug.LogWarning($"Vfx pool for {vfx.GameObject.name} not found!");
                 return;
             }
 
             if (effectsCache.ContainsKey(key) == false)
             {
-                Debug.LogWarning($"Vfx not found {key}");
                 return;
             }
             
@@ -145,6 +144,7 @@ namespace DosinisSDK.Vfx
             {
                 if (effect.Value == null)
                 {
+                    itemsToRemove.Add(effect.Key);
                     continue;
                 }
                 

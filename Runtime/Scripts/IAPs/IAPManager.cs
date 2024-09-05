@@ -283,7 +283,7 @@ namespace DosinisSDK.IAPs
             }
             catch (Exception ex)
             {
-                LogError($"IsSubscribed: {ex.Message}");
+                LogError($"IsSubscribed: {ex.Message} \n {ex.StackTrace}");
             }
             
             return false;
@@ -338,7 +338,7 @@ namespace DosinisSDK.IAPs
             }
             catch (Exception ex)
             {
-                LogError($"ProcessPurchase: Handler caused exception. {ex.Message}");
+                LogError($"ProcessPurchase: Handler caused exception. {ex.Message} \n {ex.StackTrace}");
             }
 
             Log($"ProcessPurchase: Complete. Product: {args.purchasedProduct.definition.id} - {product.transactionID}");
@@ -349,7 +349,7 @@ namespace DosinisSDK.IAPs
             }
             catch (Exception ex)
             {
-                LogError($"ProcessPurchase: OnProductPurchased event caused exception. {ex.Message}");
+                LogError($"ProcessPurchase: OnProductPurchased event caused exception. {ex.Message} \n {ex.StackTrace}");
             }
 
             try
@@ -358,7 +358,7 @@ namespace DosinisSDK.IAPs
             }
             catch (Exception ex)
             {
-                LogError($"ProcessPurchase: purchaseCallback caused exception. {ex.Message}");
+                LogError($"ProcessPurchase: purchaseCallback caused exception. {ex.Message} \n {ex.StackTrace}");
             }
            
             return PurchaseProcessingResult.Complete;

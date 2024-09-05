@@ -49,9 +49,9 @@ namespace DosinisSDK.Core
                 {
                     window.Init(app);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    LogError($"Error while initializing {window.GetType().Name}! {ex.Message}. You can disable safe mode in UIManager component.");
+                    LogError($"Error while initializing {window.GetType().Name}! {ex.Message} \n {ex.StackTrace}. You can disable safe mode in UIManager component.");
                 }
             }
             else

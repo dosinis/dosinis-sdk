@@ -140,9 +140,9 @@ namespace DosinisSDK.Rest
             {
                 resultObject = JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                LogError(e.Message);
+                LogError(ex.Message + "\n" + ex.StackTrace);
             }
 
             var response = new Response<T>(resultObject, request.responseCode, (Result)request.result, request.error);

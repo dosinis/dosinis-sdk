@@ -17,6 +17,11 @@ namespace DosinisSDK.Vfx
 
         public override void Play()
         {
+            if (particleSystem == null)
+            {
+                particleSystem = GetComponent<ParticleSystem>();
+            }
+            
             particleSystem.Play();
         }
 

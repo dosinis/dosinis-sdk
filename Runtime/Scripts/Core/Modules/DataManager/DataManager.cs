@@ -176,7 +176,7 @@ namespace DosinisSDK.Core
             }
             catch (Exception ex)
             {
-                LogError(ex.Message);
+                LogError(ex.Message + "\n" + ex.StackTrace);
             }
 
             return new T();

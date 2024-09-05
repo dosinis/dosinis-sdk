@@ -191,7 +191,7 @@ namespace DosinisSDK.Core
                     }
                     catch (Exception ex)
                     {
-                        Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. " +
+                        Debug.LogError($"Module {mType.Name} encountered initialization error: {ex.Message}. \n {ex.StackTrace} \n" +
                                        $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
                     }
                 }
