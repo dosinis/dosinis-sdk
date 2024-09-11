@@ -194,7 +194,7 @@ namespace DosinisSDK.Core
         {
             for (int i = 0; i < list.Count; i++)
             {
-                int randomIndex = UnityRandom.Range(i, list.Count());
+                int randomIndex = UnityRandom.Range(i, list.Count);
                 (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
             }
         }
