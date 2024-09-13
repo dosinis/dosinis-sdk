@@ -50,8 +50,8 @@ namespace DosinisSDK.Vfx
             var newParticleSys = Instantiate(source, useGlobalParent ? parent.transform : transform);
             pool.Add(newParticleSys);
 
-            newParticleSys.Play();
             newParticleSys.gameObject.SetActive(true);
+            newParticleSys.Play();
 
             return newParticleSys;
         }
