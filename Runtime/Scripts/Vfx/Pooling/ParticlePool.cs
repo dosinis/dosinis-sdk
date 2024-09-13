@@ -6,11 +6,11 @@ namespace DosinisSDK.Vfx
 {
     public class ParticlePool : MonoBehaviour
     {
-        [SerializeField] private int prewarmSize = 3;
+        [SerializeField] private int prewarmSize = 1;
         [SerializeField] private ParticleSystem source;
         [SerializeField] private bool useGlobalParent = false;
 
-        private readonly List<ParticleSystem> pool = new List<ParticleSystem>();
+        private readonly List<ParticleSystem> pool = new();
 
         private static GameObject parent;
         
