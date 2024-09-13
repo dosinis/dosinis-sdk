@@ -25,6 +25,7 @@ namespace DosinisSDK.Audio
         void SetSfxEnabled(bool value);
         void SetMusicEnabled(bool value);
         void SetTimeScale(float value, float lerpDuration = 0.1f);
+        void SetMusicSourceVolume(float volume);
         void SetVolume(float volume);
         bool IsSfxEnabled { get; }
         bool IsMusicEnabled { get; }

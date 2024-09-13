@@ -94,6 +94,12 @@ namespace DosinisSDK.Audio
             musicSource.Play();
         }
 
+        public void SetMusicSourceVolume(float volume)
+        {
+            if (data.isMusicEnabled)
+                musicSource.volume = volume;
+        }
+
         public void SetPlayingClipPitch(AudioClip clip, float pitch)
         {
             foreach (var src in sources)
