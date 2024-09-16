@@ -8,15 +8,17 @@ namespace DosinisSDK.Audio
 {
     public class AudioManager : BehaviourModule, IAudioManager
     {
-        private float musicVolume = 1f;
         private readonly List<AudioSource> sources = new();
         private readonly List<AudioSource> worldSources = new();
         private AudioSource musicSource;
         private AudioData data;
         private bool silencingMusic = false;
+        private float musicVolumeModifier = 1f;
 
         private const int POOL_SIZE = 10;
-        
+
+        public float SoundsVolume => data.soundsVolume;
+        public float MusicVolume => data.musicVolume * musicVolumeModifier;
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
         
@@ -75,21 +77,16 @@ namespace DosinisSDK.Audio
 
         public void PlayMusic(AudioClip clip)
         {
-            musicSource.clip = clip;
-            
-            if (data.isMusicEnabled)
-                musicSource.volume = musicVolume;
-
-            musicSource.Play();
+            PlayMusic(clip, 1f);
         }
 
         public void PlayMusic(AudioClip clip, float volume)
         {
-            musicVolume = volume;
+            musicVolumeModifier = volume;
             musicSource.clip = clip;
             
             if (data.isMusicEnabled)
-                musicSource.volume = volume;
+                musicSource.volume = MusicVolume;
 
             musicSource.Play();
         }
@@ -136,7 +133,7 @@ namespace DosinisSDK.Audio
                     src.pitch = 1f;
                     src.clip = clip;
                     src.loop = true;
-                    src.volume = volume;
+                    src.volume = SoundsVolume * volume;
                     src.Play();
                     break;
                 }
@@ -208,7 +205,7 @@ namespace DosinisSDK.Audio
                         continue;
                     
                     src.pitch = 1f;
-                    src.PlayOneShot(clip, volume);
+                    src.PlayOneShot(clip, SoundsVolume * volume);
                     break;
                 }
             }
@@ -224,7 +221,7 @@ namespace DosinisSDK.Audio
                 src.transform.position = position;
                 
                 src.clip = clip;
-                src.volume = volume;
+                src.volume = SoundsVolume * volume;
                 src.minDistance = minDistance;
                 src.maxDistance = maxDistance;
                 src.pitch = 1f;
@@ -242,7 +239,7 @@ namespace DosinisSDK.Audio
                 {
                     src.pitch = 1f;
                     src.clip = clip;
-                    src.volume = volume;
+                    src.volume = SoundsVolume * volume;
                     src.Play();
                     break;
                 }
@@ -311,17 +308,38 @@ namespace DosinisSDK.Audio
             }
         }
         
-        public void SetVolume(float volume)
+        public void SetMasterVolume(float volume)
         {
             AudioListener.volume = volume;
-            data.volume = volume;
+            data.masterVolume = volume;
+        }
+
+        public void SetMusicVolume(float volume)
+        {
+            data.musicVolume = volume;
+            musicSource.volume = volume;
+        }
+
+        public void SetSoundsVolume(float volume)
+        {
+            data.soundsVolume = volume;
+            
+            foreach (var src in sources)
+            {
+                src.volume = volume;
+            }
+            
+            foreach (var src in worldSources)
+            {
+                src.volume = volume;
+            }
         }
 
         public void SetMusicEnabled(bool value)
         {
             data.isMusicEnabled = value;
 
-            musicSource.volume = value ? musicVolume : 0;
+            musicSource.volume = value ? MusicVolume : 0;
             
             OnMusicEnabled?.Invoke(value);
         }
