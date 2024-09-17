@@ -31,6 +31,9 @@ namespace DosinisSDK.Audio
         
         private void OnDestroy()
         {
+            if (initialized == false)
+                return;
+            
             audioManager.OnSfxEnabled -= OnSfxEnabled;
             audioManager.OnMusicEnabled -= OnMusicEnabled;
         }
