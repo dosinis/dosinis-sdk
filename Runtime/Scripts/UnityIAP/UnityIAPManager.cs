@@ -6,17 +6,19 @@ using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 using UnityEngine.Purchasing.Security;
+using DosinisSDK.IAP;
+using ProductType = UnityEngine.Purchasing.ProductType;
 
-namespace DosinisSDK.IAPs
+namespace DosinisSDK.UnityIAP
 {
-    public class IAPManager : Module, IIAPManager, IDetailedStoreListener, IAsyncModule
+    public class UnityIAPManager : Module, IIAPManager, IDetailedStoreListener, IAsyncModule
     {
         // Private
 
         private IStoreController storeController;
         private IExtensionProvider storeExtensionProvider;
         private readonly Dictionary<string, ProductData> productsRegistry = new();
-        private IAPConfig config;
+        private UnityIAPConfig config;
         private bool moduleReady;
 
         // Properties
@@ -45,7 +47,7 @@ namespace DosinisSDK.IAPs
 
         protected override void OnInit(IApp app)
         {
-            config = GetConfigAs<IAPConfig>();
+            config = GetConfigAs<UnityIAPConfig>();
 
             if (Application.isEditor)
             {
@@ -59,7 +61,7 @@ namespace DosinisSDK.IAPs
             
             foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.Id, handler.ProductType, handler.GrantReward);
+                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.GrantReward);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -122,7 +124,7 @@ namespace DosinisSDK.IAPs
             }
         }
 
-        public Product GetProductById(string productId)
+        private Product GetProductById(string productId)
         {
             if (Initialized == false)
             {

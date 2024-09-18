@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DosinisSDK.IAPs
+namespace DosinisSDK.IAP
 {
     [CreateAssetMenu(fileName = "DoNothingPurchaseHandler", menuName = "DosinisSDK/IAPs/DoNothingPurchaseHandler")]
     public class DoNothingPurchaseHandler : PurchaseHandler

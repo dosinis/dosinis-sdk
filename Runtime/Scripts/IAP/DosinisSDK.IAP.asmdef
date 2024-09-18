@@ -1,0 +1,21 @@
+{
+    "name": "DosinisSDK.IAP",
+    "rootNamespace": "DosinisSDK.IAP",
+    "references": [
+        "GUID:ba55aab39d97f8d4d8a552da093e94e4",
+        "GUID:fd2b018fb93129a479a862914b971440"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor",
+        "iOS"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

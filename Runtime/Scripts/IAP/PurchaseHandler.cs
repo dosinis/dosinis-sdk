@@ -1,15 +1,15 @@
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
-using UnityEngine.Purchasing;
 
-namespace DosinisSDK.IAPs
+namespace DosinisSDK.IAP
 {
     public abstract class PurchaseHandler : Reward
     {
         [SerializeField] private ProductType productType;
         
         public ProductType ProductType => productType;
+
         public virtual bool IsListed => App.Core.GetModule<IIAPManager>().IsPurchased(Id) == false;
 
         private void OnValidate()
