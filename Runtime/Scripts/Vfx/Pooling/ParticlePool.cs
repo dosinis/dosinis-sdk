@@ -12,13 +12,13 @@ namespace DosinisSDK.Vfx
 
         private readonly List<ParticleSystem> pool = new();
 
-        private static GameObject parent;
+        public static GameObject Parent { get; private set; }
         
         private void Awake()
         {
-            if (parent == null)
+            if (Parent == null)
             {
-                parent = new GameObject($"POOL-{nameof(ParticlePool)}");
+                Parent = new GameObject($"POOL-{nameof(ParticlePool)}");
             }
             
             if (source.gameObject.IsInScene())
@@ -28,7 +28,7 @@ namespace DosinisSDK.Vfx
 
             for (int i = 0; i < prewarmSize; i++)
             {
-                var newParticleSys = Instantiate(source, useGlobalParent ? parent.transform : transform);
+                var newParticleSys = Instantiate(source, useGlobalParent ? Parent.transform : transform);
                 newParticleSys.gameObject.SetActive(false);
                 pool.Add(newParticleSys);
             }
@@ -47,7 +47,7 @@ namespace DosinisSDK.Vfx
                 }
             }
 
-            var newParticleSys = Instantiate(source, useGlobalParent ? parent.transform : transform);
+            var newParticleSys = Instantiate(source, useGlobalParent ? Parent.transform : transform);
             pool.Add(newParticleSys);
 
             newParticleSys.gameObject.SetActive(true);
