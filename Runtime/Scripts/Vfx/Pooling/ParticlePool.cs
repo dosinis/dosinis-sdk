@@ -38,7 +38,7 @@ namespace DosinisSDK.Vfx
         {
             foreach (var particleSys in pool)
             {
-                if (particleSys.gameObject.activeSelf == false || particleSys.isPlaying == false || particleSys.isEmitting == false)
+                if (particleSys.gameObject.activeSelf == false || particleSys.IsAlive() == false)
                 {
                     particleSys.gameObject.SetActive(true);
                     particleSys.Play();
