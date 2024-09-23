@@ -8,36 +8,51 @@ namespace DosinisSDK.Core
 {
     public class DataManager : Module, IDataManager
     {
+        private DataManagerConfig config;
         private readonly Dictionary<string, object> dataCache = new();
         private List<string> registeredKeys = new();
 
         // ReSharper disable once InconsistentNaming
         private static readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
         private const string REGISTERED_KEYS_KEY = "keys_registry";
-
+        private const string DATA_WIPE_SAVE_KEY = "data_wipe";
+        
         private IApp app;
         
         protected override void OnInit(IApp app)
         {
             this.app = app;
-            
-            app.OnAppFocus += OnAppFocus;
-            app.OnAppPaused += OnAppPaused;
-            app.OnAppQuit += OnAppQuit;
+
+            config = GetConfigAs<DataManagerConfig>();
 
             if (PlayerPrefs.HasKey(REGISTERED_KEYS_KEY))
             {
                 registeredKeys = JsonConvert.DeserializeObject<List<string>>(PlayerPrefs.GetString(REGISTERED_KEYS_KEY));
             }
+
+            if (config)
+            {
+                var wipeId = PlayerPrefs.GetInt(DATA_WIPE_SAVE_KEY, 0);
+
+                if (wipeId != config.WipeVersion)
+                {
+                    DeleteAllData();
+                    PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+                    Log("Data wipe detected, all data was deleted");
+                }
+            }
             
 #if UNITY_EDITOR
-
             if (Directory.Exists(EDITOR_SAVE_PATH) == false)
             {
                 PlayerPrefs.DeleteAll();
                 Directory.CreateDirectory(EDITOR_SAVE_PATH);
             }
 #endif
+            
+            app.OnAppFocus += OnAppFocus;
+            app.OnAppPaused += OnAppPaused;
+            app.OnAppQuit += OnAppQuit;
         }
 
         protected override void OnDispose()
@@ -134,18 +149,13 @@ namespace DosinisSDK.Core
             if (dataCache.TryGetValue(typeof(T).Name, out object data) == false)
             {
                 data = LoadRawData<T>();
-                RegisterData(data);
+                
+                var key = data.GetType().Name;
+                dataCache.Add(key, data);
+                SaveData(data);
             }
 
             return data as T;
-        }
-
-        public void RegisterData<T>(T data)
-        {
-            var key = data.GetType().Name;
-            dataCache.Add(key, data);
-            registeredKeys.Add(key);
-            SaveData(data);
         }
 
         public T LoadRawData<T>() where T : class, IData, new()

@@ -4,7 +4,7 @@ namespace DosinisSDK.Core
 {
     public abstract class BehaviourModule : MonoBehaviour, IModule
     {
-        [SerializeField] protected ModuleConfig mainConfig;
+        [SerializeField] private ModuleConfig mainConfig;
         
         void IModule.Init(IApp app, ModuleConfig config)
         {
@@ -25,7 +25,7 @@ namespace DosinisSDK.Core
         {
         }
         
-        public T GetConfigAs<T>() where T : ModuleConfig
+        protected T GetConfigAs<T>() where T : ModuleConfig
         {
             return mainConfig as T;
         }

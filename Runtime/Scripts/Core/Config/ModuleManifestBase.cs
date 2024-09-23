@@ -8,13 +8,18 @@ namespace DosinisSDK.Core
     /// </summary>
     public class ModuleManifestBase : ScriptableObject
     {
-        [Header("AppConfig")]
-        public bool prewarmShaders;
-        public int targetFramerate = 60;
-        
+        [Header("AppConfig")] 
+        [SerializeField] private bool prewarmShaders;
+        [SerializeField] private int targetFramerate = 60;
+
         [Header("ModulesManifest")]
-        public bool safeMode = true;
-       
+        [SerializeField] private bool safeMode = true;
+        [SerializeField] private DataManagerConfig dataManagerConfig;
+        
+        public bool PrewarmShaders => prewarmShaders;
+        public int TargetFramerate => targetFramerate;
+        public bool SafeMode => safeMode;
+
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
             await CreateModules(moduleFactory);
@@ -29,7 +34,7 @@ namespace DosinisSDK.Core
             moduleFactory.CreateModule<SceneManager>();
             moduleFactory.CreateModule<CoroutineManager>();
             moduleFactory.CreateModule<Timer>();
-            moduleFactory.CreateModule<DataManager>();
+            moduleFactory.CreateModule<DataManager>(config: dataManagerConfig);
             moduleFactory.CreateModule<LocalClock>();
             return Task.CompletedTask;
         }

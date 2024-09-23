@@ -183,7 +183,7 @@ namespace DosinisSDK.Core
 
             if (init)
             {
-                if (manifest.safeMode)
+                if (manifest.SafeMode)
                 {
                     try
                     {
@@ -403,10 +403,10 @@ namespace DosinisSDK.Core
 
             this.manifest = manifest;
 
-            if (manifest.targetFramerate != 0)
-                Application.targetFrameRate = manifest.targetFramerate;
+            if (manifest.TargetFramerate != 0)
+                Application.targetFrameRate = manifest.TargetFramerate;
             
-            if (manifest.prewarmShaders)
+            if (manifest.PrewarmShaders)
                 Shader.WarmupAllShaders();
 
             DontDestroyOnLoad(this);

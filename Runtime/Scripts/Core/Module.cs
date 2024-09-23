@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
 {
     public abstract class Module : IModule, IDisposable
     {
-        protected ModuleConfig mainConfig;
+        private ModuleConfig mainConfig;
         
         void IModule.Init(IApp app, ModuleConfig config)
         {
@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
 
         protected abstract void OnInit(IApp app);
         
-        public T GetConfigAs<T>() where T : ModuleConfig
+        protected T GetConfigAs<T>() where T : ModuleConfig
         {
             return mainConfig as T;
         }
