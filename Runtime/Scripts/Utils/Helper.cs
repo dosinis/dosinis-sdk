@@ -11,6 +11,21 @@ namespace DosinisSDK.Utils
 {
     public static class Helper
     {
+        private static Camera cam;
+        
+        private static Camera MainCam
+        {
+            get
+            {
+                if (cam == null)
+                {
+                    cam = Camera.main;
+                }
+
+                return cam;
+            }
+        }
+        
         /// <summary>
         /// Random roll chance. Input is between 0 and 1 or 0 and 100 (if useHundreds is true)
         /// </summary>
@@ -171,7 +186,7 @@ namespace DosinisSDK.Utils
         {
             if (mainCamera == null)
             {
-                mainCamera = Camera.main;
+                mainCamera = MainCam;
             }
 
             if (mainCamera == null)
