@@ -59,7 +59,7 @@ namespace DosinisSDK.Pool
         {
             if (gameObject)
             {
-                DestroyImmediate(gameObject);
+                Destroy(gameObject);
             }
         }
 
