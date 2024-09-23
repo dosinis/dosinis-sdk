@@ -19,6 +19,8 @@ namespace DosinisSDK.Core
         
         private IApp app;
         
+        public bool DataWipeDetected { get; private set; }
+        
         protected override void OnInit(IApp app)
         {
             this.app = app;
@@ -38,6 +40,7 @@ namespace DosinisSDK.Core
                 {
                     DeleteAllData();
                     PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+                    DataWipeDetected = true;
                     Log("Data wipe detected, all data was deleted");
                 }
             }
