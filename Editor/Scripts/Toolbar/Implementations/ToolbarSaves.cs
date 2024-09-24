@@ -40,7 +40,8 @@ namespace Framework.Editor.Saves
 					    if (result)
 					    {
 						    AssetDatabase.DeleteAsset(configPath);
-						    AssetDatabase.Refresh();      
+						    PlayerPrefs.DeleteKey("data_wipe");
+						    AssetDatabase.Refresh();
 					    }
 				    }   
 			    }
