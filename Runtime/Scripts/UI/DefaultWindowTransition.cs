@@ -67,6 +67,11 @@ namespace DosinisSDK.UI
 
             var initAlpha = canvasGroup.alpha;
             
+            if (useScale)
+            {
+                scaleTarget.localScale = Vector3.zero;
+            }
+            
             while (timer < fadeDuration)
             {
                 timer += Time.unscaledDeltaTime;
@@ -76,7 +81,7 @@ namespace DosinisSDK.UI
                 if (useScale)
                 {
                     float evaluation = scaleInCurve.Evaluate(timer / scaleDuration);
-                    scaleTarget.localScale = new Vector3(evaluation, evaluation, evaluation);
+                    scaleTarget.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, evaluation);
                 }
 
                 yield return null;
@@ -90,6 +95,8 @@ namespace DosinisSDK.UI
             float timer = 0;
             var initAlpha = canvasGroup.alpha;
             
+            var initScale = scaleTarget.localScale;
+            
             while (timer < fadeDuration)
             {
                 timer += Time.unscaledDeltaTime;
@@ -99,7 +106,7 @@ namespace DosinisSDK.UI
                 if (useScale)
                 {
                     float evaluation = scaleOutCurve.Evaluate(timer / scaleDuration);
-                    scaleTarget.localScale = new Vector3(evaluation, evaluation, evaluation);
+                    scaleTarget.localScale = Vector3.Lerp(initScale, Vector3.zero, evaluation);
                 }
 
                 yield return null;
