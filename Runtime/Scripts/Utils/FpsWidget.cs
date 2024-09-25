@@ -15,7 +15,6 @@ namespace DosinisSDK.Utils
         {
             if (instance == null || instance.gameObject == null)
             {
-                Debug.LogWarning("FpsWidget is not initialized");
                 return;
             }
 
