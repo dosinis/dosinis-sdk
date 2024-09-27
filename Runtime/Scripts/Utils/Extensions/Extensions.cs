@@ -157,9 +157,9 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static Vector3 GetCorrectEulerAngles(this Transform transform)
         {
-            var x = Helper.TranslateEulerAngles(transform.eulerAngles.x);
-            var y = Helper.TranslateEulerAngles(transform.eulerAngles.y);
-            var z = Helper.TranslateEulerAngles(transform.eulerAngles.z);
+            var x = Helper.TranslateEulerAngle(transform.eulerAngles.x);
+            var y = Helper.TranslateEulerAngle(transform.eulerAngles.y);
+            var z = Helper.TranslateEulerAngle(transform.eulerAngles.z);
             
             return new Vector3(x, y, z);
         }
@@ -171,9 +171,9 @@ namespace DosinisSDK.Utils
         /// <returns></returns>
         public static Vector3 GetCorrectLocalEulerAngles(this Transform transform)
         {
-            var x = Helper.TranslateEulerAngles(transform.localEulerAngles.x);
-            var y = Helper.TranslateEulerAngles(transform.localEulerAngles.y);
-            var z = Helper.TranslateEulerAngles(transform.localEulerAngles.z);
+            var x = Helper.TranslateEulerAngle(transform.localEulerAngles.x);
+            var y = Helper.TranslateEulerAngle(transform.localEulerAngles.y);
+            var z = Helper.TranslateEulerAngle(transform.localEulerAngles.z);
             
             return new Vector3(x, y, z);
         }

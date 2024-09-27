@@ -62,7 +62,7 @@ namespace DosinisSDK.Utils
         /// </summary>
         /// <param name="angle">initial euler angle</param>
         /// <returns></returns>
-        public static float TranslateEulerAngles(float angle)
+        public static float TranslateEulerAngle(float angle)
         {
             angle %= 360;
 
