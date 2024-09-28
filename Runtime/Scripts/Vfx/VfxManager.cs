@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Vfx
 {
@@ -115,6 +116,11 @@ namespace DosinisSDK.Vfx
             {
                 return;
             }
+
+            if (effectsCache[key].Exists() == false)
+            {
+                return;
+            }
             
             effectsCache[key].Stop(clear: clearParticles);
         }
@@ -169,6 +175,20 @@ namespace DosinisSDK.Vfx
                     forcedOrientationVfxCache.Remove(item);
                 }
             }
+        }
+    }
+    
+    public static class VfxExtensions
+    {
+        public static bool Exists(this IVfx v)
+        {
+            if(v == null) 
+                return false;
+            
+            if(v is Object o)
+                return o != null;
+            
+            return true;
         }
     }
 }
