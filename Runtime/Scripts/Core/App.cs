@@ -416,9 +416,13 @@ namespace DosinisSDK.Core
             await manifest.CreateUserModules(this);
 
             Debug.Log("Setting up scene modules...");
-
+            
+#if UNITY_WEBGL
             StartCoroutine(SkipFrameNative(continueScenesInit)); // Tiny delay for scene to be completely loaded (next frame)
-
+#else
+            await Task.Delay(1);
+            continueScenesInit();
+#endif
             async void continueScenesInit()
             {
                 await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
@@ -470,7 +474,14 @@ namespace DosinisSDK.Core
         {
             foreach (var processable in processables)
             {
-                processable.Process(Time.deltaTime);
+                try
+                {
+                    processable.Process(Time.deltaTime);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error while processing {processable.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                }
             }
             
             if (Time.time - lastTick >= 1)
@@ -479,7 +490,14 @@ namespace DosinisSDK.Core
                 
                 foreach (var tickable in tickables)
                 {
-                    tickable.Tick();
+                    try
+                    {
+                        tickable.Tick();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error while ticking {tickable.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                    }
                 }
             }
             
@@ -497,7 +515,14 @@ namespace DosinisSDK.Core
         {
             foreach (var fp in fixedProcessables)
             {
-                fp.FixedProcess(Time.fixedDeltaTime);
+                try
+                {
+                    fp.FixedProcess(Time.fixedDeltaTime);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error while fixed processing {fp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                }
             }
         }
         
@@ -505,7 +530,14 @@ namespace DosinisSDK.Core
         {
             foreach (var lp in lateProcessables)
             {
-                lp.LateProcess(Time.deltaTime);
+                try
+                {
+                    lp.LateProcess(Time.deltaTime);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Error while late processing {lp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                }
             }
         }
 
