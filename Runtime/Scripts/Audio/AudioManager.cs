@@ -17,8 +17,8 @@ namespace DosinisSDK.Audio
 
         private const int POOL_SIZE = 10;
 
-        public float SoundsVolume => data.soundsVolume;
-        public float MusicVolume => data.musicVolume * musicVolumeModifier;
+        public float SoundsVolume => IsSfxEnabled ? data.soundsVolume : 0;
+        public float MusicVolume => IsMusicEnabled ? data.musicVolume * musicVolumeModifier : 0;
         public bool IsSfxEnabled => data.isSfxEnabled;
         public bool IsMusicEnabled => data.isMusicEnabled;
         
@@ -257,23 +257,6 @@ namespace DosinisSDK.Audio
             }
         }
 
-        public void SetSfxEnabled(bool value)
-        {
-            data.isSfxEnabled = value;
-
-            foreach (var src in sources)
-            {
-                src.volume = value ? 1 : 0;
-            }
-
-            foreach (var src in worldSources)
-            {
-                src.volume = value ? 1 : 0;
-            }
-            
-            OnSfxEnabled?.Invoke(value);
-        }
-
         public void SetTimeScale(float value, float lerpDuration = 0.1f)
         {
             StartCoroutine(LerpTimeScale(value, lerpDuration));
@@ -342,6 +325,23 @@ namespace DosinisSDK.Audio
             musicSource.volume = value ? MusicVolume : 0;
             
             OnMusicEnabled?.Invoke(value);
+        }
+        
+        public void SetSfxEnabled(bool value)
+        {
+            data.isSfxEnabled = value;
+
+            foreach (var src in sources)
+            {
+                src.volume = value ? 1 : 0;
+            }
+
+            foreach (var src in worldSources)
+            {
+                src.volume = value ? 1 : 0;
+            }
+            
+            OnSfxEnabled?.Invoke(value);
         }
 
         public void SetMusicPitch(float value)
