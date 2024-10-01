@@ -61,7 +61,7 @@ namespace DosinisSDK.UnityIAP
             
             foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.GrantReward);
+                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.GrantReward, handler.Restore);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -91,12 +91,13 @@ namespace DosinisSDK.UnityIAP
             }
         }
         
-        private void RegisterProduct(string productId, ProductType productType, Action purchaseCallback)
+        private void RegisterProduct(string productId, ProductType productType, Action purchaseCallback, Action restoreCallback)
         {
             productsRegistry.Add(productId, new ProductData
             {
                 type = productType,
-                purchaseCallback = purchaseCallback
+                purchaseCallback = purchaseCallback,
+                restoreCallback = restoreCallback
             });
         }
 
@@ -295,6 +296,8 @@ namespace DosinisSDK.UnityIAP
 
         PurchaseProcessingResult IStoreListener.ProcessPurchase(PurchaseEventArgs args)
         {
+            // TODO : Check if purchase was restored and call restoreCallback instead of purchaseCallback
+            
             var product = args.purchasedProduct;
 
             bool validPurchase = true;
@@ -404,6 +407,7 @@ namespace DosinisSDK.UnityIAP
         {
             public ProductType type;
             public Action purchaseCallback;
+            public Action restoreCallback;
         }
     }
 }

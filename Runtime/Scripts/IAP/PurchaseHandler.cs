@@ -21,6 +21,11 @@ namespace DosinisSDK.IAP
             }
 #endif
         }
+
+        public virtual void Restore()
+        {
+            GrantReward();
+        }
         
         public override string GetTitle()
         {
