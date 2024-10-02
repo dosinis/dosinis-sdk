@@ -38,8 +38,17 @@ namespace DosinisSDK.Core
 
                 if (wipeId != config.WipeVersion)
                 {
-                    DeleteAllData();
+                    if (config.WipeAllPrefs)
+                    {
+                        PlayerPrefs.DeleteAll();
+                    }
+                    else
+                    {
+                        DeleteAllData();
+                    }
+                
                     PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+                    PlayerPrefs.Save();
                     DataWipeDetected = true;
                     Log("Data wipe detected, all data was deleted");
                 }

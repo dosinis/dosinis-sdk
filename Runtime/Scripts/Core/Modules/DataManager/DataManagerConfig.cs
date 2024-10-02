@@ -6,7 +6,9 @@ namespace DosinisSDK.Core
     public class DataManagerConfig : ModuleConfig
     {
         [SerializeField] private int wipeVersion = 0;
+        [SerializeField] private bool wipeAllPrefs = true;
 
         public int WipeVersion => wipeVersion;
+        public bool WipeAllPrefs => wipeAllPrefs;
     }
 }
