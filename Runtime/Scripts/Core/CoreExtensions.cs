@@ -147,6 +147,22 @@ namespace DosinisSDK.Core
             return list[0];
         }
         
+        public static T First<T>(this IReadOnlyList<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[0];
+        }
+        
+        public static T Last<T>(this IReadOnlyList<T> list)
+        {
+            if (list.Count == 0)
+                return default;
+
+            return list[^1];
+        }
+        
         public static bool Contains<T>(this T[] array, T value)
         {
             return Array.Exists(array, x => x != null && x.Equals(value));
