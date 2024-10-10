@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityRandom = UnityEngine.Random;
 
 namespace DosinisSDK.Core
@@ -38,6 +39,9 @@ namespace DosinisSDK.Core
             var rangeArray = new T[amount];
             
             int exitCount = 0;
+            
+            if (array.Length == 0)
+                return default;
             
             for (int i = 0; i < amount; i++)
             {
@@ -78,10 +82,16 @@ namespace DosinisSDK.Core
                 }
                 else
                 {
-                    while (rangeList.Contains(random) || exitCount < 100)
+                    while (rangeList.Contains(random) && exitCount < 100)
                     {
                         random = list.Random();
                         exitCount++;
+                    }
+
+                    if (exitCount >= 100)
+                    {
+                        Debug.LogWarning("Tried to get a random unique value from" +
+                                         " a list 100 times without success, breaking loop");
                     }
                     
                     rangeList.Add(random);
