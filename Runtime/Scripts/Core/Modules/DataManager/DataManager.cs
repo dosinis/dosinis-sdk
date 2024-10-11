@@ -241,7 +241,11 @@ namespace DosinisSDK.Core
 #endif
             
             PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
-            PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+            
+            if (config)
+            {
+                PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+            }
             
             PlayerPrefs.Save();
         }
