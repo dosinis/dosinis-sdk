@@ -81,7 +81,7 @@ namespace DosinisSDK.Core
 
         public void Show()
         {
-            Show(() => { });
+            Show(null);
         }
 
         public void Show(Action done, Action onHidden = null, Action onBeforeHide = null)
@@ -135,7 +135,7 @@ namespace DosinisSDK.Core
 
         public void Hide()
         {
-            Hide(() => { });
+            Hide(null);
         }
 
         public void Hide(Action done)

@@ -31,27 +31,27 @@ namespace DosinisSDK.Core
             {
                 registeredKeys = JsonConvert.DeserializeObject<List<string>>(PlayerPrefs.GetString(REGISTERED_KEYS_KEY));
             }
+            
+#if UNITY_EDITOR
+            if (Directory.Exists(EDITOR_SAVE_PATH) == false)
+            {
+                DeleteAllData();
+                Directory.CreateDirectory(EDITOR_SAVE_PATH);
+            }
+#endif
 
             if (config)
             {
-                var wipeId = PlayerPrefs.GetInt(DATA_WIPE_SAVE_KEY, 0);
-
+                var wipeId = PlayerPrefs.GetInt(DATA_WIPE_SAVE_KEY);
+                
                 if (wipeId != config.WipeVersion)
                 {
                     DeleteAllData();
                     
                     DataWipeDetected = true;
-                    Log("Automatic data wipe detected, all data was deleted");
+                    Warn("Automatic data wipe detected, all data was deleted");
                 }
             }
-            
-#if UNITY_EDITOR
-            if (Directory.Exists(EDITOR_SAVE_PATH) == false)
-            {
-                PlayerPrefs.DeleteAll();
-                Directory.CreateDirectory(EDITOR_SAVE_PATH);
-            }
-#endif
             
             app.OnAppFocus += OnAppFocus;
             app.OnAppPaused += OnAppPaused;
