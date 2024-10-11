@@ -38,19 +38,10 @@ namespace DosinisSDK.Core
 
                 if (wipeId != config.WipeVersion)
                 {
-                    if (config.WipeAllPrefs)
-                    {
-                        PlayerPrefs.DeleteAll();
-                    }
-                    else
-                    {
-                        DeleteAllData();
-                    }
-                
-                    PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
-                    PlayerPrefs.Save();
+                    DeleteAllData();
+                    
                     DataWipeDetected = true;
-                    Log("Data wipe detected, all data was deleted");
+                    Log("Automatic data wipe detected, all data was deleted");
                 }
             }
             
@@ -223,14 +214,36 @@ namespace DosinisSDK.Core
 
         public void DeleteAllData()
         {
-            var keys = new List<string>(registeredKeys);
-            
-            foreach (var key in keys)
+            if (config.WipeAllPrefs)
             {
-                DeleteRawData(key);
+                PlayerPrefs.DeleteAll();
+                dataCache.Clear();
+                registeredKeys.Clear();
+            }
+            else
+            {
+                var keys = new List<string>(registeredKeys);
+            
+                foreach (var key in keys)
+                {
+                    DeleteRawData(key);
+                }
+
+                dataCache.Clear();
+                registeredKeys.Clear();
             }
 
-            dataCache.Clear();
+#if UNITY_EDITOR
+            if (Directory.Exists(EDITOR_SAVE_PATH))
+            {
+                Directory.Delete(EDITOR_SAVE_PATH, true);
+            }
+#endif
+            
+            PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
+            PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+            
+            PlayerPrefs.Save();
         }
     }
 }
