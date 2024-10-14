@@ -36,12 +36,15 @@ namespace DosinisSDK.Core
 
         public static T[] RandomRange<T>(this T[] array, int amount, bool canRepeat = true)
         {
+            if (array.Length == 0)
+            {
+                Debug.LogWarning("Tried to get a random range from an empty list");
+                return Array.Empty<T>();
+            }
+            
             var rangeArray = new T[amount];
             
             int exitCount = 0;
-            
-            if (array.Length == 0)
-                return default;
             
             for (int i = 0; i < amount; i++)
             {
@@ -53,10 +56,16 @@ namespace DosinisSDK.Core
                 }
                 else
                 {
-                    while (rangeArray.Contains(random) || exitCount < 100)
+                    while (rangeArray.Contains(random) && exitCount < 100)
                     {
                         random = array.Random();
                         exitCount++;
+                    }
+
+                    if (exitCount >= 100)
+                    {
+                        Debug.LogWarning("Tried to get a random unique value from" +
+                                         " an array 100 times without success, breaking loop");
                     }
                     
                     rangeArray[i] = random;
@@ -68,6 +77,17 @@ namespace DosinisSDK.Core
         
         public static List<T> RandomRange<T>(this List<T> list, int amount, bool canRepeat = true)
         {
+            return ((IReadOnlyList<T>)list).RandomRange(amount, canRepeat);
+        }
+        
+        public static List<T> RandomRange<T>(this IReadOnlyList<T> list, int amount, bool canRepeat = true)
+        {
+            if (list.Count == 0)
+            {
+                Debug.LogWarning("Tried to get a random range from an empty list");
+                return new List<T>();
+            }
+            
             var rangeList = new List<T>();
             
             int exitCount = 0;
