@@ -5,6 +5,7 @@ namespace DosinisSDK.Core
     public class LocalClock : Module, IClock
     {
         public int DayOfYear => DateTimeOffset.UtcNow.DayOfYear;
+        public int LastActiveDayOfYear => data.lastActiveDayOfYear;
         public long LastTimeActive => data.lastTimeActive;
         public long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         public long NowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -49,6 +50,7 @@ namespace DosinisSDK.Core
         private void OnAppQuit()
         {
             data.lastTimeActive = Now;
+            data.lastActiveDayOfYear = DayOfYear;
             dataManager.SaveData(data);
         }
 
@@ -57,6 +59,7 @@ namespace DosinisSDK.Core
             if (paused)
             {
                 data.lastTimeActive = Now;
+                data.lastActiveDayOfYear = DayOfYear;
                 dataManager.SaveData(data);
             }
         }
@@ -66,6 +69,7 @@ namespace DosinisSDK.Core
             if (focus == false)
             {
                 data.lastTimeActive = Now;
+                data.lastActiveDayOfYear = DayOfYear;
                 dataManager.SaveData(data);
             }
         }
