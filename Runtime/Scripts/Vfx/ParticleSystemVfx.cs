@@ -29,7 +29,8 @@ namespace DosinisSDK.Vfx
         {
             if (clear)
             {
-                particleSystem.Clear(withChildren);
+                particleSystem.Stop(withChildren, ParticleSystemStopBehavior.StopEmittingAndClear);
+                return;
             }
             
             particleSystem.Stop(withChildren);

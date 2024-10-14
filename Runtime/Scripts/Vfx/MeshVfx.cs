@@ -29,12 +29,13 @@ namespace DosinisSDK.Vfx
 
             foreach (var particle in particles)
             {
-                particle.Stop(withChildren);
-
                 if (clear)
                 {
-                    particle.Clear(withChildren);
+                    particle.Stop(withChildren, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    continue;
                 }
+                
+                particle.Stop(withChildren);
             }
         }
 
