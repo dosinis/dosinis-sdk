@@ -214,7 +214,7 @@ namespace DosinisSDK.Core
 
         public void DeleteAllData()
         {
-            if (config.WipeAllPrefs)
+            if (config && config.WipeAllPrefs)
             {
                 PlayerPrefs.DeleteAll();
                 dataCache.Clear();
