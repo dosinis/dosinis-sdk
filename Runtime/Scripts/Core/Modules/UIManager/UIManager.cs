@@ -64,7 +64,21 @@ namespace DosinisSDK.Core
         {
             foreach (var win in windows)
             {
-                win.Value.Dispose();
+                if (safeMode)
+                {
+                    try
+                    {
+                        win.Value.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogError($"Error while disposing {win.Value.GetType().Name}! {ex.Message} \n {ex.StackTrace}");
+                    }
+                }
+                else
+                {
+                    win.Value.Dispose();
+                }
             }
         }
 
