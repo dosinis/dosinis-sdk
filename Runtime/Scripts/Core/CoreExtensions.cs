@@ -155,6 +155,11 @@ namespace DosinisSDK.Core
         
         public static int RandomIndex<T>(this List<T> list)
         {
+            return ((IReadOnlyList<T>)list).RandomIndex();
+        }
+        
+        public static int RandomIndex<T>(this IReadOnlyList<T> list)
+        {
             if (list.Count == 0)
                 return 0;
 
