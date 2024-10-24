@@ -148,7 +148,7 @@ namespace DosinisSDK.UnityIAP
             if (Initialized == false)
             {
                 Warn("Store is not ready!");
-                return "";
+                return "Not ready";
             }
 
             var product = GetProductById(productId);
@@ -156,7 +156,7 @@ namespace DosinisSDK.UnityIAP
             if (product == null)
             {
                 Warn("Couldn't find product");
-                return "";
+                return "Bad product";
             }
 
             return product.metadata.localizedPriceString;
