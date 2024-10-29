@@ -180,6 +180,26 @@ namespace DosinisSDK.Utils
         }
         
         /// <summary>
+        /// Converts the anchoredPosition of the first RectTransform to the second RectTransform,
+        /// taking into consideration offset, anchors and pivot, and returns the new anchoredPosition
+        /// </summary>
+        public static Vector2 SwitchToRectTransform(RectTransform from, RectTransform to)
+        {
+            var fromPivotDerivedOffset = new Vector2(from.rect.width * from.pivot.x + from.rect.xMin,
+                from.rect.height * from.pivot.y + from.rect.yMin);
+            
+            var screenP = RectTransformUtility.WorldToScreenPoint(null, from.position);
+            screenP += fromPivotDerivedOffset;
+            
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(to, screenP, null, out var localPoint);
+            
+            var pivotDerivedOffset = new Vector2(to.rect.width * to.pivot.x + to.rect.xMin,
+                to.rect.height * to.pivot.y + to.rect.yMin);
+            
+            return to.anchoredPosition + localPoint - pivotDerivedOffset;
+        }
+        
+        /// <summary>
         /// Checks if an certain point is currently outside the camera's field of view
         /// </summary>
         public static bool IsInCameraFieldOfView(Vector3 position, float min = 0f, float max = 1f, Camera mainCamera = null)
