@@ -23,10 +23,20 @@ namespace DosinisSDK.Utils
         {
             rt.offsetMax = new Vector2(rt.offsetMax.x, -top);
         }
-
+        
+        public static float GetTop(this RectTransform rt)
+        {
+            return -rt.offsetMax.y;
+        }
+        
         public static void SetBottom(this RectTransform rt, float bottom)
         {
             rt.offsetMin = new Vector2(rt.offsetMin.x, bottom);
+        }
+        
+        public static float GetBottom(this RectTransform rt)
+        {
+            return rt.offsetMin.y;
         }
         
         public static void SetPosX(this RectTransform rt, float value)
