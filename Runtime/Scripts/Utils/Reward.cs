@@ -44,6 +44,7 @@ namespace DosinisSDK.Utils
         
         protected abstract void OnRewarded();
         public abstract string GetValueString();
+        public abstract string GetDescription();
 
         public virtual string GetTitle()
         {

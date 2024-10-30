@@ -15,5 +15,10 @@ namespace DosinisSDK.IAP
         {
             return "";
         }
+
+        public override string GetDescription()
+        {
+            return "";
+        }
     }
 }
