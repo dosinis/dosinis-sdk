@@ -8,7 +8,7 @@ namespace DosinisSDK.Pool
     public class Pool<T> where T : class, IPooled
     {
         private static readonly Dictionary<Type, Pool<T>> pools = new Dictionary<Type, Pool<T>>();
-        private const int CAPACITY = 100;
+        private const int CAPACITY = 1000;
         
         private readonly List<IPooled> pooledObjects = new List<IPooled>();
         private readonly IPooled sourceObject;
