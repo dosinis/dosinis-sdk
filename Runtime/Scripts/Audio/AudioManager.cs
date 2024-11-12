@@ -55,6 +55,8 @@ namespace DosinisSDK.Audio
 
             SetMusicEnabled(data.isMusicEnabled);
             SetSfxEnabled(data.isSfxEnabled);
+            
+            AudioListener.volume = data.masterVolume;
         }
         
         public void StopMusic()
