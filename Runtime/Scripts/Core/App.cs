@@ -55,8 +55,9 @@ namespace DosinisSDK.Core
         {
             OnAppRestart?.Invoke();
             
-            SceneManager.OnSceneAboutToChange -= CleanupSceneModules;
+            SceneManager.OnSceneUnloaded -= OnSceneUnloaded;
             SceneManager.OnSceneChanged -= OnSceneChanged;
+            SceneManager.OnAdditiveSceneLoaded -= OnAdditiveSceneLoaded;
             
             foreach (var module in cachedModules)
             {
@@ -332,9 +333,17 @@ namespace DosinisSDK.Core
         
         private async Task SetupScene(Scene scene)
         {
-            var sceneModules = FindObjectsOfType<SceneModule>();
+            var sceneModules = new List<SceneModule>();
+            
+            foreach (var rootObject in scene.GetRootGameObjects())
+            {
+                if (rootObject.activeSelf == false)
+                    continue;
                 
-            Array.Sort(sceneModules, (a, b) => b.InitPriority.CompareTo(a.InitPriority));
+                sceneModules.AddRange(rootObject.GetComponentsInChildren<SceneModule>());
+            }
+            
+            sceneModules.Sort((a, b) => b.InitPriority.CompareTo(a.InitPriority));
 
             IUIManager foundUIManager = null;
 
@@ -427,8 +436,9 @@ namespace DosinisSDK.Core
             {
                 await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
-                SceneManager.OnSceneAboutToChange += CleanupSceneModules;
+                SceneManager.OnSceneUnloaded += OnSceneUnloaded;
                 SceneManager.OnSceneChanged += OnSceneChanged;
+                SceneManager.OnAdditiveSceneLoaded += OnAdditiveSceneLoaded;
 
                 Initialized = true;
 
@@ -436,6 +446,18 @@ namespace DosinisSDK.Core
 
                 Debug.Log($"{nameof(App)} initialized");
             }
+        }
+
+        private void OnSceneUnloaded(Scene scene)
+        {
+            CleanupSceneModules();
+        }
+
+        private async void OnAdditiveSceneLoaded(Scene scene)
+        {
+            Debug.Log($"Additive scene {scene.name} was loaded");
+            await SetupScene(scene);
+            Debug.Log($"Additive scene {scene.name} was initialized");
         }
 
         private IEnumerator SkipFrameNative(Action done)

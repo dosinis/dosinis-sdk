@@ -11,7 +11,9 @@ namespace DosinisSDK.Core
 
         public event Action<(Scene, Scene)> OnSceneChanged;
         public event Action OnSceneAboutToChange;
+        public event Action<Scene> OnSceneUnloaded;
         public event Action OnSceneLoadStarted;
+        public event Action<Scene> OnAdditiveSceneLoaded;
         public bool SceneIsLoading { get; private set; }
         public float SceneLoadProgress { get; private set; }
         public Scene ActiveScene { get; private set; }
@@ -20,9 +22,23 @@ namespace DosinisSDK.Core
         protected override void OnInit(IApp app)
         {
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded += SceneUnloaded;
         }
 
+        protected override void OnDispose()
+        {
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= SceneUnloaded;
+        }
+        
         // ISceneManager
+        
+        private void SceneUnloaded(Scene scene)
+        {
+            OnSceneUnloaded?.Invoke(scene);
+        }
 
         public void SwitchLoadedScene()
         {
@@ -78,16 +94,19 @@ namespace DosinisSDK.Core
             SceneLoadProgress = 1;
             
             yield return new WaitForSeconds(delay / 2f);
-            
-            OnSceneAboutToChange?.Invoke();
 
+            if (mode != LoadSceneMode.Additive && switchLoadedScene == false)
+            {
+                OnSceneAboutToChange?.Invoke();
+            }
+            
             yield return new WaitForEndOfFrame();
             
             if (switchLoadedScene)
             {
                 SwitchLoadedScene();
             }
-
+            
             done?.Invoke();
         }
         
@@ -98,6 +117,16 @@ namespace DosinisSDK.Core
 
             SceneIsLoading = false;
             SceneLoadProgress = 0f;
+        }
+        
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (mode == LoadSceneMode.Additive)
+            {
+                SceneIsLoading = false;
+                SceneLoadProgress = 0f;
+                OnAdditiveSceneLoaded?.Invoke(scene);
+            }
         }
     }
 }

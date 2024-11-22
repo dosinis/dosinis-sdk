@@ -7,7 +7,9 @@ namespace DosinisSDK.Core
     {
         event Action<(Scene oldScene, Scene newScene)> OnSceneChanged;
         event Action OnSceneAboutToChange;
+        event Action<Scene> OnSceneUnloaded;
         event Action OnSceneLoadStarted;
+        event Action<Scene> OnAdditiveSceneLoaded;
         bool SceneIsLoading { get; }
         float SceneLoadProgress { get; }
         Scene ActiveScene { get; }
