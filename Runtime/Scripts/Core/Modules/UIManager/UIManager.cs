@@ -82,6 +82,21 @@ namespace DosinisSDK.Core
             }
         }
 
+        public Canvas GetCanvas(RenderMode renderMode)
+        {
+            var canvases = GetComponentsInChildren<Canvas>();
+            foreach (var canvas in canvases)
+            {
+                if (canvas.renderMode == renderMode)
+                {
+                    return canvas;
+                }
+            }
+            
+            LogError($"No Canvas with RenderMode {renderMode} is available!");
+            return canvases[0];
+        }
+
         public T GetWindow<T>() where T : IWindow
         {
             var wType = typeof(T);
