@@ -19,8 +19,9 @@ namespace DosinisSDK.Core
         public event Action OnHidden;
         public event Action OnBeforeShow;
         public event Action OnBeforeHide;
-        
-        public bool IsShown { get; private set; }
+
+        public bool Activated { get; private set; }
+        public bool IsShown => gameObject.activeSelf;
         public bool Initialized { get; private set; }
 
         private RectTransform rect;
@@ -55,8 +56,6 @@ namespace DosinisSDK.Core
 
             if (closeButton) 
                 closeButton.OnClick += Hide;
-
-            IsShown = gameObject.activeInHierarchy;
             
             OnInit(app);
             
@@ -87,6 +86,7 @@ namespace DosinisSDK.Core
         public void Show(Action done, Action onHidden = null, Action onBeforeHide = null)
         {
             gameObject.SetActive(true);
+            Activated = true;
 
             OnBeforeShow?.Invoke();
             BeforeShown();
@@ -100,8 +100,7 @@ namespace DosinisSDK.Core
                 {
                     Shown();
                     OnShown?.Invoke();
-
-                    IsShown = true;
+                    
                     done?.Invoke();
                 });
             }
@@ -109,8 +108,7 @@ namespace DosinisSDK.Core
             {
                 Shown();
                 OnShown?.Invoke();
-
-                IsShown = true;
+                
                 done?.Invoke();
             }           
         }
@@ -140,6 +138,7 @@ namespace DosinisSDK.Core
 
         public void Hide(Action done)
         {
+            Activated = false;
             OnBeforeHide?.Invoke();
             BeforeHidden();
             
@@ -157,7 +156,6 @@ namespace DosinisSDK.Core
                     hiddenCallback?.Invoke();
                     hiddenCallback = null;
                     
-                    IsShown = false;
                     done?.Invoke();
                 });
             }
@@ -170,7 +168,6 @@ namespace DosinisSDK.Core
                 hiddenCallback?.Invoke();
                 hiddenCallback = null;
                 
-                IsShown = false;
                 done?.Invoke();
             }
         }

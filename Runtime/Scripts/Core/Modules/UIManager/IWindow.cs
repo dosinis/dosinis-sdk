@@ -12,6 +12,10 @@ namespace DosinisSDK.Core
         internal void Init(IApp app);
         internal void Dispose();
         
+        /// <summary>
+        /// Meaning animating in or out and not necessarily shown or hidden
+        /// </summary>
+        bool Activated { get; }
         bool IsShown { get; }
         bool Initialized { get; }
 
