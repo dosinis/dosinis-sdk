@@ -62,6 +62,24 @@ namespace DosinisSDK.Core
             StartCoroutine(LoadSceneCoroutine(sceneName, -1, mode, switchLoadedScene, delay, done));
         }
         
+        public void UnloadScene(int sceneIndex, Action done = null)
+        {
+            StartCoroutine(UnloadSceneCoroutine(sceneIndex, done));
+        }
+
+        private IEnumerator UnloadSceneCoroutine(int sceneIndex, Action done)
+        {
+            var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByBuildIndex(sceneIndex);
+            var unloadOperation = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene);
+            
+            while (unloadOperation.isDone == false)
+            {
+                yield return null;
+            }
+            
+            done?.Invoke();
+        }
+
         private IEnumerator LoadSceneCoroutine(string sceneName, int sceneIndex, LoadSceneMode mode, bool switchLoadedScene, float delay, Action done)
         {
             SceneIsLoading = true;

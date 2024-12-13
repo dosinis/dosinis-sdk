@@ -19,6 +19,7 @@ namespace DosinisSDK.Core
             Action done = null);
         void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single, bool switchLoadedScene = true, float delay = 0f,
             Action done = null);
+        void UnloadScene(int sceneIndex, Action done = null);
     }
 }
 
