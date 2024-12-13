@@ -12,6 +12,7 @@ namespace DosinisSDK.Core
     {
         // Private
 
+        private readonly Dictionary<Scene, List<SceneModule>> sceneModules = new();
         private readonly Dictionary<Type, IModule> cachedModules = new();
         private readonly HashSet<IProcessable> processables = new();
         private readonly HashSet<ITickable> tickables = new();
@@ -293,16 +294,13 @@ namespace DosinisSDK.Core
             }
         }
 
-        private void CleanupSceneModules()
+        private void CleanupSceneModules(Scene scene)
         {
             var expiredSceneModules = new List<Type>();
 
-            foreach (var cache in cachedModules)
+            foreach (var sceneModule in sceneModules[scene])
             {
-                if (cache.Value is not SceneModule sceneModule) 
-                    continue;
-                
-                expiredSceneModules.Add(cache.Key);
+                expiredSceneModules.Add(sceneModule.GetType());
                     
                 if (sceneModule is IProcessable processable)
                 {
@@ -333,24 +331,25 @@ namespace DosinisSDK.Core
         
         private async Task SetupScene(Scene scene)
         {
-            var sceneModules = new List<SceneModule>();
-            
             foreach (var rootObject in scene.GetRootGameObjects())
             {
                 if (rootObject.activeSelf == false)
                     continue;
+
+                if (sceneModules.ContainsKey(scene) == false)
+                    sceneModules.Add(scene, new List<SceneModule>());
                 
-                sceneModules.AddRange(rootObject.GetComponentsInChildren<SceneModule>());
+                sceneModules[scene].AddRange(rootObject.GetComponentsInChildren<SceneModule>());
             }
             
-            sceneModules.Sort((a, b) => b.InitPriority.CompareTo(a.InitPriority));
+            sceneModules[scene].Sort((a, b) => b.InitPriority.CompareTo(a.InitPriority));
 
             IUIManager foundUIManager = null;
 
             var modules = new List<IModule>();
                 
-            foreach (var module in sceneModules)
-            {
+            foreach (var module in sceneModules[scene])
+            {                
                 if (module is IUIManager uiManager)
                 {
                     foundUIManager = uiManager;
@@ -450,7 +449,8 @@ namespace DosinisSDK.Core
 
         private void OnSceneUnloaded(Scene scene)
         {
-            CleanupSceneModules();
+            Debug.Log($"Scene {scene.name} was unloaded");
+            CleanupSceneModules(scene);
         }
 
         private async void OnAdditiveSceneLoaded(Scene scene)
