@@ -321,6 +321,11 @@ namespace DosinisSDK.Core
                 {
                     tickables.Remove(tickable);
                 }
+
+                if (sceneModule is IUIManager uiManager)
+                {
+                    expiredSceneModules.Add(typeof(IUIManager));
+                }
             }
 
             foreach (var type in expiredSceneModules)
