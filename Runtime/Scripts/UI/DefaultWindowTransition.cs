@@ -9,20 +9,22 @@ namespace DosinisSDK.UI
     [RequireComponent(typeof(CanvasGroup))]
     public class DefaultWindowTransition : MonoBehaviour, IWindowTransition
     {
-        [SerializeField] private float fadeDuration = 0.25f;
-        [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [SerializeField] private float fadeInDuration = 0.25f;
+        [SerializeField] private AnimationCurve fadeInCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [SerializeField] private float fadeOutDuration = 0.25f;
+        [SerializeField] private AnimationCurve fadeOutCurve = AnimationCurve.Linear(0, 0, 1, 1);
 
         [SerializeField] private bool useScale = false;
         
         [ShowIf("useScale", true), SerializeField] 
         private AnimationCurve scaleInCurve = AnimationCurve.Linear(0, 0, 1, 1);
         [ShowIf("useScale", true), SerializeField]
+        private float scaleInDuration = 0.25f;
+        [ShowIf("useScale", true), SerializeField]
         private AnimationCurve scaleOutCurve = AnimationCurve.Linear(0, 1, 1, 0);
         [ShowIf("useScale", true), SerializeField] 
         private float scaleOutDuration = 0.25f;
         [ShowIf("useScale", true), SerializeField] 
-        private float scaleInDuration = 0.25f;
-        [ShowIf("useScale", true), SerializeField]
         private RectTransform scaleTarget = null;
 
         private CanvasGroup canvasGroup;
@@ -49,7 +51,7 @@ namespace DosinisSDK.UI
             if(gameObject.activeInHierarchy == false)
                 gameObject.SetActive(true);
 
-            if (useScale && scaleInDuration > fadeDuration)
+            if (useScale && scaleInDuration > fadeInDuration)
             {
                 StartCoroutine(ScaleInRoutine(done));
                 StartCoroutine(FadeInRoutine(null));
@@ -71,7 +73,7 @@ namespace DosinisSDK.UI
                 gameObject.SetActive(true);
 
 
-            if (useScale && scaleOutDuration > fadeDuration)
+            if (useScale && scaleOutDuration > fadeOutDuration)
             {
                 StartCoroutine(ScaleOutRoutine(done));
                 StartCoroutine(FadeOutRoutine(null));
@@ -91,11 +93,11 @@ namespace DosinisSDK.UI
         {
             float timer = 0;
             
-            while (timer < fadeDuration)
+            while (timer < fadeInDuration)
             {
                 timer += Time.unscaledDeltaTime;
 
-                canvasGroup.alpha = Mathf.Lerp(0, 1, fadeCurve.Evaluate(timer / fadeDuration));
+                canvasGroup.alpha = Mathf.Lerp(0, 1, fadeInCurve.Evaluate(timer / fadeInDuration));
 
                 yield return null;
             }
@@ -108,11 +110,11 @@ namespace DosinisSDK.UI
             float timer = 0;
             var initAlpha = canvasGroup.alpha;
             
-            while (timer < fadeDuration)
+            while (timer < fadeOutDuration)
             {
                 timer += Time.unscaledDeltaTime;
 
-                canvasGroup.alpha = Mathf.Lerp(initAlpha, 0, fadeCurve.Evaluate(timer / fadeDuration));
+                canvasGroup.alpha = Mathf.Lerp(initAlpha, 0, fadeOutCurve.Evaluate(timer / fadeOutDuration));
 
                 yield return null;
             }
