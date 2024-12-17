@@ -1,6 +1,6 @@
-using DosinisSDK.Core;
 using System;
 using System.Collections;
+using DosinisSDK.Core;
 using DosinisSDK.Inspector;
 using UnityEngine;
 
@@ -17,13 +17,17 @@ namespace DosinisSDK.UI
         [ShowIf("useScale", true), SerializeField] 
         private AnimationCurve scaleInCurve = AnimationCurve.Linear(0, 0, 1, 1);
         [ShowIf("useScale", true), SerializeField]
-        private AnimationCurve scaleOutCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        private AnimationCurve scaleOutCurve = AnimationCurve.Linear(0, 1, 1, 0);
         [ShowIf("useScale", true), SerializeField] 
-        private float scaleDuration = 0.25f;
+        private float scaleOutDuration = 0.25f;
+        [ShowIf("useScale", true), SerializeField] 
+        private float scaleInDuration = 0.25f;
         [ShowIf("useScale", true), SerializeField]
         private RectTransform scaleTarget = null;
 
         private CanvasGroup canvasGroup;
+
+        private float duration;
 
         public void Init()
         {
@@ -32,11 +36,6 @@ namespace DosinisSDK.UI
             if (scaleTarget == null)
             {
                 scaleTarget = GetComponent<RectTransform>();
-            }
-
-            if (useScale && scaleDuration > fadeDuration)
-            {
-                Debug.LogWarning("Scale duration is longer than fade duration. This may cause unexpected behaviour.");
             }
         }
 
@@ -50,7 +49,20 @@ namespace DosinisSDK.UI
             if(gameObject.activeInHierarchy == false)
                 gameObject.SetActive(true);
 
-            StartCoroutine(FadeInRoutine(done));
+            if (useScale && scaleInDuration > fadeDuration)
+            {
+                StartCoroutine(ScaleInRoutine(done));
+                StartCoroutine(FadeInRoutine(null));
+            }
+            else
+            {
+                if (useScale)
+                {
+                    StartCoroutine(ScaleInRoutine(null));
+                }
+                
+                StartCoroutine(FadeInRoutine(done));
+            }
         }
 
         public void HideTransition(Action done)
@@ -58,31 +70,32 @@ namespace DosinisSDK.UI
             if (gameObject.activeInHierarchy == false)
                 gameObject.SetActive(true);
 
-            StartCoroutine(FadeOutRoutine(done));
+
+            if (useScale && scaleOutDuration > fadeDuration)
+            {
+                StartCoroutine(ScaleOutRoutine(done));
+                StartCoroutine(FadeOutRoutine(null));
+            }
+            else
+            {
+                if (useScale)
+                {
+                    StartCoroutine(ScaleOutRoutine(null));
+                }
+                
+                StartCoroutine(FadeOutRoutine(done));
+            }
         }
 
         private IEnumerator FadeInRoutine(Action done)
         {
             float timer = 0;
-
-            var initAlpha = canvasGroup.alpha;
-            
-            if (useScale)
-            {
-                scaleTarget.localScale = Vector3.zero;
-            }
             
             while (timer < fadeDuration)
             {
                 timer += Time.unscaledDeltaTime;
 
-                canvasGroup.alpha = Mathf.Lerp(initAlpha, 1, fadeCurve.Evaluate(timer / fadeDuration));
-
-                if (useScale)
-                {
-                    float evaluation = scaleInCurve.Evaluate(timer / scaleDuration);
-                    scaleTarget.localScale = Vector3.Lerp(Vector3.zero, Vector3.one, evaluation);
-                }
+                canvasGroup.alpha = Mathf.Lerp(0, 1, fadeCurve.Evaluate(timer / fadeDuration));
 
                 yield return null;
             }
@@ -95,19 +108,47 @@ namespace DosinisSDK.UI
             float timer = 0;
             var initAlpha = canvasGroup.alpha;
             
-            var initScale = scaleTarget.localScale;
-            
             while (timer < fadeDuration)
             {
                 timer += Time.unscaledDeltaTime;
 
                 canvasGroup.alpha = Mathf.Lerp(initAlpha, 0, fadeCurve.Evaluate(timer / fadeDuration));
 
-                if (useScale)
-                {
-                    float evaluation = scaleOutCurve.Evaluate(timer / scaleDuration);
-                    scaleTarget.localScale = Vector3.Lerp(initScale, Vector3.zero, evaluation);
-                }
+                yield return null;
+            }
+
+            done?.Invoke();
+        }
+        
+        private IEnumerator ScaleInRoutine(Action done)
+        {
+            float timer = 0;
+            
+            scaleTarget.localScale = Vector3.zero;
+            
+            while (timer < scaleInDuration)
+            {
+                timer += Time.unscaledDeltaTime;
+
+                float evaluation = scaleInCurve.Evaluate(timer / scaleInDuration);
+                scaleTarget.localScale = new Vector3(evaluation, evaluation, evaluation);
+
+                yield return null;
+            }
+
+            done?.Invoke();
+        }
+        
+        private IEnumerator ScaleOutRoutine(Action done)
+        {
+            float timer = 0;
+            
+            while (timer < scaleOutDuration)
+            {
+                timer += Time.unscaledDeltaTime;
+
+                float evaluation = scaleOutCurve.Evaluate(timer / scaleOutDuration);
+                scaleTarget.localScale = new Vector3(evaluation, evaluation, evaluation);
 
                 yield return null;
             }

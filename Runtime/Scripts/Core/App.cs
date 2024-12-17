@@ -322,7 +322,7 @@ namespace DosinisSDK.Core
                     tickables.Remove(tickable);
                 }
 
-                if (sceneModule is IUIManager uiManager)
+                if (sceneModule is IUIManager)
                 {
                     expiredSceneModules.Add(typeof(IUIManager));
                 }
