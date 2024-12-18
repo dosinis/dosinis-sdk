@@ -300,6 +300,17 @@ namespace DosinisSDK.Core
 
             foreach (var sceneModule in sceneModules[scene])
             {
+                var interfaces = sceneModule.GetType().GetInterfaces();
+                
+                foreach (var interfaceType in interfaces)
+                {
+                    // Handle duplicate cached modules, like IUIManager and UIManager
+                    if (interfaceType != typeof(IModule) && typeof(IModule).IsAssignableFrom(interfaceType))
+                    {
+                        expiredSceneModules.Add(interfaceType);
+                    }
+                }
+                
                 expiredSceneModules.Add(sceneModule.GetType());
                     
                 if (sceneModule is IProcessable processable)
@@ -321,15 +332,11 @@ namespace DosinisSDK.Core
                 {
                     tickables.Remove(tickable);
                 }
-
-                if (sceneModule is IUIManager)
-                {
-                    expiredSceneModules.Add(typeof(IUIManager));
-                }
             }
 
             foreach (var type in expiredSceneModules)
             {
+                Debug.Log($"Removed {type.Name}!");
                 cachedModules.Remove(type);
             }
         }
