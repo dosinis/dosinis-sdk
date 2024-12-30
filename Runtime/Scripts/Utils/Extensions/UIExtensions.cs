@@ -66,7 +66,7 @@ namespace DosinisSDK.Utils
 
         public static void SetWidth(this RectTransform rt, float width)
         {
-            rt.sizeDelta = new Vector2(width, rt.sizeDelta.x);
+            rt.sizeDelta = new Vector2(width, rt.sizeDelta.y);
         }
 
         public static void SetHeight(this RectTransform rt, float height)
