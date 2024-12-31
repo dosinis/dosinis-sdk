@@ -51,7 +51,7 @@ namespace DosinisSDK.Editor
 
         // Editor
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             targetObject = target as MonoBehaviour;
 
