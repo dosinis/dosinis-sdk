@@ -72,6 +72,11 @@ namespace DosinisSDK.Utils
             return angle;
         }
 
+        public static Vector3 TranslateEulerVector(Vector3 vector)
+        {
+            return new Vector3(TranslateEulerAngle(vector.x), TranslateEulerAngle(vector.y), TranslateEulerAngle(vector.z));
+        }
+
         /// <summary>
         /// Get random point in annulus (ring) shaped area
         /// </summary>
