@@ -16,9 +16,9 @@ namespace DosinisSDK.Core
         [SerializeField] private bool safeMode = true;
         [SerializeField] private DataManagerConfig dataManagerConfig;
         
-        public bool PrewarmShaders => prewarmShaders;
-        public int TargetFramerate => targetFramerate;
-        public bool SafeMode => safeMode;
+        internal bool PrewarmShaders => prewarmShaders;
+        internal int TargetFramerate => targetFramerate;
+        internal bool SafeMode => safeMode;
 
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
