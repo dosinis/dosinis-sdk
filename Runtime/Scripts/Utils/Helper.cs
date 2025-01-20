@@ -27,10 +27,10 @@ namespace DosinisSDK.Utils
         }
         
         /// <summary>
-        /// Random roll chance. Input is between 0 and 1 or 0 and 100 (if useHundreds is true)
+        /// Random roll chance. Input is between 0f and 100f or 0f and 1.0f (if useHundreds is false)
         /// </summary>
         /// <returns></returns>
-        public static bool RollChance(float chance, bool useHundreds = false)
+        public static bool RollChance(float chance, bool useHundreds = true)
         {
             if (chance == 0)
                 return false;
