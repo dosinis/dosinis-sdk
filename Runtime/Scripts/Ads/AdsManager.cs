@@ -15,9 +15,9 @@ namespace DosinisSDK.Ads
     {
         [SerializeField] protected bool useTestAds;
         
-        [SerializeField, ShowIf("useTestAds", false)] protected string rewardedId = "";
-        [SerializeField, ShowIf("useTestAds", false)] protected string interstitialId = "";
-        [SerializeField, ShowIf("useTestAds", false)] protected string bannerId = "";
+        [SerializeField] protected string rewardedId = "";
+        [SerializeField] protected string interstitialId = "";
+        [SerializeField] protected string bannerId = "";
 
         [SerializeField] protected bool preLoadAds = true;
         [SerializeField] protected bool showBannerOnInit;

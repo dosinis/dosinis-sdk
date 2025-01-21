@@ -16,16 +16,11 @@ namespace DosinisSDK.UI
 
         [SerializeField] private bool useScale = false;
         
-        [ShowIf("useScale", true), SerializeField] 
-        private AnimationCurve scaleInCurve = AnimationCurve.Linear(0, 0, 1, 1);
-        [ShowIf("useScale", true), SerializeField]
-        private float scaleInDuration = 0.25f;
-        [ShowIf("useScale", true), SerializeField]
-        private AnimationCurve scaleOutCurve = AnimationCurve.Linear(0, 1, 1, 0);
-        [ShowIf("useScale", true), SerializeField] 
-        private float scaleOutDuration = 0.25f;
-        [ShowIf("useScale", true), SerializeField] 
-        private RectTransform scaleTarget = null;
+        [SerializeField] private AnimationCurve scaleInCurve = AnimationCurve.Linear(0, 0, 1, 1);
+        [SerializeField] private float scaleInDuration = 0.25f;
+        [SerializeField] private AnimationCurve scaleOutCurve = AnimationCurve.Linear(0, 1, 1, 0);
+        [SerializeField] private float scaleOutDuration = 0.25f;
+        [SerializeField] private RectTransform scaleTarget = null;
 
         private CanvasGroup canvasGroup;
 

@@ -11,10 +11,8 @@ namespace DosinisSDK.UI
         [SerializeField] private float scaleRatio = 0.9f;
         [SerializeField] private float animationDuration = 0.1f;
         [SerializeField] private bool interactableAffectsColor = true;
-        [ShowIf("interactableAffectsColor", true)] 
         [SerializeField] private Color notInteractiveColor = Color.gray;
         [SerializeField] private bool highlightOnMouseOver = false;
-        [ShowIf("highlightOnMouseOver", true)] 
         [SerializeField] private Color highlightColor = Color.gray;
         [SerializeField] private AudioClip clickSfx;
 
