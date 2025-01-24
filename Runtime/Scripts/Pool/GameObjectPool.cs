@@ -11,10 +11,18 @@ namespace DosinisSDK.Pool
 
         private readonly List<Component> pool = new();
 
-        public static GameObjectPool Create(GameObject source)
+        public static GameObjectPool Create(GameObject source, Transform parent = null)
         {
-            var pool = new GameObject("POOL-" + source.name).AddComponent<GameObjectPool>();
+            var poolObj = new GameObject("POOL-" + source.name);
+            
+            if (parent)
+            {
+                poolObj.transform.SetParent(parent);
+            }
+
+            var pool = poolObj.AddComponent<GameObjectPool>();
             pool.SetSource(source);
+            
             return pool;
         }
         
