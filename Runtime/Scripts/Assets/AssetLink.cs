@@ -59,7 +59,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
             }
 #endif
             return App.Core.GetModule<GlobalAssetsManager>().GetAsset<T>(path);
@@ -70,7 +70,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
                 callback?.Invoke(asset);
                 return;
             }
@@ -83,7 +83,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
             }
 #endif
             return await App.Core.GetModule<GlobalAssetsManager>().GetAssetAsync<T>(path);
