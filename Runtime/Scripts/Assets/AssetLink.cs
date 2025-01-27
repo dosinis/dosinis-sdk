@@ -56,16 +56,36 @@ namespace DosinisSDK.Assets
         
         public T GetAsset<T>() where T : Object
         {
+#if UNITY_EDITOR
+            if (Application.isPlaying == false)
+            {
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+            }
+#endif
             return App.Core.GetModule<GlobalAssetsManager>().GetAsset<T>(path);
         }
         
         public void GetAssetAsync<T>(Action<T> callback) where T : Object
         {
+#if UNITY_EDITOR
+            if (Application.isPlaying == false)
+            {
+                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+                callback?.Invoke(asset);
+                return;
+            }
+#endif
             App.Core.GetModule<GlobalAssetsManager>().GetAssetAsync(path, callback);
         }
         
         public async Task<T> GetAssetAsync<T>() where T : Object
         {
+#if UNITY_EDITOR
+            if (Application.isPlaying == false)
+            {
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(path);
+            }
+#endif
             return await App.Core.GetModule<GlobalAssetsManager>().GetAssetAsync<T>(path);
         }
 
