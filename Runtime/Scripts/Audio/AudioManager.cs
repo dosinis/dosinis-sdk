@@ -82,17 +82,49 @@ namespace DosinisSDK.Audio
             PlayMusic(clip, 1f);
         }
 
-        public void PlayMusic(AudioClip clip, float volume)
+        public void PlayMusic(AudioClip clip, float volume, float fadeDuration = 0f)
         {
             musicVolumeModifier = volume;
-            musicSource.clip = clip;
             
             if (data.isMusicEnabled)
                 musicSource.volume = MusicVolume;
 
-            musicSource.Play();
+            if (fadeDuration == 0)
+            {
+                musicSource.clip = clip;
+                musicSource.Play();
+            }
+            else
+            {
+                StartCoroutine(FadeMusicCoroutine(clip, volume, fadeDuration));
+            }
         }
 
+        private IEnumerator FadeMusicCoroutine(AudioClip clip, float volume, float fadeDuration)
+        {
+            float duration = fadeDuration / 2f;
+            var initVolume = musicSource.volume;
+
+            while (duration > 0)
+            {
+                duration -= Time.deltaTime;
+                musicSource.volume = Mathf.Lerp(initVolume, 0f, fadeDuration / duration);
+                yield return null;
+            }
+            
+            musicSource.clip = clip;
+            musicSource.Play();
+            
+            duration = fadeDuration / 2f;
+            
+            while (duration > 0)
+            {
+                duration -= Time.deltaTime;
+                musicSource.volume = Mathf.Lerp(volume, initVolume, fadeDuration / duration);
+                yield return null;
+            }
+        }
+        
         public void SetPlayingClipPitch(AudioClip clip, float pitch)
         {
             foreach (var src in sources)
