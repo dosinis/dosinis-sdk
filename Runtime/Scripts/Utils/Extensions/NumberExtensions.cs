@@ -84,7 +84,7 @@ namespace DosinisSDK.Utils
 
             var length = str.Length;
 
-            if (length < 4)
+            if (length < 5)
             {
                 return str;
             }
