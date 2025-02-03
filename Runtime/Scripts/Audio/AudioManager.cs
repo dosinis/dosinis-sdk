@@ -86,7 +86,7 @@ namespace DosinisSDK.Audio
         {
             musicVolumeModifier = volume;
             
-            TrySetMusicVolume(MusicVolume);
+            SetMusicSourceVolume(MusicVolume);
             
             if (fadeDuration == 0)
             {
@@ -120,7 +120,7 @@ namespace DosinisSDK.Audio
             {
                 duration -= Time.deltaTime;
 
-                TrySetMusicVolume(Mathf.Lerp(volume, initVolume, fadeDuration / duration));
+                SetMusicSourceVolume(Mathf.Lerp(volume, initVolume, fadeDuration / duration));
                 
                 yield return null;
             }
@@ -384,7 +384,7 @@ namespace DosinisSDK.Audio
             musicSource.pitch = value;
         }
         
-        private void TrySetMusicVolume(float volume)
+        private void SetMusicSourceVolume(float volume)
         {
             if (!data.isMusicEnabled)
                 return;
