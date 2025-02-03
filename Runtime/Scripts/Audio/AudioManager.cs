@@ -86,9 +86,8 @@ namespace DosinisSDK.Audio
         {
             musicVolumeModifier = volume;
             
-            if (data.isMusicEnabled)
-                musicSource.volume = MusicVolume;
-
+            SetMusicSourceVolume(MusicVolume);
+            
             if (fadeDuration == 0)
             {
                 musicSource.clip = clip;
@@ -99,7 +98,7 @@ namespace DosinisSDK.Audio
                 StartCoroutine(FadeMusicCoroutine(clip, volume, fadeDuration));
             }
         }
-
+        
         private IEnumerator FadeMusicCoroutine(AudioClip clip, float volume, float fadeDuration)
         {
             float duration = fadeDuration / 2f;
@@ -120,7 +119,9 @@ namespace DosinisSDK.Audio
             while (duration > 0)
             {
                 duration -= Time.deltaTime;
-                musicSource.volume = Mathf.Lerp(volume, initVolume, fadeDuration / duration);
+
+                SetMusicSourceVolume(Mathf.Lerp(volume, initVolume, fadeDuration / duration));
+                
                 yield return null;
             }
         }
@@ -381,6 +382,14 @@ namespace DosinisSDK.Audio
         public void SetMusicPitch(float value)
         {
             musicSource.pitch = value;
+        }
+        
+        private void SetMusicSourceVolume(float volume)
+        {
+            if (!data.isMusicEnabled)
+                return;
+            
+            musicSource.volume = volume;
         }
     }
 }
