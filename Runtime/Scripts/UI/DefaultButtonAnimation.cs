@@ -18,12 +18,12 @@ namespace DosinisSDK.UI
 
         private Vector3 startScale;
         private Color initColor;
-        private Button button;
+        private IButton button;
         private IAudioManager audioManager;
 
         public void Init()
         {
-            button = GetComponent<Button>();
+            button = GetComponent<IButton>();
             initColor = button.Image.color;
             startScale = transform.localScale;
 
