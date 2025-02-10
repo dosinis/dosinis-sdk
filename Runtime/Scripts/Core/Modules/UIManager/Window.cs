@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
 {
     public abstract class Window : MonoBehaviour, IWindow
     {
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         [SerializeField] protected bool ignoreSafeArea = false;
 #endif
         [SerializeField] protected Button closeButton;
@@ -43,7 +43,7 @@ namespace DosinisSDK.Core
 
             rect = GetComponent<RectTransform>();
             
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
@@ -202,7 +202,7 @@ namespace DosinisSDK.Core
         {
         }
         
-#if UNITY_ANDROID || UNITY_IOS
+#if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         private void ApplySafeArea()
         {
             var rootCanvas = GetComponentInParent<Canvas>();
