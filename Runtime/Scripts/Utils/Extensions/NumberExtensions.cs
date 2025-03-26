@@ -117,7 +117,21 @@ namespace DosinisSDK.Utils
         {
             return $"{value:F2}";
         }
-
+        
+        /// <summary>
+        /// Converts a float to a string, removing trailing zeros while keeping necessary decimals.
+        /// </summary>
+        /// <param name="value">The float value to format.</param>
+        /// <returns>
+        /// A string representation of the float:
+        /// - If the number is whole (e.g., 1.00 → "1"), it removes the decimal part.
+        /// - If the number has significant decimals (e.g., 2.20 → "2.2", 23.55 → "23.55"), it keeps them.
+        /// </returns>
+        public static string ToReadableFloat(this float value)
+        {
+            return value.ToString("0.##");
+        }
+        
         /// <summary>
         /// Returns time string in such formats: 59s; 59m 59s; 24h 59m; 30d;
         /// </summary>
