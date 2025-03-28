@@ -13,8 +13,8 @@ namespace DosinisSDK.Audio
         void StopMusic();
         void PauseMusic();
         void ResumeMusic();
-        void PlayMusic(AudioClip clip);
-        void PlayMusic(AudioClip clip, float volume, float fadeDuration = 0);
+        AudioSource PlayMusic(AudioClip clip);
+        AudioSource PlayMusic(AudioClip clip, float volume, float fadeDuration = 0);
         void SetPlayingClipPitch(AudioClip clip, float pitch);
         bool IsPlaying(AudioClip clip);
         void PlayLoop(AudioClip clip, float volume = 1f);

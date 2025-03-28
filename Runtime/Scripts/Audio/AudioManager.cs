@@ -77,12 +77,12 @@ namespace DosinisSDK.Audio
             musicSource.Play();
         }
 
-        public void PlayMusic(AudioClip clip)
+        public AudioSource PlayMusic(AudioClip clip)
         {
-            PlayMusic(clip, 1f);
+            return PlayMusic(clip, 1f);
         }
 
-        public void PlayMusic(AudioClip clip, float volume, float fadeDuration = 0f)
+        public AudioSource PlayMusic(AudioClip clip, float volume, float fadeDuration = 0f)
         {
             musicVolumeModifier = volume;
             
@@ -97,31 +97,32 @@ namespace DosinisSDK.Audio
             {
                 StartCoroutine(FadeMusicCoroutine(clip, volume, fadeDuration));
             }
+
+            return musicSource;
         }
         
         private IEnumerator FadeMusicCoroutine(AudioClip clip, float volume, float fadeDuration)
         {
-            float duration = fadeDuration / 2f;
+            var halfDuration = fadeDuration / 2f;
+            var t = 0f;
             var initVolume = musicSource.volume;
-
-            while (duration > 0)
+            
+            while (t < halfDuration)
             {
-                duration -= Time.deltaTime;
-                musicSource.volume = Mathf.Lerp(initVolume, 0f, fadeDuration / duration);
+                t += Time.deltaTime;
+                musicSource.volume = Mathf.Lerp(initVolume, 0f, t / halfDuration);
                 yield return null;
             }
-            
+
             musicSource.clip = clip;
             musicSource.Play();
-            
-            duration = fadeDuration / 2f;
-            
-            while (duration > 0)
-            {
-                duration -= Time.deltaTime;
 
-                SetMusicSourceVolume(Mathf.Lerp(volume, initVolume, fadeDuration / duration));
-                
+            t = 0f;
+            
+            while (t < halfDuration)
+            {
+                t += Time.deltaTime;
+                SetMusicSourceVolume(Mathf.Lerp(0f, volume, t / halfDuration));
                 yield return null;
             }
         }
