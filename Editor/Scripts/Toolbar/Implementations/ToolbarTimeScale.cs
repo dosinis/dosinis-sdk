@@ -1,13 +1,13 @@
-using DosinisSDK.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Framework.Editor.Timescale
+namespace DosinisSDK.Editor
 {
 	[InitializeOnLoad]
 	public class ToolbarTimeScale
 	{
 		private static GUIStyle textStyle;
+		private const int TIME_SCALE = 5;
 		
 		static ToolbarTimeScale()
 		{
@@ -45,11 +45,13 @@ namespace Framework.Editor.Timescale
 				Time.timeScale = 1;
 			}
 
-			Time.timeScale = GUILayout.HorizontalSlider(Time.timeScale, 0, 5, EditorStyles.toolbarButton, GUIStyle.none, GUILayout.Width(200));
+			Time.timeScale = GUILayout.HorizontalSlider(Time.timeScale, 0, TIME_SCALE, 
+				EditorStyles.toolbarButton, GUIStyle.none, GUILayout.Width(200));
+			
 			var rect = GUILayoutUtility.GetLastRect();
 
 			var sliderRect = rect;
-			var fillAmount = Time.timeScale / 5f;
+			var fillAmount = Time.timeScale / TIME_SCALE;
 
 			sliderRect.width *= fillAmount;
 			
@@ -61,7 +63,7 @@ namespace Framework.Editor.Timescale
 			var defaultRect = rect;
 
 			defaultRect.width = 2;
-			defaultRect.x += (rect.width * 1f / 5f) - 1;
+			defaultRect.x += (rect.width * 1f / TIME_SCALE) - 1;
 			
 			EditorGUI.DrawRect(defaultRect, new Color(0.18f, 0.18f, 0.18f));
 		}

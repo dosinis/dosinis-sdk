@@ -1,9 +1,8 @@
 using System.IO;
-using DosinisSDK.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Framework.Editor.Saves
+namespace DosinisSDK.Editor
 {
 	[InitializeOnLoad]
     public class ToolbarSaves
