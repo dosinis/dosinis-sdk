@@ -7,9 +7,9 @@ namespace DosinisSDK.Audio
     [RequireComponent(typeof(AudioSource))]
     public class ManagedAudioSource : ManagedBehaviour
     {
-        [SerializeField] private bool music = false;
+        [SerializeField] private bool music;
         [SerializeField] private AudioSource audioSource;
-
+        
         private float initVolume;
         private IAudioManager audioManager;
 
@@ -23,10 +23,12 @@ namespace DosinisSDK.Audio
             initVolume = audioSource.volume;
 
             audioManager = app.GetModule<IAudioManager>();
-            audioManager.OnSfxEnabled += OnSfxEnabled;
-            audioManager.OnMusicEnabled += OnMusicEnabled;
+            
+            audioManager.OnMusicVolumeChanged += OnMusicVolumeChanged;
+            audioManager.OnSfxVolumeChanged += OnSfxVolumeChanged;
 
-            SetupVolume();
+            OnMusicVolumeChanged(audioManager.MusicVolume);
+            OnSfxVolumeChanged(audioManager.SoundsVolume);
         }
         
         private void OnDestroy()
@@ -34,34 +36,34 @@ namespace DosinisSDK.Audio
             if (initialized == false)
                 return;
             
-            audioManager.OnSfxEnabled -= OnSfxEnabled;
-            audioManager.OnMusicEnabled -= OnMusicEnabled;
+            audioManager.OnMusicVolumeChanged -= OnMusicVolumeChanged;
+            audioManager.OnSfxVolumeChanged -= OnSfxVolumeChanged;
         }
 
         private void Reset()
         {
             audioSource = GetComponent<AudioSource>();
         }
-        
-        private void OnMusicEnabled(bool obj)
+
+        private void OnMusicVolumeChanged(float volume)
         {
             if (music)
             {
-                SetupVolume();
+                SetVolume(volume);
             }
         }
-
-        private void OnSfxEnabled(bool value)
+        
+        private void OnSfxVolumeChanged(float volume)
         {
             if (!music)
             {
-                SetupVolume();
+                SetVolume(volume);
             }
         }
 
-        private void SetupVolume()
+        private void SetVolume(float volume)
         {
-            audioSource.volume = audioManager.IsSfxEnabled ? initVolume : 0;
+            audioSource.volume = Mathf.Lerp(0f, initVolume, volume);
         }
     }
 }
