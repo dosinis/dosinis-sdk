@@ -1,33 +1,36 @@
+using System;
 using DosinisSDK.Core;
 using DosinisSDK.Pool;
+using DosinisSDK.Rest;
 using UnityEngine;
 using UnityEngine.UI;
 using Button = DosinisSDK.Core.Button;
 
-namespace DosinisSDK.LogConsole
+namespace DosinisSDK
 {
-    public class LogConsole : BehaviourModule, IProcessable
+    public class LogConsole : MonoBehaviour, IDisposable
     {
+        [SerializeField] private SendLogWidget sendLogWidget;
         [SerializeField] private GameObjectPool logEntryPool;
         [SerializeField] private Button closeButton;
         [SerializeField] private Button clearButton;
         [SerializeField] private Button pauseButton;
+        [SerializeField] private Button interactWindowButton;
+        [SerializeField] private GameObject logsContent;
 
         private VerticalLayoutGroup verticalLayoutGroup;
         private ITimer timer;
         private bool paused;
-        
-        protected override void OnInit(IApp app)
-        {
-            timer = app.Timer;
-            verticalLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>(true);
-            
-            Application.logMessageReceived += HandleLog;
 
-            closeButton.OnClick += () =>
-            {
-                gameObject.SetActive(false);
-            };
+        public void OnInit(IApp app, string googleScriptUrl)
+        {
+            var restManager = app.GetModule<RestManager>();
+            
+            timer = app.Timer;
+            
+            verticalLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>(true);
+
+            Application.logMessageReceived += HandleLog;
 
             clearButton.OnClick += () =>
             {
@@ -39,12 +42,30 @@ namespace DosinisSDK.LogConsole
                 paused = !paused;
             };
 
-            gameObject.SetActive(false);
-        }
+            closeButton.OnClick += Close;
+            interactWindowButton.OnClick += InteractWithWindow;
 
-        public void Open()
+            sendLogWidget.Init(restManager, googleScriptUrl);
+            
+            Close();
+        }
+        
+        public void Dispose()
         {
-            gameObject.SetActive(true);
+            Application.logMessageReceived -= HandleLog;
+        }
+        
+        public void Process(in float delta)
+        {
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+            {
+                InteractWithWindow();
+            }
+        }
+        
+        private void Open()
+        {
+            logsContent.SetActive(true);
             
             verticalLayoutGroup.enabled = false;
             
@@ -54,36 +75,28 @@ namespace DosinisSDK.LogConsole
             });
         }
 
-        public void Close()
+        private void Close()
         {
-            gameObject.SetActive(false);
+            logsContent.SetActive(false);
         }
-
-        protected override void OnDispose()
-        {
-            Application.logMessageReceived -= HandleLog;
-        }
-
+        
         private void HandleLog(string condition, string stacktrace, LogType type)
         {
             if (paused)
                 return;
             
-            logEntryPool.Take<LogEntry>().Setup(condition, stacktrace, type);
+            logEntryPool.Take<LogEntry>().Setup(condition, stacktrace, type, sendLogWidget);
         }
-
-        public void Process(in float delta)
+        
+        private void InteractWithWindow()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (logsContent.activeSelf)
             {
-                if (gameObject.activeSelf == false)
-                {
-                    Open();
-                }
-                else
-                {
-                    Close();
-                }
+                Close();
+            }
+            else
+            {
+                Open();
             }
         }
     }
