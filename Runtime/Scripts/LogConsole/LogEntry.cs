@@ -35,11 +35,11 @@ namespace DosinisSDK
             
             if (type == LogType.Error || type == LogType.Exception)
             {
-                conditionText.color = Color.red;
+                textColor = Color.red;
             }
             else if (type == LogType.Warning)
             {
-                conditionText.color = Color.yellow;
+                textColor = Color.yellow;
             }
 
             conditionText.color = textColor;
