@@ -17,6 +17,7 @@ namespace DosinisSDK
         [SerializeField] private Button pauseButton;
         [SerializeField] private Button interactWindowButton;
         [SerializeField] private GameObject logsContent;
+        [SerializeField] private ScrollRect scrollRect;
 
         private VerticalLayoutGroup verticalLayoutGroup;
         private ITimer timer;
@@ -44,12 +45,12 @@ namespace DosinisSDK
 
             closeButton.OnClick += Close;
             interactWindowButton.OnClick += InteractWithWindow;
-
+            
             sendLogWidget.Init(restManager, googleScriptUrl);
             
             Close();
         }
-        
+
         public void Dispose()
         {
             Application.logMessageReceived -= HandleLog;
@@ -72,6 +73,11 @@ namespace DosinisSDK
             timer.SkipFrame(() =>
             {
                 verticalLayoutGroup.enabled = true;
+                
+                timer.SkipFrame(() =>
+                {
+                    scrollRect.verticalNormalizedPosition = 0f;
+                });
             });
         }
 
@@ -98,6 +104,11 @@ namespace DosinisSDK
             {
                 Open();
             }
+        }
+        
+        private void ScrollDown()
+        {
+            
         }
     }
 }
