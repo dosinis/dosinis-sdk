@@ -138,14 +138,7 @@ namespace DosinisSDK.Rest
 
             try
             {
-                string responseText = request.downloadHandler.text;
-
-                if (IsSimpleText(responseText))
-                {
-                    responseText = $"{{ \"response\": \"{responseText}\" }}";
-                }
-                
-                resultObject = JsonConvert.DeserializeObject<T>(responseText);
+                resultObject = JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
             }
             catch (Exception ex)
             {
@@ -156,7 +149,7 @@ namespace DosinisSDK.Rest
 
             return response;
         }
-        
+
         private IEnumerator GetInternal<T>(string url, Action<Response<T>> callback)
         {
             using var request = CreateGetRequest(url);
@@ -250,16 +243,6 @@ namespace DosinisSDK.Rest
             {
                 Log($"Success. {request.responseCode}: {request.downloadHandler.text}");
             }
-        }
-        
-        private bool IsSimpleText(string responseText)
-        {
-            if (string.IsNullOrWhiteSpace(responseText))
-                return true;
-
-            var trimmed = responseText.Trim();
-
-            return !(trimmed.StartsWith("{") && trimmed.EndsWith("}"));
         }
         #endregion
     }
