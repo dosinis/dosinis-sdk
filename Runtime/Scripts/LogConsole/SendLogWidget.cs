@@ -4,23 +4,21 @@ using DosinisSDK.Rest;
 using TMPro;
 using UnityEngine;
 
-namespace DosinisSDK
+namespace DosinisSDK.LogConsole
 {
     public class SendLogWidget : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField inputField;
+        [SerializeField] private TMP_InputField descriptionInputField;
         [SerializeField] private Button sendButton;
         [SerializeField] private Button exitButton;
         
         private IRestManager restManager;
-        private LogData logData;
+        private LogConsoleApi logConsoleApi;
         private string log;
-        private string googleScriptUrl;
 
-        public void Init(IRestManager restManager, string googleScriptUrl)
+        public void Init(LogConsoleApi logConsoleApi)
         {
-            this.googleScriptUrl = googleScriptUrl;
-            this.restManager = restManager;
+            this.logConsoleApi = logConsoleApi;
             
             gameObject.SetActive(false);
         }
@@ -35,28 +33,11 @@ namespace DosinisSDK
             exitButton.OnClick += Close;
         }
 
-        private async void SendLog()
+        private void SendLog()
         {
-            try
-            {
-                logData = new LogData()
-                {
-                    phone = SystemInfo.deviceModel,
-                    build_version = $"v{Application.version}",
-                    ram = SystemInfo.systemMemorySize.ToString(),
-                    error = log,
-                    description = inputField.text,
-                };
-            
-                await restManager.PostAsync<Response<string>>(googleScriptUrl,
-                    logData, new Header("Content-Type", "application/json"));
-
-                Close();
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            logConsoleApi.PostDataAsync(log, descriptionInputField.text);
+                
+            Close();
         }
 
         private void Close()

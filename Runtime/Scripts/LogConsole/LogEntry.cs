@@ -2,7 +2,7 @@ using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
-namespace DosinisSDK
+namespace DosinisSDK.LogConsole
 {
     public class LogEntry : MonoBehaviour
     {

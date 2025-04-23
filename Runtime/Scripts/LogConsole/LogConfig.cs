@@ -1,15 +1,15 @@
 ﻿using DosinisSDK.Core;
 using UnityEngine;
 
-namespace DosinisSDK
+namespace DosinisSDK.LogConsole
 {
     [CreateAssetMenu(fileName = "LogConfig", menuName = "DosinisSDK/Configs/LogConfig")]
     public class LogConfig : ModuleConfig
     {
-        [SerializeField] private LogConsole logConsolePrefab;
+        [SerializeField] private bool isOpenByKey;
         [SerializeField] private string googleScriptUrl;
 
-        public LogConsole GetLogConsolePrefab => logConsolePrefab;
+        public bool IsOpenByKey => isOpenByKey;
         public string GetGoogleScriptUrl => googleScriptUrl;
     }
 }

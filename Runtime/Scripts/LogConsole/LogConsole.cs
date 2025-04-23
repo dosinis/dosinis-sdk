@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using Button = DosinisSDK.Core.Button;
 
-namespace DosinisSDK
+namespace DosinisSDK.LogConsole
 {
-    public class LogConsole : MonoBehaviour, IDisposable
+    public class LogConsole : BehaviourModule, IProcessable
     {
         [SerializeField] private SendLogWidget sendLogWidget;
         [SerializeField] private GameObjectPool logEntryPool;
@@ -22,43 +22,34 @@ namespace DosinisSDK
         private VerticalLayoutGroup verticalLayoutGroup;
         private ITimer timer;
         private bool paused;
+        private LogConfig logConfig;
 
-        public void OnInit(IApp app, string googleScriptUrl)
+        protected override void OnInit(IApp app)
         {
-            var restManager = app.GetModule<RestManager>();
-            
             timer = app.Timer;
-            
+            logConfig = GetConfigAs<LogConfig>();
             verticalLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>(true);
 
-            Application.logMessageReceived += HandleLog;
+            var restManager = app.GetModule<RestManager>();
+            var logConsoleApi = new LogConsoleApi(restManager, logConfig.GetGoogleScriptUrl);
 
-            clearButton.OnClick += () =>
-            {
-                logEntryPool.ReturnAll();
-            };
+            sendLogWidget.Init(logConsoleApi);
 
-            pauseButton.OnClick += () =>
-            {
-                paused = !paused;
-            };
-
-            closeButton.OnClick += Close;
-            interactWindowButton.OnClick += InteractWithWindow;
-            
-            sendLogWidget.Init(restManager, googleScriptUrl);
-            
             Close();
+            SubscribeButtons();
+            DontDestroyOnLoad(gameObject);
+            
+            Application.logMessageReceived += HandleLog;
         }
-
-        public void Dispose()
+        
+        protected override void OnDispose()
         {
             Application.logMessageReceived -= HandleLog;
         }
         
         public void Process(in float delta)
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            if (logConfig.IsOpenByKey && Input.GetKeyDown(KeyCode.BackQuote))
             {
                 InteractWithWindow();
             }
@@ -106,9 +97,20 @@ namespace DosinisSDK
             }
         }
         
-        private void ScrollDown()
+        private void SubscribeButtons()
         {
-            
+            clearButton.OnClick += () =>
+            {
+                logEntryPool.ReturnAll();
+            };
+
+            pauseButton.OnClick += () =>
+            {
+                paused = !paused;
+            };
+
+            closeButton.OnClick += Close;
+            interactWindowButton.OnClick += InteractWithWindow;
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿namespace DosinisSDK
+﻿namespace DosinisSDK.LogConsole
 {
     [System.Serializable]
     public struct LogData
     {
         public string phone;
         public string ram;
-        public string build_version;
+        public string buildVersion;
         public string error;
         public string description;
     }
