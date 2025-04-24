@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using DosinisSDK.Core;
 using DosinisSDK.Pool;
 using DosinisSDK.Rest;
@@ -8,7 +9,7 @@ using Button = DosinisSDK.Core.Button;
 
 namespace DosinisSDK.LogConsole
 {
-    public class LogConsole : BehaviourModule, IProcessable
+    public class LogConsole : BehaviourModule, IProcessable, ILogConsole
     {
         [SerializeField] private SendLogWidget sendLogWidget;
         [SerializeField] private GameObjectPool logEntryPool;
@@ -23,30 +24,29 @@ namespace DosinisSDK.LogConsole
         private ITimer timer;
         private bool paused;
         private LogConfig logConfig;
+        private RestManager restManager;
 
         protected override void OnInit(IApp app)
         {
             timer = app.Timer;
             logConfig = GetConfigAs<LogConfig>();
+            restManager = app.GetModule<RestManager>();
             verticalLayoutGroup = GetComponentInChildren<VerticalLayoutGroup>(true);
 
-            var restManager = app.GetModule<RestManager>();
-            var logConsoleApi = new LogConsoleApi(restManager, logConfig.GetGoogleScriptUrl);
-
-            sendLogWidget.Init(logConsoleApi);
+            sendLogWidget.Init(this);
 
             Close();
             SubscribeButtons();
             DontDestroyOnLoad(gameObject);
-            
+
             Application.logMessageReceived += HandleLog;
         }
-        
+
         protected override void OnDispose()
         {
             Application.logMessageReceived -= HandleLog;
         }
-        
+
         public void Process(in float delta)
         {
             if (logConfig.IsOpenByKey && Input.GetKeyDown(KeyCode.BackQuote))
@@ -54,21 +54,33 @@ namespace DosinisSDK.LogConsole
                 InteractWithWindow();
             }
         }
-        
+
+        public async Task PostDataAsync(string log, string description)
+        {
+            LogData logData = new LogData()
+            {
+                phone = SystemInfo.deviceModel,
+                buildVersion = $"v{Application.version}",
+                ram = SystemInfo.systemMemorySize.ToString(),
+                error = log,
+                description = description,
+            };
+
+            await restManager.PostAsync<Response<object>>(logConfig.GetGoogleScriptUrl,
+                logData, new Header("Content-Type", "application/json"));
+        }
+
         private void Open()
         {
             logsContent.SetActive(true);
-            
+
             verticalLayoutGroup.enabled = false;
-            
+
             timer.SkipFrame(() =>
             {
                 verticalLayoutGroup.enabled = true;
-                
-                timer.SkipFrame(() =>
-                {
-                    scrollRect.verticalNormalizedPosition = 0f;
-                });
+
+                timer.SkipFrame(() => { scrollRect.verticalNormalizedPosition = 0f; });
             });
         }
 
@@ -76,15 +88,15 @@ namespace DosinisSDK.LogConsole
         {
             logsContent.SetActive(false);
         }
-        
+
         private void HandleLog(string condition, string stacktrace, LogType type)
         {
             if (paused)
                 return;
-            
+
             logEntryPool.Take<LogEntry>().Setup(condition, stacktrace, type, sendLogWidget);
         }
-        
+
         private void InteractWithWindow()
         {
             if (logsContent.activeSelf)
@@ -96,18 +108,12 @@ namespace DosinisSDK.LogConsole
                 Open();
             }
         }
-        
+
         private void SubscribeButtons()
         {
-            clearButton.OnClick += () =>
-            {
-                logEntryPool.ReturnAll();
-            };
+            clearButton.OnClick += () => { logEntryPool.ReturnAll(); };
 
-            pauseButton.OnClick += () =>
-            {
-                paused = !paused;
-            };
+            pauseButton.OnClick += () => { paused = !paused; };
 
             closeButton.OnClick += Close;
             interactWindowButton.OnClick += InteractWithWindow;

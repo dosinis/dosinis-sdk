@@ -1,6 +1,4 @@
-﻿using System;
-using DosinisSDK.Core;
-using DosinisSDK.Rest;
+﻿using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
@@ -11,14 +9,13 @@ namespace DosinisSDK.LogConsole
         [SerializeField] private TMP_InputField descriptionInputField;
         [SerializeField] private Button sendButton;
         [SerializeField] private Button exitButton;
-        
-        private IRestManager restManager;
-        private LogConsoleApi logConsoleApi;
+
+        private ILogConsole logConsole;
         private string log;
 
-        public void Init(LogConsoleApi logConsoleApi)
+        public void Init(ILogConsole logConsole)
         {
-            this.logConsoleApi = logConsoleApi;
+            this.logConsole = logConsole;
             
             gameObject.SetActive(false);
         }
@@ -35,7 +32,7 @@ namespace DosinisSDK.LogConsole
 
         private void SendLog()
         {
-            logConsoleApi.PostDataAsync(log, descriptionInputField.text);
+            logConsole.PostDataAsync(log, descriptionInputField.text);
                 
             Close();
         }
