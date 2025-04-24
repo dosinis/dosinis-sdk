@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using DosinisSDK.Core;
 using DosinisSDK.Pool;
@@ -9,6 +8,7 @@ using Button = DosinisSDK.Core.Button;
 
 namespace DosinisSDK.LogConsole
 {
+    [HelpURL("https://github.com/dosinis/dosinis-sdk/wiki/Log-Tool-Setup")]
     public class LogConsole : BehaviourModule, IProcessable, ILogConsole
     {
         [SerializeField] private SendLogWidget sendLogWidget;
