@@ -24,6 +24,8 @@ namespace DosinisSDK.Audio
         
         public event Action<bool> OnMusicEnabled;
         public event Action<bool> OnSfxEnabled;
+        public event Action<float> OnMusicVolumeChanged;
+        public event Action<float> OnSfxVolumeChanged;
 
         protected override void OnInit(IApp app)
         {
@@ -337,6 +339,8 @@ namespace DosinisSDK.Audio
         {
             data.musicVolume = volume;
             musicSource.volume = volume;
+            
+            OnMusicVolumeChanged?.Invoke(volume);
         }
 
         public void SetSoundsVolume(float volume)
@@ -352,6 +356,8 @@ namespace DosinisSDK.Audio
             {
                 src.volume = volume;
             }
+            
+            OnSfxVolumeChanged?.Invoke(volume);
         }
 
         public void SetMusicEnabled(bool value)
@@ -361,23 +367,26 @@ namespace DosinisSDK.Audio
             musicSource.volume = value ? MusicVolume : 0;
             
             OnMusicEnabled?.Invoke(value);
+            OnMusicVolumeChanged?.Invoke(musicSource.volume);
         }
         
         public void SetSfxEnabled(bool value)
         {
             data.isSfxEnabled = value;
+            float volume = value ? 1 : 0;
 
             foreach (var src in sources)
             {
-                src.volume = value ? 1 : 0;
+                src.volume = volume;
             }
 
             foreach (var src in worldSources)
             {
-                src.volume = value ? 1 : 0;
+                src.volume = volume;
             }
             
             OnSfxEnabled?.Invoke(value);
+            OnSfxVolumeChanged?.Invoke(volume);
         }
 
         public void SetMusicPitch(float value)
