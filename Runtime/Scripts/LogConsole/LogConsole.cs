@@ -37,7 +37,6 @@ namespace DosinisSDK.LogConsole
 
             Close();
             SubscribeButtons();
-            DontDestroyOnLoad(gameObject);
 
             Application.logMessageReceived += HandleLog;
         }
