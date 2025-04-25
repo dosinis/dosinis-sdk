@@ -1,30 +1,54 @@
+using DosinisSDK.Core;
 using TMPro;
 using UnityEngine;
 
-namespace DosinisSDK
+namespace DosinisSDK.LogConsole
 {
     public class LogEntry : MonoBehaviour
     {
         [SerializeField] private TMP_Text conditionText;
         [SerializeField] private TMP_Text stacktraceText;
+        [SerializeField] private Button sendLogButton;
+        
+        private SendLogWidget sendLogWidget;
 
-        public void Setup(string condition, string stacktrace, LogType type)
+        public void Setup(string condition, string stacktrace,
+            LogType type, SendLogWidget sendLogWidget)
         {
-            conditionText.text = condition;
-            stacktraceText.text = stacktrace;
+            this.sendLogWidget = sendLogWidget;
+            this.conditionText.text = condition;
+            this.stacktraceText.text = stacktrace;
+            
+            ApplyTextsColor(type);
+
+            sendLogButton.OnClick += SendLog;
+        }
+
+        private void OnDestroy()
+        {
+            sendLogButton.OnClick -= SendLog;
+        }
+        
+        private void ApplyTextsColor(LogType type)
+        {
+            Color textColor = Color.white;
             
             if (type == LogType.Error || type == LogType.Exception)
             {
-                conditionText.color = Color.red;
+                textColor = Color.red;
             }
             else if (type == LogType.Warning)
             {
-                conditionText.color = Color.yellow;
+                textColor = Color.yellow;
             }
-            else
-            {
-                conditionText.color = Color.white;
-            }
+
+            conditionText.color = textColor;
+            stacktraceText.color = textColor;
+        }
+        
+        private void SendLog()
+        {
+            sendLogWidget.Show($"{conditionText.text}:\n{stacktraceText.text}");
         }
     }
 }
