@@ -508,14 +508,22 @@ namespace DosinisSDK.Core
         {
             foreach (var processable in processables)
             {
-                try
+                if (manifest.SafeMode)
+                {
+                    try
+                    {
+                        processable.Process(Time.deltaTime);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error while processing {processable.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                    }
+                }
+                else
                 {
                     processable.Process(Time.deltaTime);
                 }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Error while processing {processable.GetType().Name}: {ex.Message}, {ex.StackTrace}");
-                }
+                
             }
             
             if (Time.time - lastTick >= 1)
