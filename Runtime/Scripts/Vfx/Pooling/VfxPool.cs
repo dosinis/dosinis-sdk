@@ -7,7 +7,7 @@ namespace DosinisSDK.Vfx
     public class VfxPool
     {
         private readonly IVfx source;
-        private readonly List<IVfx> pool = new List<IVfx>();
+        private readonly List<IVfx> pool = new();
         
         private const int PREWARM_SIZE = 1;
         private static GameObject parent;
@@ -72,6 +72,8 @@ namespace DosinisSDK.Vfx
             {
                 if (vfx.GameObject.activeSelf == false || vfx.IsPlaying == false)
                 {
+                    vfx.GameObject.SetActive(false);
+                    
                     if (vfx.Transform.parent != newParent)
                     {
                         vfx.Transform.SetParent(newParent);
