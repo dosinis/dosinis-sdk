@@ -34,6 +34,37 @@ namespace DosinisSDK.Core
             return list[UnityRandom.Range(0, list.Count)];
         }
 
+        public static T CachedRandom<T>(this IReadOnlyList<T> list, HashSet<int> set)
+        {
+            if (list == null || list.Count == 0)
+                return default;
+
+            var available = new List<T>();
+
+            foreach (var item in list)
+            {
+                if (!set.Contains(item.GetHashCode()))
+                {
+                    available.Add(item);
+                }
+            }
+
+            if (available.Count == 0)
+            {
+                foreach (var item in list)
+                {
+                    set.Remove(item.GetHashCode());
+                }
+
+                available.AddRange(list);
+            }
+
+            var selected = available[UnityRandom.Range(0, available.Count)];
+            set.Add(selected.GetHashCode());
+
+            return selected;
+        }
+
         public static T[] RandomRange<T>(this T[] array, int amount, bool canRepeat = true)
         {
             if (array.Length == 0)
