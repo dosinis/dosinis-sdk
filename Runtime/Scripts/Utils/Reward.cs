@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Utils
 {
-    public abstract class Reward : ScriptableObject
+    public abstract class Reward : ScriptableObject, IReward
     {
         [SerializeField, ShowSprite] private Sprite mainIcon;
         [SerializeField] private string id;
@@ -50,5 +50,18 @@ namespace DosinisSDK.Utils
         {
             return fallbackTitle;
         }
+    }
+
+    public interface IReward
+    {
+        void GrantReward();
+        
+        IReadOnlyCollection<Reward> ExtraRewards { get; }
+        string Id { get; }
+        Sprite MainIcon { get; }
+
+        string GetValueString();
+        string GetDescription();
+        string GetTitle();
     }
 }
