@@ -557,13 +557,20 @@ namespace DosinisSDK.Core
         {
             foreach (var fp in fixedProcessables)
             {
-                try
+                if (manifest.SafeMode)
+                {
+                    try
+                    {
+                        fp.FixedProcess(Time.fixedDeltaTime);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Error while fixed processing {fp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                    }
+                }
+                else
                 {
                     fp.FixedProcess(Time.fixedDeltaTime);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Error while fixed processing {fp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
                 }
             }
         }
@@ -572,13 +579,21 @@ namespace DosinisSDK.Core
         {
             foreach (var lp in lateProcessables)
             {
-                try
+                if (manifest.SafeMode)
+                {
+                    try
+                    {
+                        lp.LateProcess(Time.deltaTime);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError(
+                            $"Error while late processing {lp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
+                    }
+                }
+                else
                 {
                     lp.LateProcess(Time.deltaTime);
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Error while late processing {lp.GetType().Name}: {ex.Message}, {ex.StackTrace}");
                 }
             }
         }
