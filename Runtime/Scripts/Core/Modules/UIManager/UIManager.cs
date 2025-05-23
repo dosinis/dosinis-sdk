@@ -144,7 +144,7 @@ namespace DosinisSDK.Core
             return false;
         }
 
-        public async Task WaitWindowReadyAsync<T>() where T : IWindow
+        public async Task WaitForWindowAsync<T>() where T : IWindow
         {
             if (!IsWindowReady<T>())
             {
