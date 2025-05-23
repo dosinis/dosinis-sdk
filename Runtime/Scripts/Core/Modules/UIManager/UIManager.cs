@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -141,6 +142,14 @@ namespace DosinisSDK.Core
 
             window = default;
             return false;
+        }
+
+        public async Task WaitForWindowAsync<T>() where T : IWindow
+        {
+            if (!IsWindowReady<T>())
+            {
+                await Task.Yield();
+            }
         }
 
         public bool IsWindowReady<T>() where T : IWindow
