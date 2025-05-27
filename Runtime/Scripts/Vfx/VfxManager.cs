@@ -25,6 +25,12 @@ namespace DosinisSDK.Vfx
 
         public void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
         {
+            if (vfx == null)
+            {
+                LogError("Vfx is null, cannot play effect at point.");
+                return;
+            }
+            
             if (effectPools.ContainsKey(vfx) == false)
             {
                 effectPools.Add(vfx, VfxPool.Create(vfx));
@@ -50,6 +56,12 @@ namespace DosinisSDK.Vfx
 
         public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
         {
+            if (vfx == null)
+            {
+                LogError("Vfx is null, cannot play effect.");
+                return -1;
+            }
+            
             if (effectPools.ContainsKey(vfx) == false)
             {
                 effectPools.Add(vfx, VfxPool.Create(vfx));
