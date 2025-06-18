@@ -385,6 +385,29 @@ namespace DosinisSDK.Utils
             direction.y = 0;
             transform.rotation = Quaternion.LookRotation(direction);
         }
+
+        public static void MatchForwardsSmooth(Vector3 forward, Transform transform, float time, Action done)
+        {
+            App.Core.Coroutine.Begin(MatchForwardsCoroutine(forward, transform, time, done));
+        }
+        
+        private static IEnumerator MatchForwardsCoroutine(Vector3 forward, Transform transform, float time, Action done)
+        {
+            var start = transform.forward;
+            var elapsed = 0f;
+            
+            var targetTransform = transform;
+
+            while (elapsed < time)
+            {
+                elapsed += Time.deltaTime;
+                targetTransform.forward = Vector3.Slerp(start, forward, elapsed / time);
+                yield return null;
+            }
+
+            targetTransform.forward = forward;
+            done?.Invoke();
+        }
         
         // Reflection
         
