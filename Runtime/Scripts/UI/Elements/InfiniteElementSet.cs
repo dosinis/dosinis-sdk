@@ -11,10 +11,11 @@ namespace DosinisSDK.UI.Elements
         [SerializeField] private float spacing = 0;
         [SerializeField] private RectTransform viewport = null;
         [SerializeField] private float anchorOffset = 0;
+        [SerializeField] private bool isVertical = true;
         
         private readonly List<object> valuesCache = new();
 
-        private float elementHeight;
+        private float elementSize;
         private int currentPivot;
         private int visibleElementCount;
         private RectTransform anchor = null;
@@ -34,16 +35,19 @@ namespace DosinisSDK.UI.Elements
                 return;
             }
 
-            int pivot = Mathf.Clamp(Mathf.CeilToInt((anchor.anchoredPosition.y + anchorOffset - elementHeight) / elementHeight), 0, valuesCache.Count - visibleElementCount);
-
+            float currentPosition = isVertical ? anchor.anchoredPosition.y : anchor.anchoredPosition.x;
+            int pivot = Mathf.Clamp(Mathf.CeilToInt((Mathf.Abs(currentPosition) + anchorOffset - elementSize) / elementSize),
+                0, valuesCache.Count - visibleElementCount);
+            
             while (pivot > currentPivot)
             {
                 if (pivot + visibleElementCount - 1 >= valuesCache.Count)
                 {
                     currentPivot = pivot;
+                    
                     break;
                 }
-
+                
                 currentPivot += (int)Mathf.Sign(pivot - currentPivot);
 
                 var current = currentElements;
@@ -62,9 +66,15 @@ namespace DosinisSDK.UI.Elements
 
                 elementsCache = current;
 
-                float y = elementToSwap.RectTransform.anchoredPosition.y - elementHeight * visibleElementCount;
-
-                elementToSwap.RectTransform.anchoredPosition = new Vector2(elementToSwap.RectTransform.anchoredPosition.x, y);
+                float elementToSwapPosition = isVertical
+                    ? elementToSwap.RectTransform.anchoredPosition.y
+                    : elementToSwap.RectTransform.anchoredPosition.x;
+                
+                float finalPosition = elementToSwapPosition + elementSize * visibleElementCount;
+                
+                elementToSwap.RectTransform.anchoredPosition = isVertical
+                    ? new Vector2(elementToSwap.RectTransform.anchoredPosition.x, finalPosition)
+                    : new Vector2(finalPosition, elementToSwap.RectTransform.anchoredPosition.y);
             }
 
             while (pivot < currentPivot)
@@ -72,6 +82,7 @@ namespace DosinisSDK.UI.Elements
                 if (pivot < 0)
                 {
                     currentPivot = 0;
+                    
                     break;
                 }
 
@@ -92,25 +103,33 @@ namespace DosinisSDK.UI.Elements
                 currentElements = elementsCache;
 
                 elementsCache = current;
-
-                float y = elementToSwap.RectTransform.anchoredPosition.y + elementHeight * visibleElementCount;
-
-                elementToSwap.RectTransform.anchoredPosition = new Vector2(elementToSwap.RectTransform.anchoredPosition.x, y);
+                
+                float elementToSwapPosition = isVertical
+                    ? elementToSwap.RectTransform.anchoredPosition.y
+                    : elementToSwap.RectTransform.anchoredPosition.x;
+                
+                float finalPosition = elementToSwapPosition - elementSize * visibleElementCount;
+                
+                elementToSwap.RectTransform.anchoredPosition = isVertical
+                    ? new Vector2(elementToSwap.RectTransform.anchoredPosition.x, finalPosition)
+                    : new Vector2(finalPosition, elementToSwap.RectTransform.anchoredPosition.y);
             }
         }
         
         public void FocusAround<T>(T value)
         {
             int index = valuesCache.IndexOf(value);
-
+            
             if (index < 0)
             {
                 return;
             }
-
-            float y = (elementHeight * index + elementHeight / 2) - visibleElementCount / 2f * elementHeight;
-
-            anchor.anchoredPosition = new Vector2(anchor.anchoredPosition.x, y);
+            
+            float offset = elementSize * -index;
+            
+            anchor.anchoredPosition = isVertical
+                ? new Vector2(anchor.anchoredPosition.x, offset)
+                : new Vector2(offset, anchor.anchoredPosition.y);
         }
 
         public override void Setup<TE, T>(IEnumerable<T> objects)
@@ -119,14 +138,20 @@ namespace DosinisSDK.UI.Elements
             {
                 anchor = (RectTransform)content;
             }
+
+            float viewSize = isVertical ? viewport.rect.height : viewport.rect.width;
             
-            elementHeight = element.RectTransform.rect.height + spacing;
-            visibleElementCount = Mathf.CeilToInt(viewport.rect.height / elementHeight) + 1;
+            elementSize = isVertical ? element.RectTransform.rect.height + spacing : element.RectTransform.rect.width + spacing;
+            visibleElementCount = Mathf.CeilToInt(viewSize / elementSize) + 1;
             
             var enumerable = objects as T[] ?? objects.ToArray();
-            float contentHeight = elementHeight * enumerable.Length;
-
-            anchor.SetHeight(contentHeight);
+            
+            float contentSize = elementSize * enumerable.Length;
+            if (isVertical)
+                anchor.SetHeight(contentSize);
+            else
+                anchor.SetWidth(contentSize);
+            
             currentPivot = 0;
             valuesCache.Clear();
             Clear();
@@ -163,7 +188,10 @@ namespace DosinisSDK.UI.Elements
                     }
                     
                     e.Show();
-                    e.RectTransform.anchoredPosition = new Vector2(e.RectTransform.anchoredPosition.x, i * -elementHeight);
+                    
+                    e.RectTransform.anchoredPosition = isVertical
+                        ? new Vector2(e.RectTransform.anchoredPosition.x, i * elementSize)
+                        : new Vector2(i * elementSize, e.RectTransform.anchoredPosition.y);
                 }
                 valuesCache.Add(value);
                 i++;
