@@ -386,20 +386,51 @@ namespace DosinisSDK.Core
             {
                 RegisterModule(module);
 
-                if (module is IAsyncModule asyncModule)
+                if (manifest.SafeMode)
                 {
-                    await asyncModule.InitAsync(this);
+                    try
+                    {
+                        if (module is IAsyncModule asyncModule)
+                        {
+                            await asyncModule.InitAsync(this);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Module {module.GetType().Name} encountered initialization error: {ex.Message}. \n {ex.StackTrace} \n" +
+                                       $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
+                    }
                 }
             }
 
             // Initializing UI as the last module for windows to be able to access other modules
             if (foundUIManager != null)
             {
-                foundUIManager.Init(this, null);
-                    
-                if (foundUIManager is IAsyncModule asyncModule)
+                if (manifest.SafeMode)
                 {
-                    await asyncModule.InitAsync(this);
+                    try
+                    {
+                        foundUIManager.Init(this, null);
+                    
+                        if (foundUIManager is IAsyncModule asyncModule)
+                        {
+                            await asyncModule.InitAsync(this);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.LogError($"Module {foundUIManager.GetType().Name} encountered initialization error: {ex.Message}. \n {ex.StackTrace} \n" +
+                                       $"<i><color=yellow>Error was captured in safemode. In order to get hard errors, disable safe mode in {MANIFEST_PATH}</color></i>");
+                    }
+                }
+                else
+                {
+                    foundUIManager.Init(this, null);
+                    
+                    if (foundUIManager is IAsyncModule asyncModule)
+                    {
+                        await asyncModule.InitAsync(this);
+                    }
                 }
             }
         }
@@ -441,9 +472,9 @@ namespace DosinisSDK.Core
             StartCoroutine(SkipFrameNative(continueScenesInit)); // Tiny delay for scene to be completely loaded (next frame)
 #else
             await Task.Delay(1);
-            continueScenesInit();
+            _ = continueScenesInit();
 #endif
-            async void continueScenesInit()
+            async Task continueScenesInit()
             {
                 await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
