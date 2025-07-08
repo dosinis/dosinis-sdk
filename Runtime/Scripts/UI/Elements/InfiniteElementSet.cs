@@ -8,6 +8,9 @@ namespace DosinisSDK.UI.Elements
 {
     public class InfiniteElementSet : ElementSet
     {
+        private const float HORIZONTAL_ELEMENT_SIZE_MULTIPLIER = 1.5f;
+        private const float VERTICAL_ELEMENT_SIZE_MULTIPLIER = 1f;
+        
         [SerializeField] private float spacing = 0;
         [SerializeField] private RectTransform viewport = null;
         [SerializeField] private float anchorOffset = 0;
@@ -23,6 +26,8 @@ namespace DosinisSDK.UI.Elements
         private Element[] currentElements = Array.Empty<Element>();
         private Element[] elementsCache = Array.Empty<Element>();
 
+        public RectTransform Anchor => anchor;
+
         public void ProcessElements<TE, T>() where TE : ElementFor<T>
         {
             if (!viewport || !content)
@@ -36,7 +41,8 @@ namespace DosinisSDK.UI.Elements
             }
 
             float currentPosition = isVertical ? anchor.anchoredPosition.y : Mathf.Abs(anchor.anchoredPosition.x);
-            int pivot = Mathf.Clamp(Mathf.CeilToInt((currentPosition + anchorOffset - elementSize) / elementSize),
+            float elementSizeMultiplier = isVertical ? VERTICAL_ELEMENT_SIZE_MULTIPLIER : HORIZONTAL_ELEMENT_SIZE_MULTIPLIER;
+            int pivot = Mathf.Clamp(Mathf.CeilToInt((currentPosition + anchorOffset - (elementSize * elementSizeMultiplier)) / elementSize),
                 0, valuesCache.Count - visibleElementCount);
 
             while (pivot > currentPivot)
@@ -119,19 +125,35 @@ namespace DosinisSDK.UI.Elements
         public Element FocusAround<T>(T value)
         {
             int index = valuesCache.IndexOf(value);
-            int elementIndex = index - (Mathf.FloorToInt(index / (float)currentElements.Length) * currentElements.Length); 
             
             if (index < 0)
             {
                 return null;
             }
 
-            anchor.anchoredPosition = isVertical
+            anchor.anchoredPosition = GetTarget(value, out Element targetElement);
+            
+            return targetElement;
+        }
+        
+        public Vector2 GetTarget<T>(T value, out Element targetElement)
+        {
+            targetElement = null;
+            
+            int index = valuesCache.IndexOf(value);
+            int elementIndex = index - (Mathf.FloorToInt(index / (float)currentElements.Length) * currentElements.Length);
+            
+            if (index < 0)
+            {
+                return Vector2.zero;
+            }
+
+            targetElement = GetElement(elementIndex);
+            
+            return isVertical
                 ? new Vector2(anchor.anchoredPosition.x, (elementSize * index + elementSize
                     / 2) - visibleElementCount / 2f * elementSize)
                 : new Vector2(elementSize * -index, anchor.anchoredPosition.y);
-            
-            return GetElement(elementIndex);
         }
         
         public override void Setup<TE, T>(IEnumerable<T> objects)
