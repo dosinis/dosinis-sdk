@@ -8,8 +8,8 @@ namespace DosinisSDK.UI.Elements
 {
     public class InfiniteElementSet : ElementSet
     {
-        private const float HorizontalElementSizeMultiplier = 1.5f;
-        private const float VerticalElementSizeMultiplier = 1f;
+        private const float HORIZONTAL_ELEMENT_SIZE_MULTIPLIER = 1.5f;
+        private const float VERTICAL_ELEMENT_SIZE_MULTIPLIER = 1f;
         
         [SerializeField] private float spacing = 0;
         [SerializeField] private RectTransform viewport = null;
@@ -41,7 +41,7 @@ namespace DosinisSDK.UI.Elements
             }
 
             float currentPosition = isVertical ? anchor.anchoredPosition.y : Mathf.Abs(anchor.anchoredPosition.x);
-            float elementSizeMultiplier = isVertical ? VerticalElementSizeMultiplier : HorizontalElementSizeMultiplier;
+            float elementSizeMultiplier = isVertical ? VERTICAL_ELEMENT_SIZE_MULTIPLIER : HORIZONTAL_ELEMENT_SIZE_MULTIPLIER;
             int pivot = Mathf.Clamp(Mathf.CeilToInt((currentPosition + anchorOffset - (elementSize * elementSizeMultiplier)) / elementSize),
                 0, valuesCache.Count - visibleElementCount);
 
