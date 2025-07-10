@@ -95,8 +95,8 @@ namespace DosinisSDK.Vfx
             
             pool.Add(newVfx);
 
-            newVfx.Play();
             newVfx.GameObject.SetActive(true);
+            newVfx.Play();
 
             return newVfx;
         }
