@@ -4,12 +4,25 @@ namespace DosinisSDK.Core
 {
     public class LocalClock : Module, IClock
     {
-        public int DayOfYear => DateTimeOffset.UtcNow.DayOfYear;
+        // UTC
+        
+        public long UtcNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        public long UtcNowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        public int DayOfYearUtc => DateTimeOffset.UtcNow.DayOfYear;
+        public int LastActiveDayOfYearUtc => data.lastActiveDayOfYearUtc;
+        public long LastTimeActiveUtc => data.lastTimeActiveUtc;
+        
+        // Local
+
+        public long Now => DateTimeOffset.Now.ToUnixTimeSeconds();
+        public long NowMilliseconds => DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        public int DayOfYear => DateTimeOffset.Now.DayOfYear;
         public int LastActiveDayOfYear => data.lastActiveDayOfYear;
         public long LastTimeActive => data.lastTimeActive;
-        public long Now => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        public long NowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        public long TimeInactive => Now - LastTimeActive;
+
+        // Shared
+
+        public long TimeInactive => UtcNow - LastTimeActiveUtc;
         
         // LocalClock
 
@@ -26,7 +39,7 @@ namespace DosinisSDK.Core
 
             if (data.lastTimeActive == 0)
             {
-                data.lastTimeActive = Now;
+                data.lastTimeActive = UtcNow;
             }
 
             app.OnAppFocus += OnAppFocus;
@@ -40,17 +53,14 @@ namespace DosinisSDK.Core
             app.OnAppPaused -= OnAppPaused;
             app.OnAppQuit -= OnAppQuit;
         }
-        
-        public long GetTimeOfDay(int dayOfYear, int hour, int minute)
-        {
-            var date = new DateTimeOffset(DateTimeOffset.UtcNow.Year, 1, 1, hour, minute, 0, TimeSpan.Zero);
-            return date.AddDays(dayOfYear - 1).ToUnixTimeSeconds();
-        }
 
         private void OnAppQuit()
         {
             data.lastTimeActive = Now;
             data.lastActiveDayOfYear = DayOfYear;
+            data.lastTimeActiveUtc = UtcNow;
+            data.lastActiveDayOfYearUtc = DayOfYearUtc;
+            
             dataManager.SaveData(data);
         }
 
@@ -58,7 +68,7 @@ namespace DosinisSDK.Core
         {
             if (paused)
             {
-                data.lastTimeActive = Now;
+                data.lastTimeActive = UtcNow;
                 data.lastActiveDayOfYear = DayOfYear;
                 dataManager.SaveData(data);
             }
@@ -68,7 +78,7 @@ namespace DosinisSDK.Core
         {
             if (focus == false)
             {
-                data.lastTimeActive = Now;
+                data.lastTimeActive = UtcNow;
                 data.lastActiveDayOfYear = DayOfYear;
                 dataManager.SaveData(data);
             }

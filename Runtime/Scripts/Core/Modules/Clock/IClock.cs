@@ -2,12 +2,24 @@ namespace DosinisSDK.Core
 {
     public interface IClock : IModule 
     {
-        public int DayOfYear { get; }
-        public int LastActiveDayOfYear { get; }
-        public long LastTimeActive { get; }
-        public long Now { get; }
-        public long NowMilliseconds { get; }
-        public long TimeInactive { get; }
-        long GetTimeOfDay(int dayOfYear, int hour, int minute);
+        // Local
+        
+        int DayOfYear { get; }
+        int LastActiveDayOfYear { get; }
+        long LastTimeActive { get; }
+        long Now { get; }
+        long NowMilliseconds { get; }
+        
+        // UTC
+        
+        int DayOfYearUtc { get; }
+        int LastActiveDayOfYearUtc { get; }
+        long LastTimeActiveUtc { get; }
+        long UtcNow { get; }
+        long UtcNowMilliseconds { get; }
+        
+        // Shared
+        
+        long TimeInactive { get; }
     }
 }
