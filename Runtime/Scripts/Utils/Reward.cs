@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using DosinisSDK.Inspector;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ namespace DosinisSDK.Utils
 
         public void GrantReward()
         {
-            OnRewarded();
+            OnRewarded(App.Core);
             
             foreach (var handler in extraRewards)
             {
@@ -38,11 +39,11 @@ namespace DosinisSDK.Utils
                     continue;    
                 }
 
-                handler.OnRewarded();
+                handler.OnRewarded(App.Core);
             }
         }
         
-        protected abstract void OnRewarded();
+        protected abstract void OnRewarded(IModulesProvider modulesProvider);
         public abstract string GetValueString();
         public abstract string GetDescription();
 

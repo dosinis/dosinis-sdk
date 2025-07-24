@@ -1,3 +1,4 @@
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.IAP
@@ -7,7 +8,7 @@ namespace DosinisSDK.IAP
     {
         // NOTE: This can be used to register IAP, but handling rewarding separately
         
-        protected override void OnRewarded()
+        protected override void OnRewarded(IModulesProvider modulesProvider)
         {
         }
 
