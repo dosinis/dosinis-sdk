@@ -15,7 +15,7 @@ namespace DosinisSDK.Audio
         private bool silencingMusic = false;
         private float musicVolumeModifier = 1f;
 
-        private const int POOL_SIZE = 20;
+        private const int POOL_SIZE = 32;
 
         public float SoundsVolume => IsSfxEnabled ? data.soundsVolume : 0;
         public float MusicVolume => IsMusicEnabled ? data.musicVolume * musicVolumeModifier : 0;
