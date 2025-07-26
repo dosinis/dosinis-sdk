@@ -109,11 +109,11 @@ namespace DosinisSDK.Utils
         
         public static string ToPrettyFracturedString(this float number)
         {
-            var str = number.ToString();
+            var str = number.ToString("F2");
 
             var length = str.Length;
-
-            if (length < 5)
+            
+            if (length <= 6)
             {
                 return number.ToReadableFloat();
             }
