@@ -94,6 +94,18 @@ namespace DosinisSDK.Utils
             stringValue = null;
             bigValue = number;
         }
+        
+        public BigNumber(float number)
+        {
+            stringValue = null;
+            bigValue = (BigInteger)number;
+        }
+        
+        public BigNumber(double number)
+        {
+            stringValue = null;
+            bigValue = (BigInteger)number;
+        }
 
         // Equality
 
@@ -149,7 +161,12 @@ namespace DosinisSDK.Utils
             return new BigNumber(value);
         }
 
-        public static implicit operator BigNumber(uint value)
+        public static implicit operator BigNumber(float value)
+        {
+            return new BigNumber(value);
+        }
+        
+        public static implicit operator BigNumber(double value)
         {
             return new BigNumber(value);
         }
@@ -558,11 +575,11 @@ namespace DosinisSDK.Utils
                 if (small > 1000)
                 {
                     var index = i;
-                    bigNum = (int)small;
+                    bigNum = small;
 
                     while (index < power - 1)
                     {
-                        bigNum = bigNum.MultiplyByFloat(number);
+                        bigNum = bigNum.MultiplyByFloat(number, 100000);
                         index++;
                     }
 
@@ -572,7 +589,7 @@ namespace DosinisSDK.Utils
                 small *= number;
             }
 
-            bigNum = (int)small;
+            bigNum = small;
 
             return bigNum;
         }

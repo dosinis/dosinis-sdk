@@ -106,6 +106,38 @@ namespace DosinisSDK.Utils
 
             return res;
         }
+        
+        public static string ToPrettyFracturedString(this float number)
+        {
+            var str = number.ToString();
+
+            var length = str.Length;
+
+            if (length < 5)
+            {
+                return number.ToReadableFloat();
+            }
+            
+            str = Mathf.Round(number).ToString("F0");
+            length = str.Length;
+            
+            var integerPartLength = length % 3;
+
+            if (integerPartLength == 0)
+                integerPartLength = 3;
+
+            var numberOfThousands = Mathf.CeilToInt(length / 3.0f);
+
+            var integerPart = str.Substring(0, integerPartLength);
+            var fractionalPart = str.Substring(integerPartLength, 2);
+
+            var fractional = int.Parse(fractionalPart);
+
+            string res = fractional == 0 ? $"{integerPart}{Helper.GetStringModifier(numberOfThousands)}"
+                : $"{integerPart},{fractionalPart}{Helper.GetStringModifier(numberOfThousands)}";
+
+            return res;
+        }
 
         // Float
 
@@ -148,11 +180,6 @@ namespace DosinisSDK.Utils
         public static string ToDurationString(this float time)
         {
             return ((long)time).ToDurationString();
-        }
-        
-        public static string ToPrettyString(this float number)
-        {
-            return ((int)number).ToPrettyString();
         }
     }
 }
