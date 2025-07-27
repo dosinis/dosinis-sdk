@@ -28,7 +28,7 @@ namespace DosinisSDK.Utils
         
         public override string ToString()
         {
-            return $"[{min}, {max}]";
+            return $"{min}-{max}";
         }
     }
 
