@@ -18,6 +18,8 @@ namespace DosinisSDK.Vfx
             {
                 particle.Play();
             }
+
+            transform.localScale = Vector3.one;
         }
 
         public override void Stop(bool withChildren = true, bool clear = true)

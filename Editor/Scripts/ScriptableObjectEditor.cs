@@ -38,7 +38,7 @@ namespace DosinisSDK.Editor
 
         private MemberInfo[] GetMethods()
         {
-            var flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
+            var flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy;
             return targetObject.GetType().GetMembers(flags);
         }
 

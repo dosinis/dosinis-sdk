@@ -6,7 +6,7 @@ namespace DosinisSDK.Vfx
 {
     public interface IVfxManager : IModule
     {
-        void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null);
+        long PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null);
         
         /// <summary>
         /// Returns VFX hash for further control
@@ -31,5 +31,7 @@ namespace DosinisSDK.Vfx
         void Stop(long key, bool clearParticles = true);
         
         void StopAll(IVfx vfx);
+
+        void DisposePool(IVfx vfx);
     }
 }

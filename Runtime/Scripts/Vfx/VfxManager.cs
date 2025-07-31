@@ -10,7 +10,7 @@ namespace DosinisSDK.Vfx
 {
     public class VfxManager : BehaviourModule, IVfxManager, ILateProcessable
     {
-        private readonly Dictionary<IVfx, VfxPool> effectPools = new();
+        private readonly Dictionary<string, VfxPool> effectPools = new();
 
         private readonly Dictionary<long, IVfx> forcedOrientationVfxCache = new();
         private readonly Dictionary<long, IVfx> effectsCache = new();
@@ -23,20 +23,20 @@ namespace DosinisSDK.Vfx
             coroutineManager = app.Coroutine;
         }
 
-        public void PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
+        public long PlayAtPoint(IVfx vfx, Vector3 point, Vector3 forward, AudioClip sfx = null, Action done = null)
         {
             if (vfx == null)
             {
                 LogError("Vfx is null, cannot play effect at point.");
-                return;
+                return -1;
             }
             
-            if (effectPools.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx.Id) == false)
             {
-                effectPools.Add(vfx, VfxPool.Create(vfx));
+                effectPools.Add(vfx.Id, VfxPool.Create(vfx));
             }
 
-            var ps = effectPools[vfx].Play(point);
+            var ps = effectPools[vfx.Id].Play(point);
 
             if (forward != Vector3.zero)
             {
@@ -52,6 +52,11 @@ namespace DosinisSDK.Vfx
             {
                 coroutineManager.Begin(WaitForEffect(ps, done));
             }
+            
+            var key = Helper.GetRandomLong();
+            effectsCache.Add(key, ps);
+            
+            return key;
         }
 
         public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
@@ -62,31 +67,23 @@ namespace DosinisSDK.Vfx
                 return -1;
             }
             
-            if (effectPools.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx.Id) == false)
             {
-                effectPools.Add(vfx, VfxPool.Create(vfx));
+                effectPools.Add(vfx.Id, VfxPool.Create(vfx));
             }
 
             IVfx ps;
             
             if (parent != null)
             {
-                ps = effectPools[vfx].Play(parent);
+                ps = effectPools[vfx.Id].Play(parent);
             }
             else
             {
-                ps = effectPools[vfx].Play();
+                ps = effectPools[vfx.Id].Play();
             }
 
             ps.Transform.localPosition += offset;
-
-            var key = Helper.GetRandomLong();
-            effectsCache.Add(key, ps);
-
-            if (forceKeepOrientation)
-            {
-                forcedOrientationVfxCache.Add(key, ps);
-            }
 
             if (sfx != null)
             {
@@ -97,13 +94,21 @@ namespace DosinisSDK.Vfx
             {
                 coroutineManager.Begin(WaitForEffect(ps, done));
             }
+            
+            var key = Helper.GetRandomLong();
+            effectsCache.Add(key, ps);
+
+            if (forceKeepOrientation)
+            {
+                forcedOrientationVfxCache.Add(key, ps);
+            }
 
             return key;
         }
 
         public bool IsPlaying(IVfx vfx, long key)
         {
-            if (effectPools.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx.Id) == false)
             {
                 return false;
             }
@@ -133,12 +138,39 @@ namespace DosinisSDK.Vfx
         
         public void StopAll(IVfx vfx)
         {
-            if (effectPools.ContainsKey(vfx) == false)
+            if (effectPools.ContainsKey(vfx.Id) == false)
             {
                 return;
             }
 
-            effectPools[vfx].StopAll();
+            effectPools[vfx.Id].StopAll();
+        }
+
+        public void DisposePool(IVfx vfx)
+        {
+            if (effectPools.ContainsKey(vfx.Id) == false)
+            {
+                return;
+            }
+
+            effectPools[vfx.Id].Dispose();
+            effectPools.Remove(vfx.Id);
+            
+            foreach (var item in effectsCache)
+            {
+                if (item.Value == vfx)
+                {
+                    effectsCache.Remove(item.Key);
+                }
+            }
+            
+            foreach (var item in forcedOrientationVfxCache)
+            {
+                if (item.Value == vfx)
+                {
+                    forcedOrientationVfxCache.Remove(item.Key);
+                }
+            }
         }
 
         private IEnumerator WaitForEffect(IVfx vfx, Action done)

@@ -34,13 +34,12 @@ namespace DosinisSDK.Vfx
                 source.GameObject.SetActive(false);
             }
             
-            this.source = source;
-            
             for (int i = 0; i < PREWARM_SIZE; i++)
             {
-                var newVfx = Object.Instantiate(source.GameObject, Parent.transform).GetComponent<IVfx>();
-                newVfx.GameObject.SetActive(false);
-                pool.Add(newVfx);
+                this.source = Object.Instantiate(source.GameObject, Parent.transform).GetComponent<IVfx>();
+                this.source.GameObject.SetActive(false);
+                this.source.GameObject.name = $"{source.GameObject.name} - (Source)";
+                pool.Add(this.source);
             }
         }
         
@@ -124,6 +123,17 @@ namespace DosinisSDK.Vfx
             foreach (var vfx in pool)
             {
                 vfx.Stop(true);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var vfx in pool)
+            {
+                if (vfx.Exists())
+                {
+                    Object.Destroy(vfx.GameObject);
+                }
             }
         }
     }
