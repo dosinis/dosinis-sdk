@@ -1,16 +1,18 @@
 using System;
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace DosinisSDK.Pool
 {
     public class Pool<T> where T : class, IPooled
     {
-        private static readonly Dictionary<Type, Pool<T>> pools = new Dictionary<Type, Pool<T>>();
+        private static readonly Dictionary<Type, Pool<T>> pools = new();
         private const int CAPACITY = 1000;
         
-        private readonly List<IPooled> pooledObjects = new List<IPooled>();
+        private readonly List<IPooled> pooledObjects = new();
         private readonly IPooled sourceObject;
 
         private readonly GameObject parent;
@@ -44,11 +46,16 @@ namespace DosinisSDK.Pool
                 return pooledObjects[0] as T;
             }
                 
-            T newObj = UnityEngine.Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent ?
+            T newObj = Object.Instantiate(sourceObject.gameObject, sourceObject.gameObject.transform.parent ?
                 sourceObject.gameObject.transform.parent : parent.transform).GetComponent<T>();
 
             newObj.gameObject.SetActive(true);
 
+            if (newObj.gameObject.TryGetComponent(out IPoolInitialized init))
+            {
+                init.Initialize(App.Core);
+            }
+            
             pooledObjects.Add(newObj);
 
             return newObj;

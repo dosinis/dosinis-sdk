@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
 
@@ -152,8 +153,14 @@ namespace DosinisSDK.Pool
 
             var newObj = Instantiate(source, transform).GetComponent<T>();
             pool.Add(newObj);
-
+            
             newObj.gameObject.SetActive(true);
+            
+            if (newObj.TryGetComponent(out IPoolInitialized init))
+            {
+                init.Initialize(App.Core);
+            }
+            
             return newObj;
         }
     }
