@@ -23,12 +23,15 @@ namespace DosinisSDK.Core
         // Shared
 
         public long TimeInactive => UtcNow - LastTimeActiveUtc;
-        
+        public bool IsNewDay => isNewDay;
+
         // LocalClock
 
         private IApp app;
         private IDataManager dataManager;
         private LocalClockData data;
+        
+        private bool isNewDay;
         
         protected override void OnInit(IApp app)
         {
@@ -36,6 +39,8 @@ namespace DosinisSDK.Core
             dataManager = app.GetModule<IDataManager>();
             
             data = dataManager.GetOrCreateData<LocalClockData>();
+            
+            isNewDay = DayOfYear != LastActiveDayOfYear;
 
             if (data.lastTimeActive == 0)
             {

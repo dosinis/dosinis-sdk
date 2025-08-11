@@ -21,5 +21,6 @@ namespace DosinisSDK.Core
         // Shared
         
         long TimeInactive { get; }
+        bool IsNewDay { get; }
     }
 }
