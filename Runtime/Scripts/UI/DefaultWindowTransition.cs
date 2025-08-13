@@ -43,7 +43,7 @@ namespace DosinisSDK.UI
 
             canvasGroup.alpha = 0;
 
-            if(gameObject.activeInHierarchy == false)
+            if(gameObject.activeSelf == false)
                 gameObject.SetActive(true);
 
             if (useScale && scaleInDuration > fadeInDuration)
@@ -64,10 +64,9 @@ namespace DosinisSDK.UI
 
         public void HideTransition(Action done)
         {
-            if (gameObject.activeInHierarchy == false)
+            if (gameObject.activeSelf == false)
                 gameObject.SetActive(true);
-
-
+            
             if (useScale && scaleOutDuration > fadeOutDuration)
             {
                 StartCoroutine(ScaleOutRoutine(done));

@@ -554,7 +554,6 @@ namespace DosinisSDK.Core
                 {
                     processable.Process(Time.deltaTime);
                 }
-                
             }
             
             if (Time.time - lastTick >= 1)

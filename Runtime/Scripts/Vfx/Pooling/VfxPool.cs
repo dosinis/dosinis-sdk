@@ -42,6 +42,11 @@ namespace DosinisSDK.Vfx
                 pool.Add(this.source);
             }
         }
+
+        public bool IsValid()
+        {
+            return source.Exists();
+        }
         
         public static VfxPool Create(IVfx source)
         {

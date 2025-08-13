@@ -31,6 +31,8 @@ namespace DosinisSDK.Vfx
                 return -1;
             }
             
+            ValidatePool(vfx);
+            
             if (effectPools.ContainsKey(vfx.Id) == false)
             {
                 effectPools.Add(vfx.Id, VfxPool.Create(vfx));
@@ -66,6 +68,8 @@ namespace DosinisSDK.Vfx
                 LogError("Vfx is null, cannot play effect.");
                 return -1;
             }
+
+            ValidatePool(vfx);
             
             if (effectPools.ContainsKey(vfx.Id) == false)
             {
@@ -146,13 +150,21 @@ namespace DosinisSDK.Vfx
             effectPools[vfx.Id].StopAll();
         }
 
+        public void ValidatePool(IVfx vfx)
+        {
+            if (effectPools.TryGetValue(vfx.Id, out var pool) && pool.IsValid() == false)
+            {
+                DisposePool(vfx);
+            }
+        }
+
         public void DisposePool(IVfx vfx)
         {
             if (effectPools.ContainsKey(vfx.Id) == false)
             {
                 return;
             }
-
+            
             effectPools[vfx.Id].Dispose();
             effectPools.Remove(vfx.Id);
             
@@ -186,7 +198,7 @@ namespace DosinisSDK.Vfx
             
             foreach (var effect in effectsCache)
             {
-                if (effect.Value == null)
+                if (effect.Value.Exists() == false)
                 {
                     itemsToRemove.Add(effect.Key);
                     continue;
