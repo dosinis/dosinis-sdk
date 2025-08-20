@@ -19,6 +19,7 @@ namespace DosinisSDK.Core
         protected override void OnInit(IApp app)
         {
             this.app = app;
+            
             Camera = GetComponentInChildren<Camera>();
             
             foreach (var win in GetComponentsInChildren<IWindow>(true))
@@ -206,7 +207,8 @@ namespace DosinisSDK.Core
 
         public void HideWindow<T>(Action callBack) where T : IWindow
         {
-            GetWindow<T>().Hide(callBack);
+            var window =  GetWindow<T>();
+            window.Hide(callBack);
         }
 
         public void HideWindow<T>() where T : IWindow

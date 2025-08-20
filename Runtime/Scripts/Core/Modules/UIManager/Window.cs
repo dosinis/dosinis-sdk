@@ -11,6 +11,7 @@ namespace DosinisSDK.Core
         [SerializeField] protected Button closeButton;
 
         protected IUIManager uiManager;
+        private IEventsManager eventsManager;
         
         private IWindowTransition transition;
         private Widget[] widgets = { };
@@ -33,6 +34,7 @@ namespace DosinisSDK.Core
             if (Initialized)
                 return;
 
+            eventsManager = app.EventsManager;
             uiManager = app.UIManager;
             
             if (TryGetComponent(out IWindowTransition t))
@@ -110,7 +112,9 @@ namespace DosinisSDK.Core
                 OnShown?.Invoke();
                 
                 done?.Invoke();
-            }           
+            }
+            
+            eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
         }
 
         public void ForwardTo<T>(bool waitUntilHidden = true) where T : IWindow
@@ -170,6 +174,8 @@ namespace DosinisSDK.Core
                 
                 done?.Invoke();
             }
+            
+            eventsManager.Invoke(new CoreEvents.OnWindowClosedEvent(this));
         }
 
         public T GetWidget<T>() where T : Widget
