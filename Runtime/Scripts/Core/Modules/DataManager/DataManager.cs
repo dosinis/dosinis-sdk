@@ -42,14 +42,23 @@ namespace DosinisSDK.Core
 
             if (config)
             {
-                var wipeId = PlayerPrefs.GetInt(DATA_WIPE_SAVE_KEY);
-                
-                if (wipeId != config.WipeVersion)
+                if (config.ForceWipeOnStartup)
                 {
                     DeleteAllData();
-                    
                     DataWipeDetected = true;
-                    Warn("Automatic data wipe detected, all data was deleted");
+                    Warn("Data wipe forced by config, all data was deleted");
+                }
+                else
+                {
+                    var wipeId = PlayerPrefs.GetInt(DATA_WIPE_SAVE_KEY);
+                
+                    if (wipeId != config.WipeVersion)
+                    {
+                        DeleteAllData();
+                    
+                        DataWipeDetected = true;
+                        Warn("Automatic data wipe detected, all data was deleted");
+                    }
                 }
             }
             

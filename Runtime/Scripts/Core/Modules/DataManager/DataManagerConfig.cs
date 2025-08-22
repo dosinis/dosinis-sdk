@@ -7,7 +7,9 @@ namespace DosinisSDK.Core
     {
         [SerializeField] private int wipeVersion = 0;
         [SerializeField] private bool wipeAllPrefs = true;
-
+        [SerializeField] private bool forceWipeOnStartup = false;
+        
+        public bool ForceWipeOnStartup => forceWipeOnStartup;
         public int WipeVersion => wipeVersion;
         public bool WipeAllPrefs => wipeAllPrefs;
     }
