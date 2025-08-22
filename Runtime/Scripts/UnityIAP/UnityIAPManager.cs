@@ -20,6 +20,7 @@ namespace DosinisSDK.UnityIAP
         private readonly Dictionary<string, ProductData> productsRegistry = new();
         private UnityIAPConfig config;
         private bool moduleReady;
+        private IModulesProvider modulesProvider;
 
         // Properties
 
@@ -47,6 +48,7 @@ namespace DosinisSDK.UnityIAP
 
         protected override void OnInit(IApp app)
         {
+            modulesProvider = app;
             config = GetConfigAs<UnityIAPConfig>();
 
             if (Application.isEditor)
@@ -61,7 +63,7 @@ namespace DosinisSDK.UnityIAP
             
             foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.GrantReward, handler.Restore);
+                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.OnPurchased, handler.Restore);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -91,7 +93,7 @@ namespace DosinisSDK.UnityIAP
             }
         }
         
-        private void RegisterProduct(string productId, ProductType productType, Action purchaseCallback, Action restoreCallback)
+        private void RegisterProduct(string productId, ProductType productType, Action<IModulesProvider> purchaseCallback, Action restoreCallback)
         {
             productsRegistry.Add(productId, new ProductData
             {
@@ -338,7 +340,7 @@ namespace DosinisSDK.UnityIAP
             {
                 if (productsRegistry.TryGetValue(productId, out var data))
                 {
-                    data.purchaseCallback?.Invoke();
+                    data.purchaseCallback?.Invoke(modulesProvider);
                 }
             }
             catch (Exception ex)
@@ -406,7 +408,7 @@ namespace DosinisSDK.UnityIAP
         private struct ProductData
         {
             public ProductType type;
-            public Action purchaseCallback;
+            public Action<IModulesProvider> purchaseCallback;
             public Action restoreCallback;
         }
     }
