@@ -11,6 +11,8 @@ namespace DosinisSDK.Localization
         [SerializeField] private string key;
         [SerializeField] private TMP_Text text;
 
+        public string Key => key;
+        
         private ILocalizationManager localizationManager;
         
         protected override void OnInit(IApp app)
@@ -37,6 +39,12 @@ namespace DosinisSDK.Localization
         private void Reset()
         {
             text = GetComponent<TMP_Text>();
+        }
+
+        public void SetKey(string key)
+        {
+            this.key = key;
+            OnLanguageChanged();
         }
     }
 }
