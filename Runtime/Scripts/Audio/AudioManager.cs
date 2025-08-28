@@ -84,7 +84,7 @@ namespace DosinisSDK.Audio
             return PlayMusic(clip, 1f);
         }
 
-        public AudioSource PlayMusic(AudioClip clip, float volume, float fadeDuration = 0f)
+        public AudioSource PlayMusic(AudioClip clip, float volume, float fadeDuration = 0f, float pitch = 1f)
         {
             musicVolumeModifier = volume;
             
@@ -92,6 +92,7 @@ namespace DosinisSDK.Audio
             
             if (fadeDuration == 0)
             {
+                musicSource.pitch = pitch;
                 musicSource.clip = clip;
                 musicSource.Play();
             }
@@ -162,13 +163,13 @@ namespace DosinisSDK.Audio
             return false;
         }
 
-        public void PlayLoop(AudioClip clip, float volume = 1f)
+        public void PlayLoop(AudioClip clip, float volume = 1f, float pitch = 1f)
         {
             foreach (var src in sources)
             {
                 if (src.isPlaying == false)
                 {
-                    src.pitch = 1f;
+                    src.pitch = pitch;
                     src.clip = clip;
                     src.loop = true;
                     src.volume = SoundsVolume * volume;
@@ -224,7 +225,7 @@ namespace DosinisSDK.Audio
             silencingMusic = false;
         }
 
-        public void PlayOneShot(AudioClip clip, float volume = 1, bool silentMusic = false)
+        public void PlayOneShot(AudioClip clip, float volume = 1, bool silentMusic = false, float pitch = 1)
         {
             if (silentMusic && silencingMusic == false)
             {
@@ -242,14 +243,14 @@ namespace DosinisSDK.Audio
                     if (src.isPlaying) 
                         continue;
                     
-                    src.pitch = 1f;
+                    src.pitch = pitch;
                     src.PlayOneShot(clip, SoundsVolume * volume);
                     break;
                 }
             }
         }
         
-        public void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1)
+        public void PlayAtPoint(AudioClip clip, Vector3 position, float minDistance = 1f, float maxDistance = 500f, float volume = 1, float pitch = 1f)
         {
             foreach (var src in worldSources)
             {
@@ -262,20 +263,20 @@ namespace DosinisSDK.Audio
                 src.volume = SoundsVolume * volume;
                 src.minDistance = minDistance;
                 src.maxDistance = maxDistance;
-                src.pitch = 1f;
+                src.pitch = pitch;
             
                 src.Play();
                 break;
             }
         }
         
-        public void PlayClip(AudioClip clip, float volume = 1)
+        public void PlayClip(AudioClip clip, float volume = 1, float pitch = 1f)
         {
             foreach (var src in sources)
             {
                 if (src.isPlaying == false)
                 {
-                    src.pitch = 1f;
+                    src.pitch = pitch;
                     src.clip = clip;
                     src.volume = SoundsVolume * volume;
                     src.Play();
