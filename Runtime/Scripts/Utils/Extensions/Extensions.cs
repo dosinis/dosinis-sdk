@@ -215,19 +215,19 @@ namespace DosinisSDK.Utils
         /// <summary>
         /// Plays a sound effect if the AudioManager is available.
         /// </summary>
-        public static void PlayOneShotSafe(this AudioClip clip, float volume = 1)
+        public static void PlayOneShotSafe(this AudioClip clip, float volume = 1, float pitch = 1f)
         {
             if (App.Core.TryGetModule(out IAudioManager audio))
             {
-                audio.PlayOneShot(clip, volume);
+                audio.PlayOneShot(clip, volume, pitch: pitch);
             }
         }
 
-        public static void PlayOneShotSafeAtPoint(this AudioClip clip, Vector3 point, float minDistance = 3f, float maxDistance = 100f, float volume = 1)
+        public static void PlayOneShotSafeAtPoint(this AudioClip clip, Vector3 point, float minDistance = 3f, float maxDistance = 100f, float volume = 1, float pitch = 1f)
         {
             if (App.Core.TryGetModule(out IAudioManager audio))
             {
-                audio.PlayAtPoint(clip, point, minDistance, maxDistance, volume);
+                audio.PlayAtPoint(clip, point, minDistance, maxDistance, volume, pitch);
             }
         }
         
