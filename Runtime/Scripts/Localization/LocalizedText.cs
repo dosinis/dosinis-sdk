@@ -1,3 +1,4 @@
+using System;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using TMPro;
@@ -13,6 +14,8 @@ namespace DosinisSDK.Localization
 
         public string Key => key;
         
+        private string[] args = Array.Empty<string>();
+
         private ILocalizationManager localizationManager;
         
         protected override void OnInit(IApp app)
@@ -33,7 +36,14 @@ namespace DosinisSDK.Localization
 
         private void OnLanguageChanged()
         {
-            text.text = localizationManager.GetLocalizedString(key);
+            if (localizationManager == null)
+            {
+                return;
+            }
+            
+            text.text = args.Length > 0
+                ? localizationManager.GetLocalizedStringWithArgs(key, args)
+                : localizationManager.GetLocalizedStringWithArgs(key);
         }
 
         private void Reset()
@@ -44,6 +54,19 @@ namespace DosinisSDK.Localization
         public void SetKey(string key)
         {
             this.key = key;
+            OnLanguageChanged();
+        }
+        
+        public void SetKeyWithArgs(string key, params string[] args)
+        {
+            this.key = key;
+            this.args = args;
+            OnLanguageChanged();
+        }
+        
+        public void SetArgs(params string[] args)
+        {
+            this.args = args;
             OnLanguageChanged();
         }
     }
