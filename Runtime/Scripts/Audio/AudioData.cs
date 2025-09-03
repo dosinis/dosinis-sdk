@@ -10,5 +10,6 @@ namespace DosinisSDK.Audio
         public float soundsVolume = 1f;
         public bool isSfxEnabled = true;
         public bool isMusicEnabled = true;
+        public bool initialized = false;
     }
 }
