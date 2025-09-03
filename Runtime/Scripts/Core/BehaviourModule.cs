@@ -29,6 +29,11 @@ namespace DosinisSDK.Core
         {
             return mainConfig as T;
         }
+        protected bool TryGetConfigAs<T>(out T config) where T : ModuleConfig
+        {
+            config = mainConfig as T;
+            return config != null;
+        }
 
         protected void Log(string message)
         {
