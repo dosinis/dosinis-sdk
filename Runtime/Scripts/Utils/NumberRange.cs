@@ -48,12 +48,12 @@ namespace DosinisSDK.Utils
         /// Returns Random between min and max (both inclusive)
         /// </summary>
         /// <returns></returns>
-        public float GetRandom()
+        public readonly float GetRandom()
         {
             return UnityEngine.Random.Range(min, max);
         }
         
-        public float Average()
+        public readonly float Average()
         {
             return (min + max) / 2f;
         }
