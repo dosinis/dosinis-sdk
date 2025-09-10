@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DosinisSDK.Utils;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DosinisSDK.UI.Elements
 {
@@ -16,15 +17,22 @@ namespace DosinisSDK.UI.Elements
         [SerializeField] private float anchorOffset = 0;
         [SerializeField] private bool isVertical = true;
 
+        [SerializeField] private float paddingTop = 0;
+        [SerializeField] private float paddingBottom = 0;
+        [SerializeField] private float paddingLeft = 0;
+        [SerializeField] private float paddingRight = 0;
+
         private readonly List<object> valuesCache = new();
 
         private float elementSize;
+        private float elementVisualSize;
         private int currentPivot;
         private int visibleElementCount;
         private RectTransform anchor = null;
 
         private Element[] currentElements = Array.Empty<Element>();
         private Element[] elementsCache = Array.Empty<Element>();
+        private int[] slotIndices = Array.Empty<int>();
 
         public RectTransform Anchor => anchor;
 
@@ -41,98 +49,64 @@ namespace DosinisSDK.UI.Elements
             }
 
             float currentPosition = isVertical ? anchor.anchoredPosition.y : Mathf.Abs(anchor.anchoredPosition.x);
-            float elementSizeMultiplier = isVertical ? VERTICAL_ELEMENT_SIZE_MULTIPLIER : HORIZONTAL_ELEMENT_SIZE_MULTIPLIER;
-            int pivot = Mathf.Clamp(Mathf.CeilToInt((currentPosition + anchorOffset - (elementSize * elementSizeMultiplier)) / elementSize),
-                0, valuesCache.Count - visibleElementCount);
+            float padStart = isVertical ? paddingTop : paddingLeft;
+            int maxPivot = Mathf.Max(0, valuesCache.Count - visibleElementCount);
+            int pivot = Mathf.Clamp(Mathf.FloorToInt((currentPosition + anchorOffset + padStart) / elementSize), 0, maxPivot);
 
-            while (pivot > currentPivot)
+            if (slotIndices.Length != visibleElementCount)
             {
-                if (pivot + visibleElementCount - 1 >= valuesCache.Count)
-                {
-                    currentPivot = pivot;
-
-                    break;
-                }
-
-                currentPivot += (int)Mathf.Sign(pivot - currentPivot);
-
-                var current = currentElements;
-
-                Array.Copy(currentElements, 1, elementsCache, 0, currentElements.Length - 1);
-
-                TE elementToSwap = (TE)currentElements[0];
-
-                elementsCache[^1] = elementToSwap;
-
-                T value = (T)valuesCache[currentPivot + visibleElementCount - 1];
-
-                elementToSwap.Setup(value);
-
-                currentElements = elementsCache;
-
-                elementsCache = current;
-
-                float elementToSwapPosition = isVertical
-                    ? -elementToSwap.RectTransform.anchoredPosition.y
-                    : elementToSwap.RectTransform.anchoredPosition.x;
-
-                float finalPosition = elementToSwapPosition + elementSize * visibleElementCount;
-
-                elementToSwap.RectTransform.anchoredPosition = isVertical
-                    ? new Vector2(elementToSwap.RectTransform.anchoredPosition.x, finalPosition)
-                    : new Vector2(finalPosition, elementToSwap.RectTransform.anchoredPosition.y);
+                slotIndices = new int[visibleElementCount];
+                for (int k = 0; k < slotIndices.Length; k++) slotIndices[k] = -1;
             }
 
-            while (pivot < currentPivot)
+            for (int i = 0; i < visibleElementCount; i++)
             {
-                if (pivot < 0)
-                {
-                    currentPivot = 0;
+                int dataIndex = pivot + i;
+                Element e = currentElements[i];
 
-                    break;
+                if (dataIndex < 0 || dataIndex >= valuesCache.Count)
+                {
+                    if (e != null) e.Hide();
+                    slotIndices[i] = -1;
+                    continue;
                 }
 
-                currentPivot += (int)Mathf.Sign(pivot - currentPivot);
+                if (slotIndices[i] != dataIndex)
+                {
+                    if (e is TE te)
+                    {
+                        T v = (T)valuesCache[dataIndex];
+                        te.Setup(v);
+                    }
+                    slotIndices[i] = dataIndex;
+                }
 
-                var current = currentElements;
+                if (isVertical)
+                {
+                    float y = -(padStart + dataIndex * elementSize);
+                    e.RectTransform.anchoredPosition = new Vector2(e.RectTransform.anchoredPosition.x, y);
+                }
+                else
+                {
+                    float x = padStart + dataIndex * elementSize;
+                    e.RectTransform.anchoredPosition = new Vector2(x, e.RectTransform.anchoredPosition.y);
+                }
 
-                Array.Copy(currentElements, 0, elementsCache, 1, currentElements.Length - 1);
-
-                TE elementToSwap = (TE)currentElements[visibleElementCount - 1];
-
-                elementsCache[0] = elementToSwap;
-
-                T value = (T)valuesCache[currentPivot];
-
-                elementToSwap.Setup(value);
-
-                currentElements = elementsCache;
-
-                elementsCache = current;
-
-                float elementToSwapPosition = isVertical
-                    ? -elementToSwap.RectTransform.anchoredPosition.y
-                    : elementToSwap.RectTransform.anchoredPosition.x;
-
-                float finalPosition = elementToSwapPosition - elementSize * visibleElementCount;
-
-                elementToSwap.RectTransform.anchoredPosition = isVertical
-                    ? new Vector2(elementToSwap.RectTransform.anchoredPosition.x, finalPosition)
-                    : new Vector2(finalPosition, elementToSwap.RectTransform.anchoredPosition.y);
+                e.Show();
             }
+
+            currentPivot = pivot;
         }
 
         public Element FocusAround<T>(T value)
         {
             int index = valuesCache.IndexOf(value);
-            
             if (index < 0)
             {
                 return null;
             }
 
             anchor.anchoredPosition = GetTarget(value, out Element targetElement);
-            
             return targetElement;
         }
         
@@ -149,11 +123,12 @@ namespace DosinisSDK.UI.Elements
             }
 
             targetElement = GetElement(elementIndex);
-            
+
+            float padStart = isVertical ? paddingTop : paddingLeft;
+
             return isVertical
-                ? new Vector2(anchor.anchoredPosition.x, (elementSize * index + elementSize
-                    / 2) - visibleElementCount / 2f * elementSize)
-                : new Vector2(elementSize * -index, anchor.anchoredPosition.y);
+                ? new Vector2(anchor.anchoredPosition.x, (elementSize * index + elementSize / 2 + padStart) - visibleElementCount / 2f * elementSize)
+                : new Vector2(-(padStart + elementSize * index), anchor.anchoredPosition.y);
         }
         
         public override void Setup<TE, T>(IEnumerable<T> objects)
@@ -163,20 +138,26 @@ namespace DosinisSDK.UI.Elements
                 anchor = (RectTransform)content;
             }
 
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(element.RectTransform);
+
             float viewSize = isVertical ? viewport.rect.height : viewport.rect.width;
 
-            elementSize = isVertical
-                ? element.RectTransform.rect.height + spacing
-                : element.RectTransform.rect.width + spacing;
+            elementVisualSize = isVertical
+                ? element.RectTransform.rect.height
+                : element.RectTransform.rect.width;
+
+            elementSize = elementVisualSize + spacing;
+
             visibleElementCount = Mathf.CeilToInt(viewSize / elementSize) + 1;
 
             var enumerable = objects as T[] ?? objects.ToArray();
 
             float contentSize = elementSize * enumerable.Length;
             if (isVertical)
-                anchor.SetHeight(contentSize);
+                anchor.SetHeight(contentSize + paddingTop + paddingBottom);
             else
-                anchor.SetWidth(contentSize);
+                anchor.SetWidth(contentSize + paddingLeft + paddingRight);
 
             currentPivot = 0;
             valuesCache.Clear();
@@ -186,6 +167,8 @@ namespace DosinisSDK.UI.Elements
             {
                 currentElements = new Element[visibleElementCount];
                 elementsCache = new Element[visibleElementCount];
+                slotIndices = new int[visibleElementCount];
+                for (int k = 0; k < slotIndices.Length; k++) slotIndices[k] = -1;
             }
 
             element.Hide();
@@ -193,36 +176,41 @@ namespace DosinisSDK.UI.Elements
             int i = 0;
             foreach (T value in enumerable)
             {
-                if (i < visibleElementCount)
-                {
-                    Element e;
-                    if (i < spawnedElements.Count)
-                    {
-                        e = spawnedElements[i];
-                    }
-                    else
-                    {
-                        e = Instantiate(element, anchor);
-                        e.Init();
-                        spawnedElements.Add(e);
-                    }
-
-                    currentElements[i] = e;
-
-                    if (e is ElementFor<T> ef)
-                    {
-                        ef.Setup(value);
-                    }
-
-                    e.Show();
-
-                    e.RectTransform.anchoredPosition = isVertical
-                        ? new Vector2(e.RectTransform.anchoredPosition.x, i * -elementSize)
-                        : new Vector2(i * elementSize, e.RectTransform.anchoredPosition.y);
-                }
-
                 valuesCache.Add(value);
                 i++;
+            }
+
+            float padStart = isVertical ? paddingTop : paddingLeft;
+
+            for (int j = 0; j < visibleElementCount; j++)
+            {
+                Element e;
+                if (j < spawnedElements.Count)
+                {
+                    e = spawnedElements[j];
+                }
+                else
+                {
+                    e = Instantiate(element, anchor);
+                    e.Init();
+                    spawnedElements.Add(e);
+                }
+
+                currentElements[j] = e;
+                slotIndices[j] = -1;
+
+                if (isVertical)
+                {
+                    float y = -(padStart + j * elementSize);
+                    e.RectTransform.anchoredPosition = new Vector2(e.RectTransform.anchoredPosition.x, y);
+                }
+                else
+                {
+                    float x = padStart + j * elementSize;
+                    e.RectTransform.anchoredPosition = new Vector2(x, e.RectTransform.anchoredPosition.y);
+                }
+
+                e.Hide();
             }
         }
     }
