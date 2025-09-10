@@ -9,9 +9,6 @@ namespace DosinisSDK.UI.Elements
 {
     public class InfiniteElementSet : ElementSet
     {
-        private const float HORIZONTAL_ELEMENT_SIZE_MULTIPLIER = 1.5f;
-        private const float VERTICAL_ELEMENT_SIZE_MULTIPLIER = 1f;
-        
         [SerializeField] private float spacing = 0;
         [SerializeField] private RectTransform viewport = null;
         [SerializeField] private float anchorOffset = 0;
@@ -26,12 +23,10 @@ namespace DosinisSDK.UI.Elements
 
         private float elementSize;
         private float elementVisualSize;
-        private int currentPivot;
         private int visibleElementCount;
         private RectTransform anchor = null;
 
         private Element[] currentElements = Array.Empty<Element>();
-        private Element[] elementsCache = Array.Empty<Element>();
         private int[] slotIndices = Array.Empty<int>();
 
         public RectTransform Anchor => anchor;
@@ -50,8 +45,21 @@ namespace DosinisSDK.UI.Elements
 
             float currentPosition = isVertical ? anchor.anchoredPosition.y : Mathf.Abs(anchor.anchoredPosition.x);
             float padStart = isVertical ? paddingTop : paddingLeft;
-            int maxPivot = Mathf.Max(0, valuesCache.Count - visibleElementCount);
-            int pivot = Mathf.Clamp(Mathf.FloorToInt((currentPosition + anchorOffset + padStart) / elementSize), 0, maxPivot);
+            float padEnd = isVertical ? paddingBottom : paddingRight;
+            float viewSize = isVertical ? viewport.rect.height : viewport.rect.width;
+
+            float contentExtent = padStart + valuesCache.Count * elementSize + padEnd;
+            float maxLogicalScroll = Mathf.Max(0f, contentExtent - viewSize);
+
+            float logicalScroll = currentPosition + anchorOffset - padStart;
+            if (logicalScroll < 0f) logicalScroll = 0f;
+            if (logicalScroll > maxLogicalScroll) logicalScroll = maxLogicalScroll;
+
+            int maxPivotByData = Mathf.Max(0, valuesCache.Count - visibleElementCount);
+            int maxPivotByScroll = Mathf.Max(0, Mathf.FloorToInt((maxLogicalScroll) / elementSize));
+            int maxPivot = Mathf.Max(maxPivotByData, maxPivotByScroll);
+
+            int pivot = Mathf.Clamp(Mathf.FloorToInt(logicalScroll / elementSize), 0, maxPivot);
 
             if (slotIndices.Length != visibleElementCount)
             {
@@ -94,8 +102,6 @@ namespace DosinisSDK.UI.Elements
 
                 e.Show();
             }
-
-            currentPivot = pivot;
         }
 
         public Element FocusAround<T>(T value)
@@ -158,15 +164,13 @@ namespace DosinisSDK.UI.Elements
                 anchor.SetHeight(contentSize + paddingTop + paddingBottom);
             else
                 anchor.SetWidth(contentSize + paddingLeft + paddingRight);
-
-            currentPivot = 0;
+            
             valuesCache.Clear();
             Clear();
 
             if (visibleElementCount != currentElements.Length)
             {
                 currentElements = new Element[visibleElementCount];
-                elementsCache = new Element[visibleElementCount];
                 slotIndices = new int[visibleElementCount];
                 for (int k = 0; k < slotIndices.Length; k++) slotIndices[k] = -1;
             }
