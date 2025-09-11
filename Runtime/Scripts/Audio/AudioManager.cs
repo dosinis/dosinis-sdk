@@ -30,7 +30,7 @@ namespace DosinisSDK.Audio
         protected override void OnInit(IApp app)
         {
             data = app.DataManager.GetOrCreateData<AudioData>();
-            if (!data.initialized && TryGetConfigAs<AudioConfig>(out var config))
+            if (!data.initialized && TryGetConfigAs<AudioManagerConfig>(out var config))
             {
                 data.masterVolume = config.MasterVolume;
                 data.musicVolume = config.MusicVolume;

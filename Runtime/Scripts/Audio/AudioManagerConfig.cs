@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace DosinisSDK.Audio
 {
-    [CreateAssetMenu(menuName = "Tattoo/AudioConfig", fileName = "AudioConfig")]
+    [CreateAssetMenu(menuName = "DosinisSDK/AudioManagerConfig", fileName = "AudioManagerConfig")]
     
-    public class AudioConfig: ModuleConfig
+    public class AudioManagerConfig: ModuleConfig
     {
         [SerializeField] private float masterVolume = 1f;
         [SerializeField] private float musicVolume = 1f;
