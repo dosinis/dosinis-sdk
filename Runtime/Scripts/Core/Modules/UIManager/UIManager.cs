@@ -216,6 +216,16 @@ namespace DosinisSDK.Core
             HideWindow<T>(null);
         }
 
+        public bool IsWindowShown<T>() where T : IWindow
+        {
+            if (TryGetWindow<T>(out var window))
+            {
+                return window.IsShown;
+            }
+            
+            return false;
+        }
+
         void IProcessable.Process(in float delta)
         {
             foreach (var processed in processedWindows)
