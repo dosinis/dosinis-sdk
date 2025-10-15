@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -5,6 +6,7 @@ namespace DosinisSDK.Core
     public class Widget : MonoBehaviour
     {
         protected Window parentWindow;
+        private bool isInitialized;
 
         internal void Init(IApp app, Window parentWindow)
         {
@@ -15,11 +17,21 @@ namespace DosinisSDK.Core
             parentWindow.OnBeforeHide += OnWindowBeforeHide;
 
             OnInit(app);
+
+            isInitialized = true;
         }
 
         internal void Dispose()
         {
             OnDispose();
+        }
+
+        private void Update()
+        {
+            if (!isInitialized)
+                return;
+            
+            OnProcess(Time.deltaTime);
         }
 
         protected virtual void OnInit(IApp app)
@@ -29,7 +41,12 @@ namespace DosinisSDK.Core
         protected virtual void OnDispose()
         {
         }
-
+        
+        protected virtual void OnProcess(float delta)
+        {
+            
+        }
+        
         protected virtual void OnWindowBeforeShow()
         {
         }
