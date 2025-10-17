@@ -195,6 +195,7 @@ namespace DosinisSDK.Audio
                 if (src && src.gameObject && src.isPlaying && src.clip == clip)
                 {
                     src.Stop();
+                    src.clip = null;
                     break;
                 }
             }
