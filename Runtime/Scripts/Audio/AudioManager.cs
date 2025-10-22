@@ -172,7 +172,7 @@ namespace DosinisSDK.Audio
             return false;
         }
 
-        public void PlayLoop(AudioClip clip, float volume = 1f, float pitch = 1f)
+        public LoopHandle PlayLoop(AudioClip clip, float volume = 1f, float pitch = 1f)
         {
             foreach (var src in sources)
             {
@@ -183,21 +183,19 @@ namespace DosinisSDK.Audio
                     src.loop = true;
                     src.volume = SoundsVolume * volume;
                     src.Play();
-                    break;
+                    return new LoopHandle(src);
                 }
             }
+
+            return new LoopHandle(null);
         }
 
-        public void StopLoop(AudioClip clip)
+        public void StopLoop(LoopHandle handle)
         {
-            foreach (var src in sources)
+            if (handle != null && handle.Source != null)
             {
-                if (src && src.gameObject && src.isPlaying && src.clip == clip)
-                {
-                    src.Stop();
-                    src.clip = null;
-                    break;
-                }
+                handle.Source.Stop();
+                handle.Source.clip = null;
             }
         }
 
