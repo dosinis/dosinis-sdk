@@ -195,6 +195,7 @@ namespace DosinisSDK.Audio
             if (handle != null && handle.Source != null)
             {
                 handle.Source.Stop();
+                handle.Source.loop = false;
                 handle.Source.clip = null;
             }
         }
