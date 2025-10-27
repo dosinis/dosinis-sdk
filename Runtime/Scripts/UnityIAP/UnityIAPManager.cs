@@ -404,12 +404,5 @@ namespace DosinisSDK.UnityIAP
             Warn($"Initialize failed. InitializationFailureReason: {error} {message}");
             moduleReady = true;
         }
-        
-        private struct ProductData
-        {
-            public ProductType type;
-            public Action<IModulesProvider> purchaseCallback;
-            public Action restoreCallback;
-        }
     }
 }

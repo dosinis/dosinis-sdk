@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace DosinisSDK.IAP
 {
-    [CreateAssetMenu(menuName = "DosinisSDK/IAPs/IAPConfig", fileName = "IAPConfig")]
-    public class IAPConfig : ModuleConfig
+    [CreateAssetMenu(menuName = "DosinisSDK/IAPs/IAPManagerConfig", fileName = "IAPManagerConfig")]
+    public class IAPManagerConfig : ModuleConfig
     {
         [SerializeField] private PurchaseHandler[] purchaseHandlers;
         
