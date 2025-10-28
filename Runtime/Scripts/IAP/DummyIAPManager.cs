@@ -59,7 +59,7 @@ namespace DosinisSDK.IAP
 
         public string GetProductTitle(string productId)
         {
-            return "Dummy Product";
+            return "";
         }
 
         public bool IsPurchased(string productId)
