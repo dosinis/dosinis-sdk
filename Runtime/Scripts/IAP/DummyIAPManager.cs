@@ -49,6 +49,10 @@ namespace DosinisSDK.IAP
                 {
                     productData.purchaseCallback?.Invoke(modulesProvider);
                 }
+                else
+                {
+                    LogError($"Could not find product with id {productId} in the registry.");
+                }
             });
         }
 
@@ -76,7 +80,7 @@ namespace DosinisSDK.IAP
             return true;
         }
 
-        public void RegisterProduct(string productId, ProductType productType, Action<IModulesProvider> purchaseCallback, Action restoreCallback)
+        public void RegisterProduct(string productId, ProductType productType, Action<IModulesProvider> purchaseCallback, Action<IModulesProvider> restoreCallback)
         {
             productsRegistry[productId] = new ProductData
             {
@@ -84,6 +88,19 @@ namespace DosinisSDK.IAP
                 purchaseCallback = purchaseCallback,
                 restoreCallback = restoreCallback
             };
+        }
+
+        public PurchaseHandler GetPurchaseHandler(string productId)
+        {
+            foreach (var handler in config.PurchaseHandlers)
+            {
+                if (handler.Id == productId)
+                {
+                    return handler;
+                }
+            }
+
+            return null;
         }
     }
 }

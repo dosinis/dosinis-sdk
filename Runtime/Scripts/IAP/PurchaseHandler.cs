@@ -28,9 +28,9 @@ namespace DosinisSDK.IAP
 
         public abstract void OnPurchased(IModulesProvider modulesProvider);
 
-        public virtual void Restore()
+        public virtual void Restore(IModulesProvider modulesProvider)
         {
-            OnPurchased(App.Core);
+            OnPurchased(modulesProvider);
         }
         
         public virtual string GetTitle()

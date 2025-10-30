@@ -15,6 +15,7 @@ namespace DosinisSDK.IAP
         void RestorePurchases();
         bool IsSubscribed(string productId);
         void RegisterProduct(string productId, ProductType productType, 
-            Action<IModulesProvider> purchaseCallback, Action restoreCallback);
+            Action<IModulesProvider> purchaseCallback, Action<IModulesProvider> restoreCallback);
+        PurchaseHandler GetPurchaseHandler(string productId);
     }
 }

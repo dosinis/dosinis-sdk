@@ -7,6 +7,6 @@ namespace DosinisSDK.IAP
     {
         public ProductType type;
         public Action<IModulesProvider> purchaseCallback;
-        public Action restoreCallback;
+        public Action<IModulesProvider> restoreCallback;
     }
 }
