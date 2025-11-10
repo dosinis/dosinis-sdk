@@ -11,7 +11,7 @@ namespace DosinisSDK.IAP
     {
         [SerializeField] private PurchaseHandler[] purchaseHandlers;
         
-        public IReadOnlyCollection<PurchaseHandler> PurchaseHandlers => purchaseHandlers;
+        public IReadOnlyList<PurchaseHandler> PurchaseHandlers => purchaseHandlers;
 
 #if UNITY_EDITOR
         [Button]

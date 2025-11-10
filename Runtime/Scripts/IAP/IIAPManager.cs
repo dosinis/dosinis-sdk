@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DosinisSDK.Core;
 
 namespace DosinisSDK.IAP
@@ -17,5 +18,6 @@ namespace DosinisSDK.IAP
         void RegisterProduct(string productId, ProductType productType, 
             Action<IModulesProvider> purchaseCallback, Action<IModulesProvider> restoreCallback);
         PurchaseHandler GetPurchaseHandler(string productId);
+        IReadOnlyList<PurchaseHandler> GetPurchaseHandlers();
     }
 }

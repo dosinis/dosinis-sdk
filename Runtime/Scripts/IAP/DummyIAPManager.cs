@@ -102,5 +102,10 @@ namespace DosinisSDK.IAP
 
             return null;
         }
+
+        public IReadOnlyList<PurchaseHandler> GetPurchaseHandlers()
+        {
+            return config.PurchaseHandlers;
+        }
     }
 }
