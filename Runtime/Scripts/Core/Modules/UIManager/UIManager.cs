@@ -24,22 +24,12 @@ namespace DosinisSDK.Core
             
             foreach (var win in GetComponentsInChildren<IWindow>(true))
             {
-                windows.Add(win.GetType(), win);
+                RegisterWindow(win, false);
             }
 
             foreach (var win in windows)
             {
                 InitWindow(win.Value);
-                
-                if (win.Value is IProcessable proc)
-                {
-                    processedWindows.Add(proc);
-                }
-
-                if (win.Value is ITickable tickable)
-                {
-                    tickableWindows.Add(tickable);
-                }
             }
         }
 
@@ -59,6 +49,16 @@ namespace DosinisSDK.Core
             else
             {
                 window.Init(app);
+            }
+            
+            if (window is IProcessable proc)
+            {
+                processedWindows.Add(proc);
+            }
+
+            if (window is ITickable tickable)
+            {
+                tickableWindows.Add(tickable);
             }
         }
 
@@ -224,6 +224,16 @@ namespace DosinisSDK.Core
             }
             
             return false;
+        }
+
+        public void RegisterWindow(IWindow window, bool initialize = true)
+        {
+            windows.Add(window.GetType(), window);
+
+            if (initialize)
+            {
+                InitWindow(window);
+            }
         }
 
         void IProcessable.Process(in float delta)
