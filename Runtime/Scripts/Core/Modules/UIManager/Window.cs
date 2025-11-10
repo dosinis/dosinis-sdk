@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -12,9 +13,10 @@ namespace DosinisSDK.Core
 
         protected IUIManager uiManager;
         private IEventsManager eventsManager;
+        private IApp app;
         
         private IWindowTransition transition;
-        private Widget[] widgets = { };
+        private readonly List<Widget> widgets = new();
 
         public event Action OnShown;
         public event Action OnHidden;
@@ -34,6 +36,7 @@ namespace DosinisSDK.Core
             if (Initialized)
                 return;
 
+            this.app = app;
             eventsManager = app.EventsManager;
             uiManager = app.UIManager;
             
@@ -49,7 +52,7 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
-            widgets = GetComponentsInChildren<Widget>(true);
+            GetComponentsInChildren(true, widgets);
 
             foreach (var widget in widgets)
             {
@@ -176,6 +179,16 @@ namespace DosinisSDK.Core
             }
             
             eventsManager.Invoke(new CoreEvents.OnWindowClosedEvent(this));
+        }
+
+        public virtual void Refresh()
+        {
+        }
+
+        public void RegisterWidget(Widget widget)
+        {
+            widget.Init(app, this);
+            widgets.Add(widget);
         }
 
         public T GetWidget<T>() where T : Widget

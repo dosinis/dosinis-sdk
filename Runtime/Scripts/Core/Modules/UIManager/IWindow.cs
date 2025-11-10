@@ -24,5 +24,7 @@ namespace DosinisSDK.Core
         void ForwardTo<T>(bool waitUntilHidden = false) where T : IWindow;
         void Hide();
         void Hide(Action done);
+        void Refresh();
+        void RegisterWidget(Widget widget);
     }
 }
