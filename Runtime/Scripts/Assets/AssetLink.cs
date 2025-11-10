@@ -54,6 +54,8 @@ namespace DosinisSDK.Assets
 #endif
         public string Path => path;
         
+        public bool IsValid => string.IsNullOrEmpty(path) == false;
+        
         public T GetAsset<T>() where T : Object
         {
 #if UNITY_EDITOR
