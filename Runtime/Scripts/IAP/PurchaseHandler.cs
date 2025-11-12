@@ -6,10 +6,12 @@ namespace DosinisSDK.IAP
     public abstract class PurchaseHandler : ScriptableObject
     {
         [SerializeField] private Sprite icon;
+        [SerializeField] private GameObject decoratorPrefab;
         [SerializeField] private string id;
         [SerializeField] private string fallbackTitle;
         [SerializeField] private ProductType productType;
 
+        public GameObject DecoratorPrefab => decoratorPrefab;
         public Sprite MainIcon => icon;
         public string Id => id;
         public ProductType ProductType => productType;
