@@ -226,7 +226,7 @@ namespace DosinisSDK.Core
             Debug.Log($"Registered {mType.Name} successfully");
         }
         
-        public T CreateModule<T>(T source = default, ModuleConfig config = null) where T : class, IModule
+        public T CreateModule<T>(T source = null, ModuleConfig config = null) where T : class, IModule
         {
             if (typeof(T).IsSubclassOf(typeof(BehaviourModule)))
             {
@@ -267,10 +267,10 @@ namespace DosinisSDK.Core
             return source;
         }
 
-        public async Task CreateModuleAsync<T>(T source = default, ModuleConfig config = null) where T : class, IAsyncModule
+        public async Task CreateModuleAsync<T>(T source = null, ModuleConfig config = null) where T : class, IAsyncModule
         {
-            var module = CreateModule(source, config) as IAsyncModule;
-
+            IAsyncModule module = source == null ? CreateModule<T>(config: config) : CreateModule(source, config);
+            
             await module.InitAsync(this);
         }
         
