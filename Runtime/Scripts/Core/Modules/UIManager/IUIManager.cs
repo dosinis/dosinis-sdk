@@ -20,5 +20,7 @@ namespace DosinisSDK.Core
         void HideWindow<T>() where T : IWindow;
         bool IsWindowShown<T>() where T : IWindow;
         void RegisterWindow(IWindow window, bool initialize = true);
+        bool AnyPopupShown();
+        Task WaitForPopupsHidden();
     }
 }

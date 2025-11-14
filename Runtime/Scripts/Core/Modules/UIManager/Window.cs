@@ -10,7 +10,8 @@ namespace DosinisSDK.Core
         [SerializeField] protected bool ignoreSafeArea = false;
 #endif
         [SerializeField] protected Button closeButton;
-
+        [SerializeField] private bool isPopup = false;
+        
         protected IUIManager uiManager;
         private IEventsManager eventsManager;
         private IApp app;
@@ -26,6 +27,7 @@ namespace DosinisSDK.Core
         public bool Activated { get; private set; }
         public bool IsShown => gameObject.activeSelf;
         public bool Initialized { get; private set; }
+        public bool IsPopup => isPopup;
 
         private RectTransform rect;
         private Action hiddenCallback;

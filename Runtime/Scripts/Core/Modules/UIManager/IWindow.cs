@@ -18,6 +18,7 @@ namespace DosinisSDK.Core
         bool Activated { get; }
         bool IsShown { get; }
         bool Initialized { get; }
+        bool IsPopup { get; }
 
         void Show();
         void Show(Action done, Action onHidden = null, Action onBeforeHide = null);

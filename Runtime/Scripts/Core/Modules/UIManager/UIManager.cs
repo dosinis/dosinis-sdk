@@ -147,7 +147,7 @@ namespace DosinisSDK.Core
 
         public async Task WaitForWindowAsync<T>() where T : IWindow
         {
-            if (!IsWindowReady<T>())
+            while (IsWindowReady<T>() == false)
             {
                 await Task.Yield();
             }
@@ -233,6 +233,27 @@ namespace DosinisSDK.Core
             if (initialize)
             {
                 InitWindow(window);
+            }
+        }
+
+        public bool AnyPopupShown()
+        {
+            foreach (var w in windows)
+            {
+                if (w.Value.IsPopup && w.Value.IsShown)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public async Task WaitForPopupsHidden()
+        {
+            while (AnyPopupShown())
+            {
+                await Task.Yield();
             }
         }
 
