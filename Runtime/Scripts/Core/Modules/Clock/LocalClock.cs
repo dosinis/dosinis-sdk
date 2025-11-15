@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace DosinisSDK.Core
 {
@@ -30,6 +31,7 @@ namespace DosinisSDK.Core
         private IApp app;
         private IDataManager dataManager;
         private LocalClockData data;
+        private readonly List<string> newDayCache = new();
         
         private bool isNewDay;
         
@@ -87,6 +89,23 @@ namespace DosinisSDK.Core
                 data.lastActiveDayOfYear = DayOfYear;
                 dataManager.SaveData(data);
             }
+        }
+        
+        public bool IsNewDayCached(string forId)
+        {
+            if (isNewDay == false)
+                return false;
+
+            if (string.IsNullOrEmpty(forId))
+            {
+                Warn("Id is null or empty!");
+            }
+            
+            if (newDayCache.Contains(forId))
+                return false;
+            
+            newDayCache.Add(forId);
+            return true;
         }
     }
 }

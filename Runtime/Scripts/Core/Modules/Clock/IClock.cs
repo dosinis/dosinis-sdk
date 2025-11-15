@@ -22,5 +22,11 @@ namespace DosinisSDK.Core
         
         long TimeInactive { get; }
         bool IsNewDay { get; }
+        /// <summary>
+        /// Return if it's a new day only once per session for specified id
+        /// </summary>
+        /// <param name="forId">Specified id used for caching</param>
+        /// <returns></returns>
+        bool IsNewDayCached(string forId);
     }
 }
