@@ -79,7 +79,7 @@ namespace DosinisSDK.Editor
                 loadedObj = EditorGUI.ObjectField(objRect, loadedObj, type, false);
             }
             
-            if (AssetDatabase.GetAssetPath(loadedObj).StartsWith("Assets/Resources/") == false) // && not addressable
+            if (loadedObj != null && AssetDatabase.GetAssetPath(loadedObj).StartsWith("Assets/Resources/") == false) // && not addressable
             {
                 EditorGUI.HelpBox(idRect, $"Asset is invalid (should be in Resources folder or Addressable)", MessageType.Error);
             }
@@ -101,9 +101,11 @@ namespace DosinisSDK.Editor
             var loadedObj = AssetDatabase.LoadAssetAtPath<Object>(assetPath);
             
             Draw(ref loadedObj, position, property, label);
-           
+   
             if (loadedObj == null)
             {
+                guidProperty.stringValue = string.Empty;
+                pathProperty.stringValue = string.Empty;
                 property.serializedObject.ApplyModifiedProperties();
                 return;
             }
