@@ -61,6 +61,17 @@ namespace DosinisSDK.Pool
             return newObj;
         }
         
+        public IEnumerable<T> GetAllActive()
+        {
+            foreach (var obj in pooledObjects)
+            {
+                if (obj.gameObject.activeSelf)
+                {
+                    yield return obj as T;
+                }
+            }
+        }
+        
         public static Pool<T> GetOrCreate(IPooled source)
         {
             if (pools.TryGetValue(source.GetType(), out var pool))
