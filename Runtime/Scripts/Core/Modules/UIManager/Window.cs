@@ -158,28 +158,37 @@ namespace DosinisSDK.Core
             {
                 transition.HideTransition(() =>
                 {
-                    gameObject.SetActive(false);
-                    Hidden();
-                    OnHidden?.Invoke();
-
-                    hiddenCallback?.Invoke();
-                    hiddenCallback = null;
-                    
-                    done?.Invoke();
+                    CompleteHideWindow(done);
                 });
             }
             else
             {
-                gameObject.SetActive(false);
-                Hidden();
-                OnHidden?.Invoke();
-
-                hiddenCallback?.Invoke();
-                hiddenCallback = null;
-                
-                done?.Invoke();
+                CompleteHideWindow(done);
             }
-            
+
+            eventsManager.Invoke(new CoreEvents.OnWindowClosedEvent(this));
+        }
+
+        private void CompleteHideWindow(Action done = null)
+        {
+            gameObject.SetActive(false);
+            Hidden();
+            OnHidden?.Invoke();
+
+            hiddenCallback?.Invoke();
+            hiddenCallback = null;
+
+            done?.Invoke();
+        }
+
+        public void HideImmediately()
+        {
+            Activated = false;
+            OnBeforeHide?.Invoke();
+            BeforeHidden();
+            beforeHideCallback?.Invoke();
+            beforeHideCallback = null;
+            CompleteHideWindow();
             eventsManager.Invoke(new CoreEvents.OnWindowClosedEvent(this));
         }
 
@@ -206,7 +215,7 @@ namespace DosinisSDK.Core
             Debug.LogError($"Widget {nameof(T)} not found");
             return default;
         }
-        
+
         protected virtual void BeforeShown()
         {
         }
@@ -222,7 +231,7 @@ namespace DosinisSDK.Core
         protected virtual void Hidden()
         {
         }
-        
+
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         private void ApplySafeArea()
         {
@@ -244,4 +253,3 @@ namespace DosinisSDK.Core
 #endif
     }
 }
-
