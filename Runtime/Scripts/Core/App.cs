@@ -79,11 +79,12 @@ namespace DosinisSDK.Core
             lateProcessables.Clear();
             tickables.Clear();
 
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-            
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0).completed+=(operation =>
+            {
+                
             Core = null;
-
             Init(manifest);
+            } );
         }
 
         public T GetModule<T>() where T : class, IModule
