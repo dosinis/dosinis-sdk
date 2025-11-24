@@ -42,9 +42,6 @@ namespace DosinisSDK.IAP
         {
             timer.Delay(0.25f, () =>
             {
-                onPurchased?.Invoke(true);
-                OnProductPurchased?.Invoke(productId);
-                
                 if (productsRegistry.TryGetValue(productId, out var productData))
                 {
                     productData.purchaseCallback?.Invoke(modulesProvider);
@@ -53,6 +50,9 @@ namespace DosinisSDK.IAP
                 {
                     LogError($"Could not find product with id {productId} in the registry.");
                 }
+                
+                onPurchased?.Invoke(true);
+                OnProductPurchased?.Invoke(productId);
             });
         }
 
