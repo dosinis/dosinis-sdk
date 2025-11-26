@@ -216,6 +216,11 @@ namespace DosinisSDK.Core
             HideWindow<T>(null);
         }
 
+        public void HideImmediately<T>() where T : IWindow
+        {
+            GetWindow<T>().HideImmediately();
+        }
+
         public bool IsWindowShown<T>() where T : IWindow
         {
             if (TryGetWindow<T>(out var window))

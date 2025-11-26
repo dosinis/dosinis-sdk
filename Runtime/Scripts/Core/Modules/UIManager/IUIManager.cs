@@ -18,6 +18,7 @@ namespace DosinisSDK.Core
             where T : IWindowWithArgs<TArgs>;
         void HideWindow<T>(Action callBack) where T : IWindow;
         void HideWindow<T>() where T : IWindow;
+        void HideImmediately<T>() where T : IWindow;
         bool IsWindowShown<T>() where T : IWindow;
         void RegisterWindow(IWindow window, bool initialize = true);
         bool AnyPopupShown();
