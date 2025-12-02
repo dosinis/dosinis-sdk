@@ -1,3 +1,4 @@
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Elements
@@ -27,10 +28,10 @@ namespace DosinisSDK.UI.Elements
                 return;
 
             initialized = true;
-            OnInit();
+            OnInit(App.Core);
         }
 
-        protected virtual void OnInit()
+        protected virtual void OnInit(IApp app)
         {
         }
 
