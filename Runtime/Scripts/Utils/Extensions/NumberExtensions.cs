@@ -27,9 +27,9 @@ namespace DosinisSDK.Utils
                 return $"{time / 3600}h {time / 60 % 60}m";
             }
 
-            // Days
+            // Days Hours
 
-            return $"{time / 86400}d";
+            return $"{time / 86400}d {time / 3600 % 24}h";
         }
         
         /// <summary>
