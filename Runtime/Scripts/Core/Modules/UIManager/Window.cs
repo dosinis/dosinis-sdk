@@ -202,6 +202,12 @@ namespace DosinisSDK.Core
             widgets.Add(widget);
         }
 
+        public void ClearHideCallbacks()
+        {
+            hiddenCallback = null;
+            beforeHideCallback = null;
+        }
+
         public T GetWidget<T>() where T : Widget
         {
             foreach (var w in widgets)

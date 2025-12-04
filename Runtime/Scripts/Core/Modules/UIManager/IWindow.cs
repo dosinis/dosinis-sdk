@@ -28,5 +28,6 @@ namespace DosinisSDK.Core
         void HideImmediately();
         void Refresh();
         void RegisterWidget(Widget widget);
+        void ClearHideCallbacks();
     }
 }
