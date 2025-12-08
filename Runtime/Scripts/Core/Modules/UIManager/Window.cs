@@ -11,11 +11,11 @@ namespace DosinisSDK.Core
 #endif
         [SerializeField] protected Button closeButton;
         [SerializeField] private bool isPopup = false;
-        
+
         protected IUIManager uiManager;
         private IEventsManager eventsManager;
         private IApp app;
-        
+
         private IWindowTransition transition;
         private readonly List<Widget> widgets = new();
 
@@ -41,7 +41,7 @@ namespace DosinisSDK.Core
             this.app = app;
             eventsManager = app.EventsManager;
             uiManager = app.UIManager;
-            
+
             if (TryGetComponent(out IWindowTransition t))
             {
                 transition = t;
@@ -49,7 +49,7 @@ namespace DosinisSDK.Core
             }
 
             rect = GetComponent<RectTransform>();
-            
+
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
             if (ignoreSafeArea == false)
                 ApplySafeArea();
@@ -61,14 +61,14 @@ namespace DosinisSDK.Core
                 widget.Init(app, this);
             }
 
-            if (closeButton) 
+            if (closeButton)
                 closeButton.OnClick += Hide;
-            
+
             OnInit(app);
-            
+
             Initialized = true;
         }
-        
+
         void IWindow.Dispose()
         {
             OnDispose();
@@ -90,6 +90,25 @@ namespace DosinisSDK.Core
             Show(null);
         }
 
+        public void ShowImmediately()
+        {
+            ShowImmediately(null);
+        }
+
+        public void ShowImmediately(Action done, Action onHidden = null, Action onBeforeHide = null)
+        {
+            gameObject.SetActive(true);
+            Activated = true;
+            OnBeforeShow?.Invoke();
+            BeforeShown();
+            hiddenCallback += onHidden;
+            beforeHideCallback += onBeforeHide;
+            Shown();
+            OnShown?.Invoke();
+            done?.Invoke();
+            eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
+        }
+
         public void Show(Action done, Action onHidden = null, Action onBeforeHide = null)
         {
             gameObject.SetActive(true);
@@ -107,7 +126,7 @@ namespace DosinisSDK.Core
                 {
                     Shown();
                     OnShown?.Invoke();
-                    
+
                     done?.Invoke();
                 });
             }
@@ -115,23 +134,20 @@ namespace DosinisSDK.Core
             {
                 Shown();
                 OnShown?.Invoke();
-                
+
                 done?.Invoke();
             }
-            
+
             eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
         }
 
         public void ForwardTo<T>(bool waitUntilHidden = true) where T : IWindow
         {
             var window = uiManager.GetWindow<T>();
-            
+
             if (waitUntilHidden)
             {
-                Hide(() =>
-                {
-                    window.Show(null, onHidden: Show);
-                });
+                Hide(() => { window.Show(null, onHidden: Show); });
             }
             else
             {
@@ -150,16 +166,13 @@ namespace DosinisSDK.Core
             Activated = false;
             OnBeforeHide?.Invoke();
             BeforeHidden();
-            
+
             beforeHideCallback?.Invoke();
             beforeHideCallback = null;
 
             if (transition != null)
             {
-                transition.HideTransition(() =>
-                {
-                    CompleteHideWindow(done);
-                });
+                transition.HideTransition(() => { CompleteHideWindow(done); });
             }
             else
             {

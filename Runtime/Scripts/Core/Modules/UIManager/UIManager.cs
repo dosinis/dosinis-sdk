@@ -8,7 +8,7 @@ namespace DosinisSDK.Core
     public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
         [SerializeField] private bool safeMode = true;
-        
+
         public Camera Camera { get; private set; }
 
         private readonly Dictionary<Type, IWindow> windows = new();
@@ -19,9 +19,9 @@ namespace DosinisSDK.Core
         protected override void OnInit(IApp app)
         {
             this.app = app;
-            
+
             Camera = GetComponentInChildren<Camera>();
-            
+
             foreach (var win in GetComponentsInChildren<IWindow>(true))
             {
                 RegisterWindow(win, false);
@@ -43,14 +43,15 @@ namespace DosinisSDK.Core
                 }
                 catch (Exception ex)
                 {
-                    LogError($"Error while initializing {window.GetType().Name}! {ex.Message} \n {ex.StackTrace}. You can disable safe mode in UIManager component.");
+                    LogError(
+                        $"Error while initializing {window.GetType().Name}! {ex.Message} \n {ex.StackTrace}. You can disable safe mode in UIManager component.");
                 }
             }
             else
             {
                 window.Init(app);
             }
-            
+
             if (window is IProcessable proc)
             {
                 processedWindows.Add(proc);
@@ -94,7 +95,7 @@ namespace DosinisSDK.Core
                     return canvas;
                 }
             }
-            
+
             LogError($"No Canvas with RenderMode {renderMode} is available!");
             return canvases[0];
         }
@@ -175,7 +176,8 @@ namespace DosinisSDK.Core
         }
 
         // ReSharper disable once MethodOverloadWithOptionalParameter
-        public void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow
+        public void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null)
+            where T : IWindow
         {
             var window = GetWindow<T>();
 
@@ -192,7 +194,8 @@ namespace DosinisSDK.Core
             ShowWindow<T>(null);
         }
 
-        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null, Action onBeforeHide = null)
+        public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null,
+            Action onBeforeHide = null)
             where T : IWindowWithArgs<TArgs>
         {
             var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
@@ -205,9 +208,35 @@ namespace DosinisSDK.Core
             window.Show(args, shown, onHidden, onBeforeHide);
         }
 
+        public void ShowWindowImmediately<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null)
+            where T : Window
+        {
+            var window = GetWindow<T>();
+
+            if (window.Initialized == false)
+            {
+                InitWindow(window);
+            }
+
+            window.ShowImmediately(shown, onHidden, onBeforeHide);
+        }
+
+        public void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null,
+            Action onBeforeHide = null) where T : IWindowWithArgs<TArgs>
+        {
+            var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
+
+            if (window.Initialized == false)
+            {
+                InitWindow(window);
+            }
+
+            window.ShowImmediately(args, shown, onHidden, onBeforeHide);
+        }
+
         public void HideWindow<T>(Action hidden) where T : IWindow
         {
-            var window =  GetWindow<T>();
+            var window = GetWindow<T>();
             window.Hide(hidden);
         }
 
@@ -227,7 +256,7 @@ namespace DosinisSDK.Core
             {
                 return window.IsShown;
             }
-            
+
             return false;
         }
 
