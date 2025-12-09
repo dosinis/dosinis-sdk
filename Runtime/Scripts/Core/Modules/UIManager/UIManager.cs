@@ -43,8 +43,7 @@ namespace DosinisSDK.Core
                 }
                 catch (Exception ex)
                 {
-                    LogError(
-                        $"Error while initializing {window.GetType().Name}! {ex.Message} \n {ex.StackTrace}. You can disable safe mode in UIManager component.");
+                    LogError($"Error while initializing {window.GetType().Name}! {ex.Message} \n {ex.StackTrace}. You can disable safe mode in UIManager component.");
                 }
             }
             else
@@ -176,8 +175,7 @@ namespace DosinisSDK.Core
         }
 
         // ReSharper disable once MethodOverloadWithOptionalParameter
-        public void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null)
-            where T : IWindow
+        public void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow
         {
             var window = GetWindow<T>();
 
@@ -208,8 +206,7 @@ namespace DosinisSDK.Core
             window.Show(args, shown, onHidden, onBeforeHide);
         }
 
-        public void ShowWindowImmediately<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null)
-            where T : Window
+        public void ShowWindowImmediately<T>( Action onHidden = null, Action onBeforeHide = null) where T : Window
         {
             var window = GetWindow<T>();
 
@@ -218,11 +215,10 @@ namespace DosinisSDK.Core
                 InitWindow(window);
             }
 
-            window.ShowImmediately(shown, onHidden, onBeforeHide);
+            window.ShowImmediately(onHidden, onBeforeHide);
         }
 
-        public void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null,
-            Action onBeforeHide = null) where T : IWindowWithArgs<TArgs>
+        public void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, Action onBeforeHide = null) where T : IWindowWithArgs<TArgs>
         {
             var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
 
@@ -231,7 +227,7 @@ namespace DosinisSDK.Core
                 InitWindow(window);
             }
 
-            window.ShowImmediately(args, shown, onHidden, onBeforeHide);
+            window.ShowImmediately(args,  onHidden, onBeforeHide);
         }
 
         public void HideWindow<T>(Action hidden) where T : IWindow

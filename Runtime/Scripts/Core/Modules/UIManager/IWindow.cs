@@ -21,8 +21,7 @@ namespace DosinisSDK.Core
         bool IsPopup { get; }
 
         void Show();
-        void ShowImmediately();
-        void ShowImmediately(Action done, Action onHidden = null, Action onBeforeHide = null);
+        void ShowImmediately(Action onHidden = null, Action onBeforeHide = null);
         
         void Show(Action done, Action onHidden = null, Action onBeforeHide = null);
         void ForwardTo<T>(bool waitUntilHidden = false) where T : IWindow;

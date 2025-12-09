@@ -89,13 +89,8 @@ namespace DosinisSDK.Core
         {
             Show(null);
         }
-
-        public void ShowImmediately()
-        {
-            ShowImmediately(null);
-        }
-
-        public void ShowImmediately(Action done, Action onHidden = null, Action onBeforeHide = null)
+        
+        public void ShowImmediately(Action onHidden = null, Action onBeforeHide = null)
         {
             gameObject.SetActive(true);
             Activated = true;
@@ -105,7 +100,6 @@ namespace DosinisSDK.Core
             beforeHideCallback += onBeforeHide;
             Shown();
             OnShown?.Invoke();
-            done?.Invoke();
             eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
         }
 
@@ -147,7 +141,10 @@ namespace DosinisSDK.Core
 
             if (waitUntilHidden)
             {
-                Hide(() => { window.Show(null, onHidden: Show); });
+                Hide(() =>
+                {
+                    window.Show(null, onHidden: Show);
+                });
             }
             else
             {
@@ -172,7 +169,10 @@ namespace DosinisSDK.Core
 
             if (transition != null)
             {
-                transition.HideTransition(() => { CompleteHideWindow(done); });
+                transition.HideTransition(() =>
+                {
+                    CompleteHideWindow(done);
+                });
             }
             else
             {

@@ -12,17 +12,17 @@ namespace DosinisSDK.Core
             Show(done, onHidden, onBeforeHide);
         }
 
-        public void ShowImmediately(T args, Action done=null, Action onHidden = null, Action onBeforeHide = null)
+        public void ShowImmediately(T args, Action onHidden = null, Action onBeforeHide = null)
         {
             this.args = args;
-            ShowImmediately(done,onHidden, onBeforeHide);
+            ShowImmediately(onHidden, onBeforeHide);
         }
     }
 
     public interface IWindowWithArgs<in T> : IWindow
     {
         void Show(T args, Action done = null, Action onHidden = null, Action onBeforeHide = null);
-        void ShowImmediately(T args,Action done=null, Action onHidden = null, Action onBeforeHide = null);
+        void ShowImmediately(T args, Action onHidden = null, Action onBeforeHide = null);
     }
 }
 
