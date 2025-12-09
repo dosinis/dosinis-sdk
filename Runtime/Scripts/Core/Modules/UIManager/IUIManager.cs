@@ -14,6 +14,9 @@ namespace DosinisSDK.Core
         bool IsWindowReady<T>() where T : IWindow;
         void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow;
         void ShowWindow<T>() where T : IWindow;
+        void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : Window;
+        void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, Action onBeforeHide = null)
+            where T : IWindowWithArgs<TArgs>;
         void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null, Action onBeforeHide = null)
             where T : IWindowWithArgs<TArgs>;
         void HideWindow<T>(Action hidden) where T : IWindow;
