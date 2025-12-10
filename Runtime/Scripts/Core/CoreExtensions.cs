@@ -334,5 +334,10 @@ namespace DosinisSDK.Core
                 dictionary.Remove(key);
             }
         }
+
+        public static bool Approx(this float value, float other, float tolerance = 0.0001f)
+        {
+            return Mathf.Abs(value - other) <= tolerance;
+        }
     }
 }
