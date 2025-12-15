@@ -122,7 +122,7 @@ namespace DosinisSDK.Utils
         
         public static void SnapToChild(this ScrollRect scrollRect, RectTransform child, bool ignoreX = false, bool ignoreY = false)
         {
-            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
             
             Vector2 viewportLocalPosition = scrollRect.viewport.localPosition;
             Vector2 childLocalPosition = child.localPosition;

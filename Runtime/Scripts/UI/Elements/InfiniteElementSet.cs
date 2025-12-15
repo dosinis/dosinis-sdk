@@ -143,9 +143,8 @@ namespace DosinisSDK.UI.Elements
             {
                 anchor = (RectTransform)content;
             }
-
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(element.RectTransform);
+            
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)content);
 
             float viewSize = isVertical ? viewport.rect.height : viewport.rect.width;
 
