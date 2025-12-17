@@ -19,7 +19,7 @@ namespace DosinisSDK.Vfx
         /// <param name="done">Callback when vfx is no longer alive</param>
         /// <returns></returns>
         long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default,
-            Action done = null);
+            Action done = null, bool forceKeepLocalOrientation = false);
         
         bool IsPlaying(IVfx vfx, long key);
 

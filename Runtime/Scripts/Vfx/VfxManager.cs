@@ -61,7 +61,8 @@ namespace DosinisSDK.Vfx
             return key;
         }
 
-        public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default, Action done = null)
+        public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null,
+            Vector3 offset = default, Action done = null, bool forceKeepLocalOrientation = false)
         {
             if (vfx == null)
             {
@@ -101,6 +102,11 @@ namespace DosinisSDK.Vfx
             
             var key = Helper.GetRandomLong();
             effectsCache.Add(key, ps);
+
+            if (forceKeepLocalOrientation)
+            {
+                ps.Transform.localRotation = Quaternion.identity;
+            }
 
             if (forceKeepOrientation)
             {
