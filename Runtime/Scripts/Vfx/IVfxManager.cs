@@ -17,9 +17,10 @@ namespace DosinisSDK.Vfx
         /// <param name="sfx">Sound effect</param>
         /// <param name="offset">Offset from parent</param>
         /// <param name="done">Callback when vfx is no longer alive</param>
+        /// <param name="resetLocalOrientation">Reset local orientation</param>
         /// <returns></returns>
         long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null, Vector3 offset = default,
-            Action done = null);
+            Action done = null, bool resetLocalOrientation = false);
         
         bool IsPlaying(IVfx vfx, long key);
 
