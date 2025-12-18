@@ -62,7 +62,7 @@ namespace DosinisSDK.Vfx
         }
 
         public long Play(IVfx vfx, bool forceKeepOrientation = true, Transform parent = null, AudioClip sfx = null,
-            Vector3 offset = default, Action done = null, bool forceKeepLocalOrientation = false)
+            Vector3 offset = default, Action done = null, bool resetLocalOrientation = false)
         {
             if (vfx == null)
             {
@@ -103,7 +103,7 @@ namespace DosinisSDK.Vfx
             var key = Helper.GetRandomLong();
             effectsCache.Add(key, ps);
 
-            if (forceKeepLocalOrientation)
+            if (resetLocalOrientation)
             {
                 ps.Transform.localRotation = Quaternion.identity;
             }
