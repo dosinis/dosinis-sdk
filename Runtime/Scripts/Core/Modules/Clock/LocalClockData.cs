@@ -1,5 +1,8 @@
+using System;
+
 namespace DosinisSDK.Core
 {
+    [Serializable]
     public class LocalClockData : ModuleData
     {
         public long lastTimeActive;
