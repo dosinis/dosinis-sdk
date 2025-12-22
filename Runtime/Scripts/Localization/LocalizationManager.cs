@@ -151,7 +151,8 @@ namespace DosinisSDK.Localization
         public string GetLocalizedStringWithArgs(string key, params string[] args)
         {
             var localizedString = GetLocalizedString(key);
-            return string.Format(localizedString, args);
+            return args.Length>0 ? string.Format(localizedString, args) : localizedString;
+
         }
     }
 }
