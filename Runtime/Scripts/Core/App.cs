@@ -44,6 +44,7 @@ namespace DosinisSDK.Core
         // Static
 
         private static Action onAppInitialized;
+        public static int InitProgress { get; private set; }
         public static bool Initialized { get; private set; }
         public static IApp Core { get; private set; }
         public const string MANIFEST_PATH = "ModuleManifest";
@@ -79,12 +80,11 @@ namespace DosinisSDK.Core
             lateProcessables.Clear();
             tickables.Clear();
 
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0).completed+=(operation =>
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0).completed += _ =>
             {
-                
-            Core = null;
-            Init(manifest);
-            } );
+                Core = null;
+                Init(manifest);
+            };
         }
 
         public T GetModule<T>() where T : class, IModule
@@ -451,6 +451,8 @@ namespace DosinisSDK.Core
 
             Debug.Log("Starting App...");
 
+            InitProgress = 0;
+
             Core = this;
 
             this.manifest = manifest;
@@ -465,8 +467,12 @@ namespace DosinisSDK.Core
 
             Debug.Log("Registering Modules...");
 
+            InitProgress = 25;
+            
             await manifest.CreateUserModules(this);
 
+            InitProgress = 50;
+            
             Debug.Log("Setting up scene modules...");
             
 #if UNITY_WEBGL
@@ -483,12 +489,18 @@ namespace DosinisSDK.Core
                 SceneManager.OnSceneChanged += OnSceneChanged;
                 SceneManager.OnAdditiveSceneLoaded += OnAdditiveSceneLoaded;
 
+                InitProgress = 90;
                 Initialized = true;
-
+                
                 onAppInitialized?.Invoke();
 
                 Debug.Log($"{nameof(App)} initialized");
             }
+        }
+
+        public static void MarkAppBootupComplete()
+        {
+            InitProgress = 100;
         }
 
         private void OnSceneUnloaded(Scene scene)
