@@ -393,18 +393,22 @@ namespace DosinisSDK.Utils
         
         private static IEnumerator MatchForwardsCoroutine(Vector3 forward, Transform transform, float time, Action done)
         {
+            var targetTransform = transform;
             var start = transform.forward;
             var elapsed = 0f;
             
-            var targetTransform = transform;
-
             while (elapsed < time)
             {
+                if(targetTransform == null)
+                    yield break;
+                
                 elapsed += Time.deltaTime;
+                
                 targetTransform.forward = Vector3.Slerp(start, forward, elapsed / time);
+                
                 yield return null;
             }
-
+            
             targetTransform.forward = forward;
             done?.Invoke();
         }
