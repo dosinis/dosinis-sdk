@@ -7,7 +7,6 @@ namespace DosinisSDK.Core
     {
         public long lastTimeActive;
         public long lastTimeActiveUtc;
-        public int lastActiveDayOfYear;
-        public int lastActiveDayOfYearUtc;
+        public long previousDayOfYear;
     }
 }
