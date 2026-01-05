@@ -10,6 +10,7 @@ namespace DosinisSDK.Core
         void DeleteData<T>() where T : class, IData, new();
         void DeleteAllData();
         bool DataWipeDetected { get; }
+        void LoadSaveSlot(string saveSlot);
     }
 
 }

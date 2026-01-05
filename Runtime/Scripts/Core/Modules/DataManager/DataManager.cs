@@ -16,11 +16,12 @@ namespace DosinisSDK.Core
         private static readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
         private const string REGISTERED_KEYS_KEY = "keys_registry";
         private const string DATA_WIPE_SAVE_KEY = "data_wipe";
-        
+
+        private string loadedSaveSlot = "";
         private IApp app;
-        
+
         public bool DataWipeDetected { get; private set; }
-        
+
         protected override void OnInit(IApp app)
         {
             this.app = app;
@@ -60,6 +61,8 @@ namespace DosinisSDK.Core
                         Warn("Automatic data wipe detected, all data was deleted");
                     }
                 }
+                
+                LoadSaveSlot(config.DefaultSavePath);
             }
             
             app.OnAppFocus += OnAppFocus;
@@ -106,34 +109,39 @@ namespace DosinisSDK.Core
         private void SaveRawData<T>(T data, string key)
         {
             string json = JsonConvert.SerializeObject(data);
-            PlayerPrefs.SetString(key, json);
+
+            var saveKey = BuildSaveKey(key, loadedSaveSlot);
             
-            if (registeredKeys.Contains(key) == false)
+            PlayerPrefs.SetString(saveKey, json);
+            
+            if (registeredKeys.Contains(saveKey) == false)
             {
-                registeredKeys.Add(key);
+                registeredKeys.Add(saveKey);
                 PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
             }
             
             PlayerPrefs.Save();
 
 #if UNITY_EDITOR
-            File.WriteAllText(GetEditorSavePath(key), json);
+            File.WriteAllText(GetEditorSavePath(saveKey), json);
 #endif
         }
 
         private void DeleteRawData(string key)
         {
+            var saveKey = BuildSaveKey(key, loadedSaveSlot);
+            
             bool save = false;
             
-            if (PlayerPrefs.HasKey(key))
+            if (PlayerPrefs.HasKey(saveKey))
             {
-                PlayerPrefs.DeleteKey(key);
+                PlayerPrefs.DeleteKey(saveKey);
                 save = true;
             }
             
-            if (registeredKeys.Contains(key))
+            if (registeredKeys.Contains(saveKey))
             {
-                registeredKeys.Remove(key);
+                registeredKeys.Remove(saveKey);
                 PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
                 save = true;
             }
@@ -144,9 +152,9 @@ namespace DosinisSDK.Core
             }
             
 #if UNITY_EDITOR
-            if (File.Exists(GetEditorSavePath(key)))
+            if (File.Exists(GetEditorSavePath(saveKey)))
             {
-                File.Delete(GetEditorSavePath(key));
+                File.Delete(GetEditorSavePath(saveKey));
             }
 #endif
         }
@@ -162,8 +170,7 @@ namespace DosinisSDK.Core
             {
                 data = LoadRawData<T>();
                 
-                var key = data.GetType().Name;
-                dataCache.Add(key, data);
+                dataCache.Add(typeof(T).Name, data);
                 SaveData(data);
             }
 
@@ -172,20 +179,20 @@ namespace DosinisSDK.Core
 
         public T LoadRawData<T>() where T : class, IData, new()
         {
-            string dataKey = typeof(T).Name;
+            string saveKey = BuildSaveKey(typeof(T).Name, loadedSaveSlot);
 
             string json = "";
 
             if (HasData<T>())
             {
                 // ReSharper disable once RedundantAssignment
-                json = PlayerPrefs.GetString(dataKey);
+                json = PlayerPrefs.GetString(saveKey);
             }
 
 #if UNITY_EDITOR
-            if (File.Exists(GetEditorSavePath(dataKey)))
+            if (File.Exists(GetEditorSavePath(saveKey)))
             {
-                json = File.ReadAllText(GetEditorSavePath(dataKey));
+                json = File.ReadAllText(GetEditorSavePath(saveKey));
             }
             else
             {
@@ -203,6 +210,12 @@ namespace DosinisSDK.Core
 
             return new T();
         }
+        
+        public void LoadSaveSlot(string saveSlot)
+        {
+            loadedSaveSlot = saveSlot;
+            dataCache.Clear();
+        }
 
         public void SaveData<T>(T data)
         {
@@ -211,7 +224,7 @@ namespace DosinisSDK.Core
 
         public bool HasData<T>()
         {
-            return PlayerPrefs.HasKey(typeof(T).Name);
+            return PlayerPrefs.HasKey(BuildSaveKey(typeof(T).Name, loadedSaveSlot));
         }
 
         public void DeleteData<T>() where T : class, IData, new()
@@ -241,7 +254,7 @@ namespace DosinisSDK.Core
                 dataCache.Clear();
                 registeredKeys.Clear();
             }
-
+            
 #if UNITY_EDITOR
             if (Directory.Exists(EDITOR_SAVE_PATH))
             {
@@ -257,6 +270,16 @@ namespace DosinisSDK.Core
             }
             
             PlayerPrefs.Save();
+        }
+
+        private string BuildSaveKey(string dataKey, string saveSlot)
+        {
+            if (string.IsNullOrEmpty(saveSlot))
+            {
+                return dataKey;
+            }
+            
+            return $"{saveSlot}_{dataKey}";
         }
     }
 }
