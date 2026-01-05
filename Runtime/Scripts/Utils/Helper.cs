@@ -51,6 +51,21 @@ namespace DosinisSDK.Utils
         {
             return Random.Range(1, 101) <= chance;
         }
+        
+        /// <summary>
+        /// Returns true if <paramref name="point"/> lies within <paramref name="radius"/> of <paramref name="center"/>.
+        /// Uses squared distance comparison to avoid the cost of Vector3.Distance (no sqrt).
+        /// Intended for high-frequency range checks (AI, targeting, gameplay).
+        /// </summary>
+        /// <param name="center">The center position of the radius check.</param>
+        /// <param name="point">The point being tested.</param>
+        /// <param name="radius">The radius to test against, in world units.</param>
+        /// <returns>True if the point is inside the radius; otherwise false.</returns>
+        public static bool IsWithinRadius(Vector3 center, Vector3 point, float radius)
+        {
+            var d = point - center;
+            return d.sqrMagnitude < radius * radius;
+        }
 
         public static T GetRandomEnum<T>() where T : struct, Enum
         {
