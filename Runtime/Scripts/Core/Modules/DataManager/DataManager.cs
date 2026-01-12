@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -10,14 +11,12 @@ namespace DosinisSDK.Core
     {
         private DataManagerConfig config;
         private readonly Dictionary<string, object> dataCache = new();
-        private List<string> registeredKeys = new();
 
         // ReSharper disable once InconsistentNaming
         private static readonly string EDITOR_SAVE_PATH = Path.Combine(Application.dataPath, "Saves");
-        private const string REGISTERED_KEYS_KEY = "keys_registry";
         private const string DATA_WIPE_SAVE_KEY = "data_wipe";
 
-        private string loadedSaveSlot = "";
+        private static string loadedSaveSlot = "";
         private IApp app;
 
         public bool DataWipeDetected { get; private set; }
@@ -27,11 +26,6 @@ namespace DosinisSDK.Core
             this.app = app;
 
             config = GetConfigAs<DataManagerConfig>();
-
-            if (PlayerPrefs.HasKey(REGISTERED_KEYS_KEY))
-            {
-                registeredKeys = JsonConvert.DeserializeObject<List<string>>(PlayerPrefs.GetString(REGISTERED_KEYS_KEY));
-            }
             
 #if UNITY_EDITOR
             if (Directory.Exists(EDITOR_SAVE_PATH) == false)
@@ -40,7 +34,6 @@ namespace DosinisSDK.Core
                 Directory.CreateDirectory(EDITOR_SAVE_PATH);
             }
 #endif
-
             if (config)
             {
                 if (config.ForceWipeOnStartup)
@@ -61,8 +54,6 @@ namespace DosinisSDK.Core
                         Warn("Automatic data wipe detected, all data was deleted");
                     }
                 }
-                
-                LoadSaveSlot(config.DefaultSavePath);
             }
             
             app.OnAppFocus += OnAppFocus;
@@ -100,65 +91,24 @@ namespace DosinisSDK.Core
 
         public void SaveAll()
         {
-            foreach (var pair in dataCache)
+            foreach (var data in dataCache)
             {
-                SaveRawData(pair.Value, pair.Key);
-            }
-        }
-
-        private void SaveRawData<T>(T data, string key)
-        {
-            string json = JsonConvert.SerializeObject(data);
-
-            var saveKey = BuildSaveKey(key, loadedSaveSlot);
-            
-            PlayerPrefs.SetString(saveKey, json);
-            
-            if (registeredKeys.Contains(saveKey) == false)
-            {
-                registeredKeys.Add(saveKey);
-                PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
+                SaveRawData(data.Value, data.Value.GetType());
             }
             
             PlayerPrefs.Save();
+        }
 
+        private void SaveRawData(object data, Type type)
+        {
+            string json = JsonConvert.SerializeObject(data);
+            var saveKey = BuildSaveKey(type);
+            PlayerPrefs.SetString(saveKey, json);
 #if UNITY_EDITOR
             File.WriteAllText(GetEditorSavePath(saveKey), json);
 #endif
         }
-
-        private void DeleteRawData(string key)
-        {
-            var saveKey = BuildSaveKey(key, loadedSaveSlot);
-            
-            bool save = false;
-            
-            if (PlayerPrefs.HasKey(saveKey))
-            {
-                PlayerPrefs.DeleteKey(saveKey);
-                save = true;
-            }
-            
-            if (registeredKeys.Contains(saveKey))
-            {
-                registeredKeys.Remove(saveKey);
-                PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
-                save = true;
-            }
-
-            if (save)
-            {
-                PlayerPrefs.Save();
-            }
-            
-#if UNITY_EDITOR
-            if (File.Exists(GetEditorSavePath(saveKey)))
-            {
-                File.Delete(GetEditorSavePath(saveKey));
-            }
-#endif
-        }
-
+        
         private string GetEditorSavePath(string key)
         {
             return Path.Combine(EDITOR_SAVE_PATH, key + ".json");
@@ -166,20 +116,26 @@ namespace DosinisSDK.Core
 
         public T GetOrCreateData<T>() where T : class, IData, new()
         {
-            if (dataCache.TryGetValue(typeof(T).Name, out object data) == false)
+            if (dataCache.TryGetValue(typeof(T).Name, out object cached))
             {
-                data = LoadRawData<T>();
-                
-                dataCache.Add(typeof(T).Name, data);
-                SaveData(data);
+                return cached as T;
             }
-
-            return data as T;
+            
+            if (HasData<T>())
+            {
+                var loaded = LoadRawData<T>();
+                dataCache[typeof(T).Name] = loaded;
+                return loaded;
+            }
+            
+            var created = new T();
+            dataCache[typeof(T).Name] = created;
+            return created;
         }
 
         public T LoadRawData<T>() where T : class, IData, new()
         {
-            string saveKey = BuildSaveKey(typeof(T).Name, loadedSaveSlot);
+            string saveKey = BuildSaveKey<T>();
 
             string json = "";
 
@@ -211,27 +167,75 @@ namespace DosinisSDK.Core
             return new T();
         }
         
+        /// <summary>
+        /// Switches the active save slot and performs a full App restart.
+        ///
+        /// Intended to be called from a launcher / profile selection flow.
+        ///
+        /// Usage pattern:
+        /// - User selects save slot in some Launcher scene
+        /// - App restarts and continues boot normally with the new slot
+        /// - In the Launcher scene capture that it was selected (with some static field) and boot the game instead
+        ///
+        /// Note:
+        /// This will recreate all modules and scenes. Avoid calling it
+        /// during active gameplay.
+        /// </summary>
         public void LoadSaveSlot(string saveSlot)
         {
             loadedSaveSlot = saveSlot;
             dataCache.Clear();
+            
+            App.Core.Restart();
         }
-
-        public void SaveData<T>(T data)
+        
+        public void SaveData<T>(T data) where T : class, IData
         {
-            SaveRawData(data, data.GetType().Name);
+            SaveRawData(data, data.GetType());
+            PlayerPrefs.Save();
         }
 
-        public bool HasData<T>()
+        public bool HasData<T>() where T : class, IData
         {
-            return PlayerPrefs.HasKey(BuildSaveKey(typeof(T).Name, loadedSaveSlot));
+            return PlayerPrefs.HasKey(BuildSaveKey<T>());
         }
 
-        public void DeleteData<T>() where T : class, IData, new()
+        private bool IsGlobal<T>()
+        {
+            return typeof(IGlobalData).IsAssignableFrom(typeof(T));
+        }
+
+        private string GetKeyFromType<T>()
+        {
+            return typeof(T).Name;
+        }
+
+        public void DeleteData<T>() where T : class, IData
         {
             var key = typeof(T).Name;
             dataCache.Remove(key);
-            DeleteRawData(key);
+            
+            var saveKey = BuildSaveKey<T>();
+            
+            bool save = false;
+            
+            if (PlayerPrefs.HasKey(saveKey))
+            {
+                PlayerPrefs.DeleteKey(saveKey);
+                save = true;
+            }
+
+            if (save)
+            {
+                PlayerPrefs.Save();
+            }
+            
+#if UNITY_EDITOR
+            if (File.Exists(GetEditorSavePath(saveKey)))
+            {
+                File.Delete(GetEditorSavePath(saveKey));
+            }
+#endif
         }
 
         public void DeleteAllData()
@@ -240,20 +244,26 @@ namespace DosinisSDK.Core
             {
                 PlayerPrefs.DeleteAll();
                 dataCache.Clear();
-                registeredKeys.Clear();
             }
             else
             {
-                var keys = new List<string>(registeredKeys);
-            
-                foreach (var key in keys)
-                {
-                    DeleteRawData(key);
-                }
+                var dataTypes = FindAllIDataTypes();
 
-                dataCache.Clear();
-                registeredKeys.Clear();
+                foreach (var t in dataTypes)
+                {
+                    var key = t.Name;
+                    dataCache.Remove(key);
+
+                    var saveKey = BuildSaveKey(t);
+
+                    if (PlayerPrefs.HasKey(saveKey))
+                    {
+                        PlayerPrefs.DeleteKey(saveKey);
+                    }
+                }
             }
+
+            dataCache.Clear();
             
 #if UNITY_EDITOR
             if (Directory.Exists(EDITOR_SAVE_PATH))
@@ -261,8 +271,6 @@ namespace DosinisSDK.Core
                 Directory.Delete(EDITOR_SAVE_PATH, true);
             }
 #endif
-            
-            PlayerPrefs.SetString(REGISTERED_KEYS_KEY, JsonConvert.SerializeObject(registeredKeys));
             
             if (config)
             {
@@ -272,14 +280,66 @@ namespace DosinisSDK.Core
             PlayerPrefs.Save();
         }
 
-        private string BuildSaveKey(string dataKey, string saveSlot)
+        private List<Type> FindAllIDataTypes()
         {
-            if (string.IsNullOrEmpty(saveSlot))
+            var result = new List<Type>();
+            var dataInterface = typeof(IData);
+
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-                return dataKey;
+                Type[] types;
+
+                try
+                {
+                    types = asm.GetTypes();
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    types = e.Types;
+                }
+
+                if (types == null)
+                {
+                    continue;
+                }
+
+                foreach (var t in types)
+                {
+                    if (t == null || t.IsAbstract || !t.IsClass)
+                    {
+                        continue;
+                    }
+
+                    if (dataInterface.IsAssignableFrom(t))
+                    {
+                        result.Add(t);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private string BuildSaveKey(Type type)
+        {
+            bool isGlobal = typeof(IGlobalData).IsAssignableFrom(type);
+            
+            if (string.IsNullOrEmpty(loadedSaveSlot) || isGlobal)
+            {
+                return type.Name;
+            }
+
+            return $"{loadedSaveSlot}_{type.Name}";
+        }
+
+        private string BuildSaveKey<T>()
+        {
+            if (string.IsNullOrEmpty(loadedSaveSlot) || IsGlobal<T>()) 
+            {
+                return GetKeyFromType<T>();
             }
             
-            return $"{saveSlot}_{dataKey}";
+            return $"{loadedSaveSlot}_{GetKeyFromType<T>()}";
         }
     }
 }
