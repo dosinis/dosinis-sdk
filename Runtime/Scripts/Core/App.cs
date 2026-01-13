@@ -61,19 +61,21 @@ namespace DosinisSDK.Core
             SceneManager.OnSceneChanged -= OnSceneChanged;
             SceneManager.OnAdditiveSceneLoaded -= OnAdditiveSceneLoaded;
             
-            foreach (var module in cachedModules)
+            var modulesToDispose = new List<IModule>(cachedModules.Values);
+
+            foreach (var m in modulesToDispose)
             {
-                if (module.Value is BehaviourModule behaviourModule)
+                if (m is BehaviourModule behaviourModule)
                 {
                     DestroyImmediate(behaviourModule);
                 }
-                
-                if (module.Value is IDisposable disposableModule)
+
+                if (m is IDisposable disposableModule)
                 {
                     disposableModule.Dispose();
                 }
             }
-            
+
             cachedModules.Clear();
             processables.Clear();
             fixedProcessables.Clear();
@@ -91,18 +93,24 @@ namespace DosinisSDK.Core
         {
             var mType = typeof(T);
 
-            if (cachedModules.TryGetValue(mType, out IModule module))
-            {
+            if (cachedModules.TryGetValue(mType, out var module))
                 return (T)module;
+
+            IModule found = null;
+
+            foreach (var kv in cachedModules)
+            {
+                if (kv.Value is T)
+                {
+                    found = kv.Value;
+                    break;
+                }
             }
 
-            foreach (var m in cachedModules)
+            if (found != null)
             {
-                if (m.Value is T value)
-                {
-                    cachedModules.Add(mType, m.Value);
-                    return value;
-                }
+                cachedModules[mType] = found;
+                return (T)found;
             }
 
             Debug.LogError($"Module {typeof(T).Name} is not found! Maybe it's not ready yet?");
@@ -131,22 +139,30 @@ namespace DosinisSDK.Core
         {
             var mType = typeof(T);
 
-            if (cachedModules.TryGetValue(mType, out IModule m))
+            if (cachedModules.TryGetValue(mType, out var m))
             {
                 module = (T)m;
                 return true;
             }
 
-            foreach (var mKeyValue in cachedModules)
+            IModule found = null;
+
+            foreach (var kv in cachedModules)
             {
-                if (mKeyValue.Value is T value)
+                if (kv.Value is T)
                 {
-                    cachedModules.Add(mType, mKeyValue.Value);
-                    module = value;
-                    return true;
+                    found = kv.Value;
+                    break;
                 }
             }
-            
+
+            if (found != null)
+            {
+                cachedModules[mType] = found;
+                module = (T)found;
+                return true;
+            }
+
             module = null;
             return false;
         }
@@ -156,19 +172,25 @@ namespace DosinisSDK.Core
             var mType = typeof(T);
 
             if (cachedModules.ContainsKey(mType))
+                return true;
+
+            IModule found = null;
+
+            foreach (var kv in cachedModules)
             {
+                if (kv.Value is T)
+                {
+                    found = kv.Value;
+                    break;
+                }
+            }
+
+            if (found != null)
+            {
+                cachedModules[mType] = found;
                 return true;
             }
 
-            foreach (var mKeyValue in cachedModules)
-            {
-                if (mKeyValue.Value is T)
-                {
-                    cachedModules.Add(mType, mKeyValue.Value);
-                    return true;
-                }
-            }
-            
             return false;
         }
 

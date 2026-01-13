@@ -27,9 +27,15 @@ namespace DosinisSDK.Core
                 RegisterWindow(win, false);
             }
 
-            foreach (var win in windows)
+            var initList = new List<IWindow>(windows.Count);
+            foreach (var kv in windows)
             {
-                InitWindow(win.Value);
+                initList.Add(kv.Value);
+            }
+
+            foreach (var win in initList)
+            {
+                InitWindow(win);
             }
         }
 
@@ -64,22 +70,28 @@ namespace DosinisSDK.Core
 
         private void OnDestroy()
         {
-            foreach (var win in windows)
+            var disposeList = new List<IWindow>(windows.Count);
+            foreach (var kv in windows)
+            {
+                disposeList.Add(kv.Value);
+            }
+
+            foreach (var win in disposeList)
             {
                 if (safeMode)
                 {
                     try
                     {
-                        win.Value.Dispose();
+                        win.Dispose();
                     }
                     catch (Exception ex)
                     {
-                        LogError($"Error while disposing {win.Value.GetType().Name}! {ex.Message} \n {ex.StackTrace}");
+                        LogError($"Error while disposing {win.GetType().Name}! {ex.Message} \n {ex.StackTrace}");
                     }
                 }
                 else
                 {
-                    win.Value.Dispose();
+                    win.Dispose();
                 }
             }
         }
@@ -108,13 +120,21 @@ namespace DosinisSDK.Core
                 return (T)window;
             }
 
-            foreach (var w in windows)
+            IWindow found = null;
+
+            foreach (var kv in windows)
             {
-                if (w.Value is T value)
+                if (kv.Value is T)
                 {
-                    windows.Add(wType, w.Value);
-                    return value;
+                    found = kv.Value;
+                    break;
                 }
+            }
+
+            if (found != null)
+            {
+                windows[wType] = found;
+                return (T)found;
             }
 
             LogError($"No Window {wType.Name} is available!");
@@ -131,14 +151,22 @@ namespace DosinisSDK.Core
                 return true;
             }
 
-            foreach (var w in windows)
+            IWindow found = null;
+
+            foreach (var kv in windows)
             {
-                if (w.Value is T value)
+                if (kv.Value is T)
                 {
-                    windows.Add(wType, w.Value);
-                    window = value;
-                    return true;
+                    found = kv.Value;
+                    break;
                 }
+            }
+
+            if (found != null)
+            {
+                windows[wType] = found;
+                window = (T)found;
+                return true;
             }
 
             window = default;
@@ -162,13 +190,21 @@ namespace DosinisSDK.Core
                 return true;
             }
 
-            foreach (var w in windows)
+            IWindow found = null;
+
+            foreach (var kv in windows)
             {
-                if (w.Value is T)
+                if (kv.Value is T)
                 {
-                    windows.Add(wType, w.Value);
-                    return true;
+                    found = kv.Value;
+                    break;
                 }
+            }
+
+            if (found != null)
+            {
+                windows[wType] = found;
+                return true;
             }
 
             return false;
@@ -206,7 +242,7 @@ namespace DosinisSDK.Core
             window.Show(args, shown, onHidden, onBeforeHide);
         }
 
-        public void ShowWindowImmediately<T>( Action onHidden = null, Action onBeforeHide = null) where T : Window
+        public void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : Window
         {
             var window = GetWindow<T>();
 
@@ -227,7 +263,7 @@ namespace DosinisSDK.Core
                 InitWindow(window);
             }
 
-            window.ShowImmediately(args,  onHidden, onBeforeHide);
+            window.ShowImmediately(args, onHidden, onBeforeHide);
         }
 
         public void HideWindow<T>(Action hidden) where T : IWindow
@@ -258,7 +294,7 @@ namespace DosinisSDK.Core
 
         public void RegisterWindow(IWindow window, bool initialize = true)
         {
-            windows.Add(window.GetType(), window);
+            windows[window.GetType()] = window;
 
             if (initialize)
             {
