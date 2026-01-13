@@ -101,6 +101,9 @@ namespace DosinisSDK.Core
 
         private void SaveRawData(object data, Type type)
         {
+            if (config && config.SaveOnlyIfSlotSelected && string.IsNullOrEmpty(loadedSaveSlot) && IsGlobal(type) == false)
+                return;
+            
             string json = JsonConvert.SerializeObject(data);
             var saveKey = BuildSaveKey(type);
             PlayerPrefs.SetString(saveKey, json);
@@ -203,6 +206,11 @@ namespace DosinisSDK.Core
         private bool IsGlobal<T>()
         {
             return typeof(IGlobalData).IsAssignableFrom(typeof(T));
+        }
+
+        private bool IsGlobal(Type type)
+        {
+            return typeof(IGlobalData).IsAssignableFrom(type);
         }
 
         private string GetKeyFromType<T>()
@@ -322,7 +330,7 @@ namespace DosinisSDK.Core
 
         private string BuildSaveKey(Type type)
         {
-            bool isGlobal = typeof(IGlobalData).IsAssignableFrom(type);
+            bool isGlobal = IsGlobal(type);
             
             if (string.IsNullOrEmpty(loadedSaveSlot) || isGlobal)
             {
