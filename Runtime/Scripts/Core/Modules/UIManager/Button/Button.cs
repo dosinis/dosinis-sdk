@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.Core
 {
-    [RequireComponent(typeof(Image))]
     public class Button : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler, IButton
     {
         // Properties
@@ -29,11 +28,10 @@ namespace DosinisSDK.Core
         // Serialized
         
         [SerializeField] private bool interactable = true;
-
+        [SerializeField] private Image image;
         // Private
         
         protected IButtonAnimation buttonAnimation;
-        private Image image;
         public bool HeldDown { get; protected set; }
         public bool MouseOverObject { get; protected set; }
         
@@ -106,7 +104,16 @@ namespace DosinisSDK.Core
         
         private void Awake()
         {
-            image = GetComponent<Image>();
+            if (image == null)
+            {
+                image = GetComponent<Image>();
+            }
+
+            if (image == null)
+            {
+                Debug.LogError($"Image is not found on {gameObject.name} button", gameObject);
+                return;
+            }
             
             buttonAnimation = GetComponent<IButtonAnimation>();
             buttonAnimation?.Init();
