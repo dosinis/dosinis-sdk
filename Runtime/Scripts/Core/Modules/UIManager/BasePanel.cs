@@ -8,11 +8,7 @@ namespace DosinisSDK.Core
         protected bool Initialized;
         protected IWindow ParentWindow;
         private IWindowTransition windowTransition;
-
-        private void Awake()
-        {
-            windowTransition = GetComponent<IWindowTransition>();
-        }
+        
 
         public void Init(IApp app, IWindow parentWindow)
         {
@@ -46,6 +42,7 @@ namespace DosinisSDK.Core
         protected virtual void OnInit(IApp app)
         {
             Initialized = true;
+            windowTransition = GetComponent<IWindowTransition>();
             windowTransition.Init();
         }
         protected virtual void ShowInternal(Action done)
