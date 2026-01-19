@@ -8,7 +8,7 @@ namespace DosinisSDK.Core
         protected bool Initialized;
         protected IWindow ParentWindow;
         private IWindowTransition windowTransition;
-        
+
 
         public void Init(IApp app, IWindow parentWindow)
         {
@@ -45,9 +45,10 @@ namespace DosinisSDK.Core
             windowTransition = GetComponent<IWindowTransition>();
             windowTransition.Init();
         }
+
         protected virtual void ShowInternal(Action done)
         {
-            if(!Initialized) return;
+            if (!Initialized) return;
             OnBeforeShownInternal();
             if (windowTransition is not null)
             {
@@ -60,14 +61,13 @@ namespace DosinisSDK.Core
             else
             {
                 done?.Invoke();
-                gameObject.SetActive(true);
                 OnShownInternal();
             }
         }
 
         protected virtual void HideInternal()
         {
-            if(!Initialized) return;
+            if (!Initialized) return;
             OnBeforeHiddenInternal();
             if (windowTransition is not null)
             {
@@ -75,31 +75,28 @@ namespace DosinisSDK.Core
             }
             else
             {
-                gameObject.SetActive(false);
                 OnHiddenInternal();
             }
         }
 
         protected virtual void OnBeforeShownInternal()
         {
-            
         }
 
         protected virtual void OnBeforeHiddenInternal()
         {
-            
         }
 
         protected virtual void OnShownInternal()
         {
-            
+            gameObject.SetActive(true);
         }
 
         protected virtual void OnHiddenInternal()
         {
-            
+            gameObject.SetActive(false);
         }
-    
+
         protected virtual void OnWindowShown()
         {
         }
@@ -115,10 +112,9 @@ namespace DosinisSDK.Core
         protected virtual void OnWindowBeforeHide()
         {
         }
-        
+
         protected virtual void OnDispose()
         {
         }
-
     }
 }
