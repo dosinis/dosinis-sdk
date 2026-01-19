@@ -1,13 +1,14 @@
+using System;
 using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Widget : MonoBehaviour
+    public class Widget : MonoBehaviour, ISubWindowElement
     {
-        protected Window parentWindow;
+        protected IWindow parentWindow;
         private bool isInitialized;
 
-        internal void Init(IApp app, Window parentWindow)
+        public void Init(IApp app, IWindow parentWindow)
         {
             this.parentWindow = parentWindow;
             parentWindow.OnShown += OnWindowShown;
@@ -20,7 +21,7 @@ namespace DosinisSDK.Core
             isInitialized = true;
         }
 
-        internal void Dispose()
+        public void Dispose()
         {
             OnDispose();
         }
@@ -60,6 +61,16 @@ namespace DosinisSDK.Core
 
         protected virtual void OnWindowHidden()
         {
+        }
+        public virtual void Show(Action done = null)
+        {
+            gameObject.SetActive(true);
+            done?.Invoke();
+        }
+
+        public virtual void Hide()
+        {
+            gameObject.SetActive(false);
         }
     }
 

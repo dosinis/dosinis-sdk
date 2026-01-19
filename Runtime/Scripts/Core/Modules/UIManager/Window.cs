@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -17,7 +18,7 @@ namespace DosinisSDK.Core
         private IApp app;
 
         private IWindowTransition transition;
-        private readonly List<Widget> widgets = new();
+        private readonly List<ISubWindowElement> subWindowElements = new();
 
         public event Action OnShown;
         public event Action OnHidden;
@@ -54,11 +55,11 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
-            GetComponentsInChildren(true, widgets);
+            GetComponentsInChildren(true, subWindowElements);
 
-            foreach (var widget in widgets)
+            foreach (var subWindowElement in subWindowElements)
             {
-                widget.Init(app, this);
+                subWindowElement.Init(app, this);
             }
 
             if (closeButton)
@@ -73,9 +74,9 @@ namespace DosinisSDK.Core
         {
             OnDispose();
 
-            foreach (var widget in widgets)
+            foreach (var subWindowElement in subWindowElements)
             {
-                widget.Dispose();
+                subWindowElement.Dispose();
             }
         }
 
@@ -89,7 +90,7 @@ namespace DosinisSDK.Core
         {
             Show(null);
         }
-        
+
         public void ShowImmediately(Action onHidden = null, Action onBeforeHide = null)
         {
             gameObject.SetActive(true);
@@ -141,10 +142,7 @@ namespace DosinisSDK.Core
 
             if (waitUntilHidden)
             {
-                Hide(() =>
-                {
-                    window.Show(null, onHidden: Show);
-                });
+                Hide(() => { window.Show(null, onHidden: Show); });
             }
             else
             {
@@ -169,10 +167,7 @@ namespace DosinisSDK.Core
 
             if (transition != null)
             {
-                transition.HideTransition(() =>
-                {
-                    CompleteHideWindow(done);
-                });
+                transition.HideTransition(() => { CompleteHideWindow(done); });
             }
             else
             {
@@ -212,7 +207,7 @@ namespace DosinisSDK.Core
         public void RegisterWidget(Widget widget)
         {
             widget.Init(app, this);
-            widgets.Add(widget);
+            subWindowElements.Add(widget);
         }
 
         public void ClearHideCallbacks()
@@ -223,9 +218,9 @@ namespace DosinisSDK.Core
 
         public T GetWidget<T>() where T : Widget
         {
-            foreach (var w in widgets)
+            foreach (var subWindowElement in subWindowElements)
             {
-                if (w is T widget)
+                if (subWindowElement is T widget)
                 {
                     return widget;
                 }
@@ -239,9 +234,9 @@ namespace DosinisSDK.Core
         {
             var result = new List<T>();
 
-            foreach (var w in widgets)
+            foreach (var subWindowElement in subWindowElements)
             {
-                if (w is T widget)
+                if (subWindowElement is T widget)
                 {
                     result.Add(widget);
                 }
@@ -254,7 +249,26 @@ namespace DosinisSDK.Core
 
             return result;
         }
-        
+
+        public bool TryGetSubWindowElement<T>(out T element) where T : ISubWindowElement
+        {
+            element = default;
+            var result = subWindowElements.FirstOrDefault(element => element is T);
+            if (result is not null)
+            {
+                element = (T)result;
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryGetSubWindowElements<T>(out IEnumerable<T> elements) where T : ISubWindowElement
+        {
+            var results = subWindowElements.Where(element => element is T);
+            elements = results.Cast<T>();
+            return elements.Any();
+        }
+
         protected virtual void BeforeShown()
         {
         }
