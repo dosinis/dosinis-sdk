@@ -62,6 +62,7 @@ namespace DosinisSDK.Core
             else
             {
                 done?.Invoke();
+                gameObject.SetActive(true);
                 OnShownInternal();
             }
         }
@@ -76,6 +77,7 @@ namespace DosinisSDK.Core
             }
             else
             {
+                gameObject.SetActive(false);
                 OnHiddenInternal();
             }
         }
