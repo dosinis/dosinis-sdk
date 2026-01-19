@@ -46,6 +46,7 @@ namespace DosinisSDK.Core
         protected virtual void OnInit(IApp app)
         {
             Initialized = true;
+            windowTransition.Init();
         }
         protected virtual void ShowInternal(Action done)
         {
