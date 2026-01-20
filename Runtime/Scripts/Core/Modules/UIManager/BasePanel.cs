@@ -5,27 +5,27 @@ namespace DosinisSDK.Core
 {
     public abstract class BasePanel : MonoBehaviour, ISubWindowElement
     {
-        protected bool Initialized;
-        protected IWindow ParentWindow;
-        private IWindowTransition windowTransition;
+        protected IWindow parentWindow;
+        protected bool initialized;
 
+        private IWindowTransition windowTransition;
 
         public void Init(IApp app, IWindow parentWindow)
         {
-            ParentWindow = parentWindow;
-            ParentWindow.OnShown += OnWindowShown;
-            ParentWindow.OnHidden += OnWindowHidden;
-            ParentWindow.OnBeforeShow += OnWindowBeforeShow;
-            ParentWindow.OnBeforeHide += OnWindowBeforeHide;
+            this.parentWindow = parentWindow;
+            this.parentWindow.OnShown += OnWindowShown;
+            this.parentWindow.OnHidden += OnWindowHidden;
+            this.parentWindow.OnBeforeShow += OnWindowBeforeShow;
+            this.parentWindow.OnBeforeHide += OnWindowBeforeHide;
             OnInit(app);
         }
 
         public void Dispose()
         {
-            ParentWindow.OnShown -= OnWindowShown;
-            ParentWindow.OnHidden -= OnWindowHidden;
-            ParentWindow.OnBeforeShow -= OnWindowBeforeShow;
-            ParentWindow.OnBeforeHide -= OnWindowBeforeHide;
+            parentWindow.OnShown -= OnWindowShown;
+            parentWindow.OnHidden -= OnWindowHidden;
+            parentWindow.OnBeforeShow -= OnWindowBeforeShow;
+            parentWindow.OnBeforeHide -= OnWindowBeforeHide;
             OnDispose();
         }
 
@@ -41,14 +41,15 @@ namespace DosinisSDK.Core
 
         protected virtual void OnInit(IApp app)
         {
-            Initialized = true;
+            initialized = true;
             windowTransition = GetComponent<IWindowTransition>();
-            windowTransition.Init();
+            windowTransition?.Init();
         }
 
         protected virtual void ShowInternal(Action done)
         {
-            if (!Initialized) return;
+            if (!initialized) return;
+            
             OnBeforeShownInternal();
             if (windowTransition is not null)
             {
@@ -67,7 +68,8 @@ namespace DosinisSDK.Core
 
         protected virtual void HideInternal()
         {
-            if (!Initialized) return;
+            if (!initialized) return;
+            
             OnBeforeHiddenInternal();
             if (windowTransition is not null)
             {

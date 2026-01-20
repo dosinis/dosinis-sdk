@@ -4,10 +4,11 @@ namespace DosinisSDK.Core
 {
     public abstract class GenericPanelWithArgs<TArgs> : GenericPanel, ISubWindowElementWithArgs<TArgs>
     {
-        protected TArgs Args;
+        protected TArgs args;
+        
         public void Show(TArgs args, Action done = null)
         {
-            Args = args;
+            this.args = args;
             Show(done);
         }
     }

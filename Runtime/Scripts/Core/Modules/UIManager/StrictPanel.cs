@@ -7,8 +7,8 @@ namespace DosinisSDK.Core
         protected override void OnInit(IApp app)
         {
             base.OnInit(app);
-            Initialized = ParentWindow is TWindow;
-            if (!Initialized)
+            initialized = parentWindow is TWindow;
+            if (!initialized)
             {
                 Debug.LogWarning("Current panel is designed to work only with " + typeof(TWindow).Name + " window.");
             }
