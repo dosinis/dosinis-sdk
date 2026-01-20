@@ -216,6 +216,7 @@ namespace DosinisSDK.Core
             beforeHideCallback = null;
         }
 
+        [Obsolete("Widget now is realization of ISubWindowElement. Use TryGetSubWindowElement<T> instead")]
         public T GetWidget<T>() where T : Widget
         {
             foreach (var subWindowElement in subWindowElements)
@@ -230,6 +231,7 @@ namespace DosinisSDK.Core
             return default;
         }
 
+        [Obsolete("Widget now is a realization of ISubWindowElement. Use TryGetSubWindowElements<T> instead")]
         public List<T> GetWidgets<T>() where T : Widget
         {
             var result = new List<T>();
