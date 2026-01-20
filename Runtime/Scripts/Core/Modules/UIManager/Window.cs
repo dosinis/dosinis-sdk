@@ -252,21 +252,31 @@ namespace DosinisSDK.Core
 
         public bool TryGetSubWindowElement<T>(out T element) where T : ISubWindowElement
         {
-            element = default;
-            var result = subWindowElements.FirstOrDefault(element => element is T);
-            if (result is not null)
+            foreach (var subWindowElement in subWindowElements)
             {
-                element = (T)result;
-                return true;
+                if (subWindowElement is T result)
+                {
+                    element = result;
+                    return true;
+                }
             }
+
+            element = default;
             return false;
         }
 
         public bool TryGetSubWindowElements<T>(out IEnumerable<T> elements) where T : ISubWindowElement
         {
-            var results = subWindowElements.Where(element => element is T);
-            elements = results.Cast<T>();
-            return elements.Any();
+            var results = new List<T>();
+            foreach (var subWindowElement in subWindowElements)
+            {
+                if (subWindowElement is T result)
+                {
+                    results.Add(result);
+                }
+            }
+            elements = results;
+            return results.Count > 0;
         }
 
         protected virtual void BeforeShown()

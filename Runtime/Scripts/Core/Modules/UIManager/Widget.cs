@@ -30,7 +30,7 @@ namespace DosinisSDK.Core
         {
             if (!isInitialized)
                 return;
-            
+
             OnProcess(Time.deltaTime);
         }
 
@@ -41,12 +41,11 @@ namespace DosinisSDK.Core
         protected virtual void OnDispose()
         {
         }
-        
+
         protected virtual void OnProcess(float delta)
         {
-            
         }
-        
+
         protected virtual void OnWindowBeforeShow()
         {
         }
@@ -62,6 +61,7 @@ namespace DosinisSDK.Core
         protected virtual void OnWindowHidden()
         {
         }
+
         public virtual void Show(Action done = null)
         {
             gameObject.SetActive(true);
