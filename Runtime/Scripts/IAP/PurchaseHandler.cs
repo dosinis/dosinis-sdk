@@ -49,5 +49,10 @@ namespace DosinisSDK.IAP
 
         public abstract string GetValueString();
         public abstract string GetDescription();
+
+        public virtual string GetPriceString()
+        {
+            return App.Core.GetModule<IIAPManager>().GetProductPrice(Id);
+        }
     }
 }
