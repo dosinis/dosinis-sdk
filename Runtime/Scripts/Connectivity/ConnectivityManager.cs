@@ -26,13 +26,23 @@ namespace DosinisSDK.Connectivity
 
         public void RefreshConnectionStatus()
         {
+            coroutineManager.Begin(RefreshConnectionStatusRoutine());
+        }
+
+        public IEnumerator RefreshConnectionStatusRoutine()
+        {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
                 connected.Value = false;
-                return;
+
+                yield break;
             }
 
-            coroutineManager.Begin(CheckConnection());
+            var checkConnection = CheckConnection();
+            
+            coroutineManager.Begin(checkConnection);
+
+            yield return checkConnection;
         }
         
         private IEnumerator CheckConnection()

@@ -1,3 +1,4 @@
+using System.Collections;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 
@@ -7,5 +8,6 @@ namespace DosinisSDK.Connectivity
     {
         IObservable<bool> Connected { get;}
         void RefreshConnectionStatus();
+        IEnumerator RefreshConnectionStatusRoutine();
     }
 }
