@@ -187,7 +187,21 @@ namespace DosinisSDK.Core
         public void LoadSaveSlot(string saveSlot)
         {
             loadedSaveSlot = saveSlot;
-            dataCache.Clear();
+            
+            var nonGlobalData = new List<string>();
+
+            foreach (var c in dataCache)
+            {
+                if (c.Value is not IGlobalData)
+                {
+                    nonGlobalData.Add(c.Key);
+                }
+            }
+
+            foreach (var d in nonGlobalData)
+            {
+                dataCache.Remove(d);
+            }
             
             App.Core.Restart();
         }
