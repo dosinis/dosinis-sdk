@@ -252,6 +252,20 @@ namespace DosinisSDK.Core
             return result;
         }
 
+        public T GetSubWindowElement<T>() where T : ISubWindowElement
+        {
+            foreach (var subWindowElement in subWindowElements)
+            {
+                if (subWindowElement is T result)
+                {
+                    return result;
+                }
+            }
+
+            Debug.LogError($"SubWindowElement {nameof(T)} not found");
+            return default;
+        }
+
         public bool TryGetSubWindowElement<T>(out T element) where T : ISubWindowElement
         {
             foreach (var subWindowElement in subWindowElements)
