@@ -9,7 +9,7 @@ namespace DosinisSDK.Core
     {
         // Properties
         
-        public Image Image => image ? image : GetComponent<Image>();
+        public Graphic Image => image ? image : GetComponent<Image>();
 
         public bool Interactable
         {
@@ -28,7 +28,7 @@ namespace DosinisSDK.Core
         // Serialized
         
         [SerializeField] private bool interactable = true;
-        [SerializeField] private Image image;
+        [SerializeField] private Graphic image;
         // Private
         
         protected IButtonAnimation buttonAnimation;
@@ -68,7 +68,7 @@ namespace DosinisSDK.Core
         {
             if (Interactable == false)
                 return;
-            
+            Debug.Log("Click performed");
             buttonAnimation?.ReleaseAnimation();
 
             ClickPerformed();
