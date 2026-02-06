@@ -5,7 +5,7 @@ namespace DosinisSDK.Core
 {
     public interface IButton
     {
-        Image Image { get; }
+        Graphic Image { get; }
         bool Interactable { get; set; }
         
         event Action OnClick;
