@@ -13,6 +13,8 @@ namespace DosinisSDK.UI
         [SerializeField] private bool interactableAffectsColor = true;
         [SerializeField] private Color notInteractiveColor = Color.gray;
         [SerializeField] private bool highlightOnMouseOver = false;
+        [SerializeField] private bool scaleOnMouseOver = false;
+        [SerializeField] private float mouseOverScaleRatio = 1.1f;
         [SerializeField] private Color highlightColor = Color.gray;
         [SerializeField] private AudioClip clickSfx;
 
@@ -68,6 +70,11 @@ namespace DosinisSDK.UI
             {
                 StartCoroutine(value ? HighlightAnimationRoutine() : UnhighlightAnimationRoutine());
             }
+
+            if (scaleOnMouseOver)
+            {
+                StartCoroutine(value ? ScaleOnMouseOverRoutine() : UnScaleOnMouseOverRoutine());
+            }
         }
 
         private void OnDisable()
@@ -82,6 +89,27 @@ namespace DosinisSDK.UI
             else
             {
                 button.Image.color = initColor;
+            }
+        }
+
+        private IEnumerator ScaleOnMouseOverRoutine()
+        {
+            float t = 0f;
+            while (t <1)
+            {
+                t += Time.unscaledDeltaTime / animationDuration;
+                transform.localScale = Vector3.Lerp(startScale, startScale * mouseOverScaleRatio, t);
+                yield return null;
+            }
+        }
+        private IEnumerator UnScaleOnMouseOverRoutine()
+        {
+            float t = 0f;
+            while (t <1)
+            {
+                t += Time.unscaledDeltaTime / animationDuration;
+                transform.localScale = Vector3.Lerp(startScale * mouseOverScaleRatio, startScale, t);
+                yield return null;
             }
         }
 
