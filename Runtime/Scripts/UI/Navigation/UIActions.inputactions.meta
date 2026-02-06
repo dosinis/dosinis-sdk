@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 904b36e7c34e610248abe937b19506f6
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 8404be70184654265930450def6a9037, type: 3}
+  generateWrapperCode: 0
+  wrapperCodePath: /home/vitaliinull/Documents/GitHub/dosinis-sdk/Runtime/Scripts/UI/Navigation/UIActionsAsset.cs
+  wrapperClassName: UIActionsAsset
+  wrapperCodeNamespace: DosinisSDK.UI.Navigation
