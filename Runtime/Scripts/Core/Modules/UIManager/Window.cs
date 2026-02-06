@@ -266,6 +266,26 @@ namespace DosinisSDK.Core
             Debug.LogError($"SubWindowElement {nameof(T)} not found");
             return default;
         }
+        
+        public List<T> GetSubWindowElements<T>() where T : ISubWindowElement
+        {
+            var result = new List<T>();
+
+            foreach (var subWindowElement in subWindowElements)
+            {
+                if (subWindowElement is T element)
+                {
+                    result.Add(element);
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                Debug.LogError($"Subwindow element of type {typeof(T).Name} not found");
+            }
+
+            return result;
+        }
 
         public bool TryGetSubWindowElement<T>(out T element) where T : ISubWindowElement
         {
