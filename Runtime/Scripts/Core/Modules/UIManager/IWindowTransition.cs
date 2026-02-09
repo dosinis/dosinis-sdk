@@ -7,6 +7,7 @@ namespace DosinisSDK.Core
         void Init();
         void ShowTransition(Action done);
         void HideTransition(Action done);
+        void ResetTransition();
     }
 }
 

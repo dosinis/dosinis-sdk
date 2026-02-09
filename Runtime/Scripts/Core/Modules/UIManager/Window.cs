@@ -93,6 +93,7 @@ namespace DosinisSDK.Core
 
         public void ShowImmediately(Action onHidden = null, Action onBeforeHide = null)
         {
+            transition?.ResetTransition();
             gameObject.SetActive(true);
             Activated = true;
             OnBeforeShow?.Invoke();

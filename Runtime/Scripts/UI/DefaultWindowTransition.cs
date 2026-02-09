@@ -83,6 +83,12 @@ namespace DosinisSDK.UI
             }
         }
 
+        public void ResetTransition()
+        {
+            canvasGroup.alpha = 1;
+            scaleTarget.localScale = Vector3.one;
+        }
+
         private IEnumerator FadeInRoutine(Action done)
         {
             float timer = 0;
