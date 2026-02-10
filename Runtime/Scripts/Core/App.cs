@@ -319,38 +319,33 @@ namespace DosinisSDK.Core
 
         private void CleanupSceneModules(Scene scene)
         {
-            var expiredSceneModules = new List<Type>();
+            var expiredSceneModules = new HashSet<Type>();
 
             foreach (var sceneModule in sceneModules[scene])
             {
-                var interfaces = sceneModule.GetType().GetInterfaces();
-                
-                foreach (var interfaceType in interfaces)
+                foreach (var kvp in cachedModules)
                 {
-                    // Handle duplicate cached modules, like IUIManager and UIManager
-                    if (interfaceType != typeof(IModule) && typeof(IModule).IsAssignableFrom(interfaceType))
+                    if (ReferenceEquals(kvp.Value, sceneModule))
                     {
-                        expiredSceneModules.Add(interfaceType);
+                        expiredSceneModules.Add(kvp.Key);
                     }
                 }
-                
-                expiredSceneModules.Add(sceneModule.GetType());
-                    
+
                 if (sceneModule is IProcessable processable)
                 {
                     processables.Remove(processable);
                 }
-                
+
                 if (sceneModule is IFixedProcessable fixedProcessable)
                 {
                     fixedProcessables.Remove(fixedProcessable);
                 }
-                
+
                 if (sceneModule is ILateProcessable lateProcessable)
                 {
                     lateProcessables.Remove(lateProcessable);
                 }
-                
+
                 if (sceneModule is ITickable tickable)
                 {
                     tickables.Remove(tickable);
