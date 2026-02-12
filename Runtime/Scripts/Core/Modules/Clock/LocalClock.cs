@@ -9,6 +9,7 @@ namespace DosinisSDK.Core
         
         public long UtcNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         public long UtcNowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        public int UtcDayOfYear => DateTimeOffset.UtcNow.DayOfYear;
         public long LastTimeActiveUtc => data.lastTimeActiveUtc;
         
         // Local
