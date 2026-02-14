@@ -14,6 +14,7 @@ namespace DosinisSDK.Core
         long LastTimeActiveUtc { get; }
         long UtcNow { get; }
         long UtcNowMilliseconds { get; }
+        int UtcDayOfYear { get; }
         
         // Shared
         
