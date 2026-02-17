@@ -17,6 +17,7 @@ namespace DosinisSDK.Ads
         public override event Action OnBannerLoaded;
         public override event Action<string> OnInterstitialShown;
         public override event Action<string> OnRewardedShown;
+        public override event Action<string> OnRewardedRewarded;
         public override Utils.IObservable<bool> RewardedAdLoadingToShow => rewardedAdLoadingToShow;
         public override float LastTimeAnyAdFullyShown { get; protected set; }
         public override bool IsBannerDisplayed { get; protected set; }
@@ -96,6 +97,7 @@ namespace DosinisSDK.Ads
                 LoadRewardedAds();
 
                 callBack(true);
+                OnRewardedRewarded?.Invoke(placement);
                 LastTimeAnyAdFullyShown = Time.time;
             }, true);
         }
