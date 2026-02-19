@@ -15,9 +15,19 @@ namespace DosinisSDK.Utils
             initialized = true;
         }
 
+        private void OnDestroy()
+        {
+            if (initialized)
+            {
+                OnDispose();
+            }
+        }
+
         /// <summary>
         /// Essentially Start(), but called once/if App is initialized
         /// </summary>
         protected abstract void OnInit(IApp app);
+
+        protected virtual void OnDispose() { }
     }
 }
