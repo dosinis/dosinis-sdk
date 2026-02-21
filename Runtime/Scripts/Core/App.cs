@@ -47,7 +47,15 @@ namespace DosinisSDK.Core
         public static int InitProgress { get; private set; }
         public static bool Initialized { get; private set; }
         public static IApp Core { get; private set; }
+        public static string FirstVersion { get; private set; }
+        public static string PreviousVersion { get; private set; }
+        public static bool IsFirstBuild { get; private set; }
+        
+        // Constants
+        
         public const string MANIFEST_PATH = "ModuleManifest";
+        private const string FIRST_VERSION_STRING = "first-version";
+        private const string PREVIOUS_VERSION_STRING = "previous-version";
         
         // App
         
@@ -466,7 +474,7 @@ namespace DosinisSDK.Core
                 return;
             }
 
-            Debug.Log("Starting App...");
+            Debug.Log("Initializing App...");
 
             InitProgress = 0;
 
@@ -558,7 +566,41 @@ namespace DosinisSDK.Core
             {
                 throw new FileNotFoundException($"App failed to boot up! Couldn't find {MANIFEST_PATH} in the Resources folder");
             }
+            
+            bool saveRequired = false;
 
+            if (PlayerPrefs.HasKey(FIRST_VERSION_STRING) == false)
+            {
+                PlayerPrefs.SetString(FIRST_VERSION_STRING, Application.version);
+                saveRequired = true;
+            }
+            
+            FirstVersion = PlayerPrefs.GetString(FIRST_VERSION_STRING);
+            IsFirstBuild = FirstVersion == Application.version;
+            
+            if (PlayerPrefs.HasKey(PREVIOUS_VERSION_STRING) == false)
+            {
+                PlayerPrefs.SetString(PREVIOUS_VERSION_STRING, Application.version);
+                saveRequired = true;
+            }
+            
+            PreviousVersion = PlayerPrefs.GetString(PREVIOUS_VERSION_STRING);
+            
+            if (PreviousVersion != Application.version)
+            {
+                PlayerPrefs.SetString(PREVIOUS_VERSION_STRING, Application.version);
+                saveRequired = true;
+            }
+
+            if (saveRequired)
+            {
+                PlayerPrefs.Save();
+            }
+            
+            Debug.Log($"App Bootup: First Build - {IsFirstBuild}; " +
+                      $"First Version - {FirstVersion}; " +
+                      $"Previous Version - {PreviousVersion}");
+            
             var appObject = new GameObject(nameof(App)).AddComponent<App>();
             appObject.Init(manifest);
         }
