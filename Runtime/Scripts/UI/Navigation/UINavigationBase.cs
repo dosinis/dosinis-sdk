@@ -17,7 +17,7 @@ namespace DosinisSDK.UI.Navigation
         [SerializeField] private bool startNavigationFromHere = false;
 
         protected IUINavigationController navigationController;
-        
+
         public bool IsEnabled => Target.activeInHierarchy;
         public bool StartNavigationFromHere => startNavigationFromHere;
         public virtual GameObject Target => target;
@@ -109,10 +109,32 @@ namespace DosinisSDK.UI.Navigation
         {
         }
 
-        private void OnDestroy()
+        public void SetStartNavigationFromHere(bool value)
         {
-            Dispose();
+            startNavigationFromHere = value;
+            navigationController?.RebuildNavigation();
         }
+
+
+        public void SetNavigationElement(NavigationDirection direction, UINavigationBase element)
+        {
+            switch (direction)
+            {
+                case NavigationDirection.Up:
+                    moveUp = element;
+                    break;
+                case NavigationDirection.Left:
+                    moveLeft = element;
+                    break;
+                case NavigationDirection.Right:
+                    moveRight = element;
+                    break;
+                case NavigationDirection.Down:
+                    moveDown = element;
+                    break;
+            }
+        }
+
 
         public void Select()
         {
@@ -149,35 +171,14 @@ namespace DosinisSDK.UI.Navigation
             OnMove(axis);
         }
 
-        public void SetStartNavigationFromHere(bool value)
-        {
-            startNavigationFromHere = value;
-            navigationController?.RebuildNavigation();
-        }
-
-
-        public void SetNavigationElement(NavigationDirection direction, UINavigationBase element)
-        {
-            switch (direction)
-            {
-                case NavigationDirection.Up:
-                    moveUp = element;
-                    break;
-                case NavigationDirection.Left:
-                    moveLeft = element;
-                    break;
-                case NavigationDirection.Right:
-                    moveRight = element;
-                    break;
-                case NavigationDirection.Down:
-                    moveDown = element;
-                    break;
-            }
-        }
-
         public void Dispose()
         {
             OnDispose();
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
     }
 }
