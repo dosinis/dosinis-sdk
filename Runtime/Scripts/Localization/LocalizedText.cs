@@ -13,7 +13,8 @@ namespace DosinisSDK.Localization
         [SerializeField] private TMP_Text text;
 
         public string Key => key;
-        
+
+        public string[] Args => args;
         private string[] args = Array.Empty<string>();
 
         private ILocalizationManager localizationManager;
