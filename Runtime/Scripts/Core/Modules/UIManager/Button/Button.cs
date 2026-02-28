@@ -106,7 +106,7 @@ namespace DosinisSDK.Core
         {
             if (image == null)
             {
-                image = GetComponent<Image>();
+                image = GetComponentInChildren<Image>();
             }
 
             if (image == null)
