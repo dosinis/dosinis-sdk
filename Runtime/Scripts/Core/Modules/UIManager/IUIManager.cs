@@ -12,19 +12,20 @@ namespace DosinisSDK.Core
         bool TryGetWindow<T>(out T window) where T : IWindow;
         Task WaitForWindowAsync<T>() where T : IWindow;
         bool IsWindowReady<T>() where T : IWindow;
-        void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow;
-        void ShowWindow<T>() where T : IWindow;
-        void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : IWindow;
-        void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, Action onBeforeHide = null)
+        void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null, CanvasType canvas = CanvasType.None) where T : MonoBehaviour, IWindow;
+        void ShowWindow<T>(CanvasType canvas) where T : MonoBehaviour, IWindow;
+        void ShowWindow<T>() where T : MonoBehaviour, IWindow;
+        void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null, CanvasType canvas = CanvasType.None) where T : IWindow;
+        void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, Action onBeforeHide = null, CanvasType canvas = CanvasType.None)
             where T : IWindowWithArgs<TArgs>;
-        void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null, Action onBeforeHide = null)
+        void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null, Action onBeforeHide = null, CanvasType canvas = CanvasType.None)
             where T : IWindowWithArgs<TArgs>;
         void HideWindow<T>(Action hidden) where T : IWindow;
         void HideWindow<T>() where T : IWindow;
         void HideImmediately<T>() where T : IWindow;
         bool IsWindowShown<T>() where T : IWindow;
         void RegisterWindow(IWindow window, bool initialize = true);
-        Task<IWindow> CreateWindowAsync<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
-        IWindow CreateWindow<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
+        Task<T> CreateWindowAsync<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
+        T CreateWindow<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
     }
 }
