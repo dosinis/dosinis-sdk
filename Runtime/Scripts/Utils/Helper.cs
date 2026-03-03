@@ -411,27 +411,33 @@ namespace DosinisSDK.Utils
             var targetTransform = transform;
             var start = transform.forward;
             var elapsed = 0f;
-            
+
             while (elapsed < time)
             {
-                if(targetTransform == null)
+                if (targetTransform == null)
+                {
                     yield break;
-                
+                }
+
                 elapsed += Time.deltaTime;
-                
+
                 targetTransform.forward = Vector3.Slerp(start, forward, elapsed / time);
-                
+
                 yield return null;
             }
-            
-            targetTransform.forward = forward;
+
+            if (targetTransform != null)
+            {
+                targetTransform.forward = forward;
+            }
+
             done?.Invoke();
         }
-        
+
         // Reflection
-        
+
         // TODO: Consider moving to ReflectionHelper
-        
+
         public static void SetFieldWithReflection<T>(object targetObject, string fieldName, object value)
         {
             var field = typeof(T).GetField(fieldName, BindingFlags.NonPublic
