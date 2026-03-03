@@ -301,27 +301,6 @@ namespace DosinisSDK.Core
             }
         }
 
-        public bool AnyPopupShown()
-        {
-            foreach (var w in windows)
-            {
-                if (w.Value.IsPopup && w.Value.IsShown)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public async Task WaitForPopupsHidden()
-        {
-            while (AnyPopupShown())
-            {
-                await Task.Yield();
-            }
-        }
-
         void IProcessable.Process(in float delta)
         {
             foreach (var processed in processedWindows)
