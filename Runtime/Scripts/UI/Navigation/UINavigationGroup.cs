@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
 {
-    public class UINavigationGroup : UINavigationBase
+    public abstract class UINavigationGroupBase : UINavigationBase
     {
-        [SerializeField] private List<GameObject> children = new();
-        private int currentIndex = 0;
-        
+        [SerializeField] protected List<GameObject> children = new();
+        protected int currentIndex = 0;
+        public override GameObject Target => children[currentIndex];
         
     }
 }
