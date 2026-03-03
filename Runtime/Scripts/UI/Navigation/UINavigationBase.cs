@@ -8,10 +8,10 @@ namespace DosinisSDK.UI.Navigation
 {
     public class UINavigationBase : ManagedBehaviour, IUINavigationElement
     {
-        [SerializeField] private UINavigationBase moveUp;
-        [SerializeField] private UINavigationBase moveDown;
-        [SerializeField] private UINavigationBase moveLeft;
-        [SerializeField] private UINavigationBase moveRight;
+        [SerializeField] protected UINavigationBase moveUp;
+        [SerializeField] protected UINavigationBase moveDown;
+        [SerializeField] protected UINavigationBase moveLeft;
+        [SerializeField] protected UINavigationBase moveRight;
 
         [Header("Optional")] [SerializeField] protected GameObject target;
         [SerializeField] private bool startNavigationFromHere = false;
@@ -103,6 +103,7 @@ namespace DosinisSDK.UI.Navigation
             {
                 navigationController.SetCurrentElement(moveRight);
             }
+       
         }
 
         protected virtual void OnCancel()
@@ -168,6 +169,7 @@ namespace DosinisSDK.UI.Navigation
 
         public void Move(Vector2 axis)
         {
+
             OnMove(axis);
         }
 
