@@ -96,19 +96,18 @@ namespace DosinisSDK.Core
             }
         }
 
-        public Canvas GetCanvas(RenderMode renderMode)
+        public Canvas GetCanvas(CanvasType canvasType)
         {
-            var canvases = GetComponentsInChildren<Canvas>();
+            var canvases = GetComponentsInChildren<CanvasTag>();
             foreach (var canvas in canvases)
             {
-                if (canvas.renderMode == renderMode)
+                if (canvas.Type == canvasType)
                 {
-                    return canvas;
+                    return canvas.Canvas;
                 }
             }
-
-            LogError($"No Canvas with RenderMode {renderMode} is available!");
-            return canvases[0];
+            
+            return GetComponentInChildren<Canvas>();
         }
 
         public T GetWindow<T>() where T : IWindow

@@ -7,7 +7,7 @@ namespace DosinisSDK.Core
     public interface IUIManager : IModule
     {
         Camera Camera { get; }
-        Canvas GetCanvas(RenderMode renderMode);
+        Canvas GetCanvas(CanvasType canvasType);
         T GetWindow<T>() where T : IWindow;
         bool TryGetWindow<T>(out T window) where T : IWindow;
         Task WaitForWindowAsync<T>() where T : IWindow;
