@@ -24,7 +24,7 @@ namespace DosinisSDK.Core
         void HideImmediately<T>() where T : IWindow;
         bool IsWindowShown<T>() where T : IWindow;
         void RegisterWindow(IWindow window, bool initialize = true);
-        Task<IWindow> CreateWindowAsync<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow;
-        IWindow CreateWindow<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow;
+        Task<IWindow> CreateWindowAsync<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
+        IWindow CreateWindow<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow;
     }
 }

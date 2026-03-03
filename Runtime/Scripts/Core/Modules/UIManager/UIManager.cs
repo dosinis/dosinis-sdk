@@ -8,6 +8,7 @@ namespace DosinisSDK.Core
     public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
         [SerializeField] private bool safeMode = true;
+        [SerializeField] private List<AssetLink> windowAssets;
         
         public Camera Camera { get; private set; }
 
@@ -331,18 +332,41 @@ namespace DosinisSDK.Core
             return window;
         }
 
-        public async Task<IWindow> CreateWindowAsync<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow
+        public async Task<IWindow> CreateWindowAsync<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow
         {
+            if (link == null)
+            {
+                link = FindAssetLink<T>();
+            }
+            
             var windowPrefab = await link.GetAssetAsync<T>();
 
             return CreateWindow<T>(windowPrefab.gameObject, canvas);
         }
 
-        public IWindow CreateWindow<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow
+        public IWindow CreateWindow<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow
         {
+            if (link == null)
+            {
+                link = FindAssetLink<T>();
+            }
+            
             var windowPrefab = link.GetAsset<T>();
 
             return CreateWindow<T>(windowPrefab.gameObject, canvas);
+        }
+
+        private AssetLink<T> FindAssetLink<T>() where T : MonoBehaviour, IWindow
+        {
+            foreach (var a in windowAssets)
+            {
+                if (a.Path.Contains(nameof(T)))
+                {
+                    return (AssetLink<T>)a;
+                }
+            }
+            
+            return null;
         }
 
         void IProcessable.Process(in float delta)
