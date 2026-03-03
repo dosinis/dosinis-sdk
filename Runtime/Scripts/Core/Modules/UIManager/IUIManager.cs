@@ -14,7 +14,7 @@ namespace DosinisSDK.Core
         bool IsWindowReady<T>() where T : IWindow;
         void ShowWindow<T>(Action shown = null, Action onHidden = null, Action onBeforeHide = null) where T : IWindow;
         void ShowWindow<T>() where T : IWindow;
-        void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : Window;
+        void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : IWindow;
         void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, Action onBeforeHide = null)
             where T : IWindowWithArgs<TArgs>;
         void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null, Action onBeforeHide = null)
@@ -24,5 +24,7 @@ namespace DosinisSDK.Core
         void HideImmediately<T>() where T : IWindow;
         bool IsWindowShown<T>() where T : IWindow;
         void RegisterWindow(IWindow window, bool initialize = true);
+        Task<IWindow> CreateWindowAsync<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow;
+        IWindow CreateWindow<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow;
     }
 }

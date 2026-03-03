@@ -8,7 +8,7 @@ namespace DosinisSDK.Core
     public class UIManager : SceneModule, IUIManager, IProcessable, ITickable
     {
         [SerializeField] private bool safeMode = true;
-
+        
         public Camera Camera { get; private set; }
 
         private readonly Dictionary<Type, IWindow> windows = new();
@@ -241,7 +241,7 @@ namespace DosinisSDK.Core
             window.Show(args, shown, onHidden, onBeforeHide);
         }
 
-        public void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : Window
+        public void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null) where T : IWindow
         {
             var window = GetWindow<T>();
 
@@ -299,6 +299,50 @@ namespace DosinisSDK.Core
             {
                 InitWindow(window);
             }
+        }
+
+        private IWindow CreateWindow<T>(GameObject prefab, CanvasType canvas) where T : IWindow
+        {
+            if (prefab == null)
+            {
+                LogError("Prefab is null!");
+                return null;
+            }
+
+            if (prefab.TryGetComponent(out T _) == false)
+            {
+                LogError($"Prefab contains no {nameof(T)} component");
+                return null;
+            }
+            
+            var root = GetCanvas(canvas);
+
+            var windowObj = Instantiate(prefab, root.transform);
+
+            var window = windowObj.GetComponent<T>();
+
+            if (window is MonoBehaviour mono)
+            {
+                mono.gameObject.SetActive(false);
+            }
+            
+            RegisterWindow(window);
+
+            return window;
+        }
+
+        public async Task<IWindow> CreateWindowAsync<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow
+        {
+            var windowPrefab = await link.GetAssetAsync<T>();
+
+            return CreateWindow<T>(windowPrefab.gameObject, canvas);
+        }
+
+        public IWindow CreateWindow<T>(AssetLink<T> link, CanvasType canvas) where T : MonoBehaviour, IWindow
+        {
+            var windowPrefab = link.GetAsset<T>();
+
+            return CreateWindow<T>(windowPrefab.gameObject, canvas);
         }
 
         void IProcessable.Process(in float delta)

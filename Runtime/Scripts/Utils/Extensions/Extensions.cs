@@ -35,20 +35,6 @@ namespace DosinisSDK.Utils
             vector.Set(vector.x, newY);
         }
 
-        // Strings
-
-        public static string RemovePathExtension(this string path)
-        {
-            string ext = Path.GetExtension(path);
-
-            if (string.IsNullOrEmpty(ext) == false)
-            {
-                return path.Remove(path.Length - ext.Length, ext.Length);
-            }
-
-            return path;
-        }
-
         // Renderer
 
         public static void InstantiateMaterials(this Renderer rend)

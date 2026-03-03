@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace DosinisSDK.Assets
+namespace DosinisSDK.Core
 {
     public class AssetProviderResources : IAssetProvider
     {

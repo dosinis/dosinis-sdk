@@ -1,15 +1,18 @@
 using System;
 using System.Threading.Tasks;
-using DosinisSDK.Core;
-using DosinisSDK.Utils;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace DosinisSDK.Assets
+namespace DosinisSDK.Core
 {
     [Serializable]
     public class AssetLink<T> : AssetLink where T : Object
     {
+        public Type Type => typeof(T);
+        
 #if UNITY_EDITOR
         public AssetLink(Object obj) : base(obj)
         {
@@ -46,10 +49,23 @@ namespace DosinisSDK.Assets
         /// <param name="obj"></param>
         public AssetLink(Object obj)
         {
-            path = EditorUtils.GetAssetPathResourcesAdjusted(obj);
-            guid = UnityEditor.AssetDatabase.AssetPathToGUID(UnityEditor.AssetDatabase.GetAssetPath(obj));
+            path = GetAssetPathResourcesAdjusted(obj);
+            guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(obj));
         }
         
+        private string GetAssetPathResourcesAdjusted(Object obj)
+        {
+            var assetPath = AssetDatabase.GetAssetPath(obj);
+            
+            if (assetPath.StartsWith("Assets/Resources/"))
+            {
+                assetPath = assetPath.Replace("Assets/Resources/", "");
+                assetPath = assetPath.RemovePathExtension();
+            }
+
+            return assetPath;
+        }
+
         public string Guid => guid;
 #endif
         public string Path => path;
@@ -61,7 +77,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
+                return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
             }
 #endif
             return App.Core.GetModule<GlobalAssetsManager>().GetAsset<T>(path);
@@ -72,7 +88,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                var asset = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
+                var asset = AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
                 callback?.Invoke(asset);
                 return;
             }
@@ -85,7 +101,7 @@ namespace DosinisSDK.Assets
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
             {
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(UnityEditor.AssetDatabase.GUIDToAssetPath(guid));
+                return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guid));
             }
 #endif
             return await App.Core.GetModule<GlobalAssetsManager>().GetAssetAsync<T>(path);

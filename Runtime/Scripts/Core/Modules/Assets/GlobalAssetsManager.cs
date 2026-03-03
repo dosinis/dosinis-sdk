@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using DosinisSDK.Core;
 using Object = UnityEngine.Object;
 
-namespace DosinisSDK.Assets
+namespace DosinisSDK.Core
 {
     public class GlobalAssetsManager : Module
     {
