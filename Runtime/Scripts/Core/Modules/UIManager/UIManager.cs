@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace DosinisSDK.Core
@@ -9,7 +12,7 @@ namespace DosinisSDK.Core
     {
         [SerializeField] private bool safeMode = true;
         [SerializeField] private bool autoCreateWindowIfNotFound = true;
-        [SerializeField] private List<AssetLink> windowAssets;
+        [SerializeField] private List<WindowAssetLink> windowAssets;
         
         public Camera Camera { get; private set; }
 
@@ -17,7 +20,27 @@ namespace DosinisSDK.Core
         private readonly List<IProcessable> processedWindows = new();
         private readonly List<ITickable> tickableWindows = new();
         private IApp app;
+        
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            bool changed = false;
 
+            foreach (var link in windowAssets)
+            {
+                if (link != null && link.RefreshTypeIfNeeded())
+                {
+                    changed = true;
+                }
+            }
+
+            if (changed)
+            {
+                EditorUtility.SetDirty(this);
+                AssetDatabase.SaveAssets();
+            }
+        }
+#endif
         protected override void OnInit(IApp app)
         {
             this.app = app;
@@ -345,17 +368,32 @@ namespace DosinisSDK.Core
 
         private AssetLink FindAssetLink<T>() where T : IWindow
         {
-            var lookupName = typeof(T).Name;
+            var lookupType = typeof(T);
+            AssetLink found = null;
 
             foreach (var a in windowAssets)
             {
-                if (a.Path.Contains(lookupName))
+                var windowType = a.WindowType;
+
+                if (windowType == null)
+                    continue;
+
+                if (lookupType.IsAssignableFrom(windowType))
                 {
-                    return a;
+                    if (found != null)
+                    {
+                        Warn($"Multiple window assets match {lookupType.Name}");
+                        return found;
+                    }
+
+                    found = a.Asset;
                 }
             }
 
-            LogError($"Failed to find {lookupName} in asset links!");
+            if (found != null)
+                return found;
+
+            LogError($"Failed to find {lookupType.Name} in asset links!");
             return null;
         }
 
@@ -373,6 +411,80 @@ namespace DosinisSDK.Core
             {
                 tickable.Tick();
             }
+        }
+        
+        [Serializable]
+        private class WindowAssetLink
+        {
+            [SerializeField] private AssetLink asset;
+            [SerializeField] private string windowTypeName;
+
+#if UNITY_EDITOR
+            [SerializeField] private string cachedAssetPath;
+#endif
+
+            public AssetLink Asset => asset;
+
+            public Type WindowType
+            {
+                get
+                {
+                    if (string.IsNullOrEmpty(windowTypeName))
+                        return null;
+
+                    return Type.GetType(windowTypeName);
+                }
+            }
+
+#if UNITY_EDITOR
+            public bool RefreshTypeIfNeeded()
+            {
+                if (asset == null)
+                    return false;
+
+                var path = asset.Path;
+
+                if (path == cachedAssetPath)
+                    return false;
+
+                cachedAssetPath = path;
+
+                var go = asset.GetAsset<GameObject>();
+
+                if (go == null)
+                    return false;
+
+                var window = go.GetComponent<IWindow>();
+
+                if (window == null)
+                {
+                    Debug.LogError($"{go.name} does not contain IWindow");
+                    return false;
+                }
+
+                windowTypeName = window.GetType().AssemblyQualifiedName;
+
+                return true;
+            }
+#endif
+            
+#if UNITY_EDITOR
+            [CustomPropertyDrawer(typeof(WindowAssetLink))]
+            public class WindowAssetLinkDrawer : PropertyDrawer
+            {
+                public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+                {
+                    var assetProp = property.FindPropertyRelative("asset");
+
+                    EditorGUI.PropertyField(position, assetProp, label);
+                }
+
+                public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+                {
+                    return EditorGUI.GetPropertyHeight(property.FindPropertyRelative("asset"), label);
+                }
+            }
+#endif
         }
     }
 }
