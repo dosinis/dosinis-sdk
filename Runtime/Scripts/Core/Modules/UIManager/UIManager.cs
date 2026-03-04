@@ -70,7 +70,6 @@ namespace DosinisSDK.Core
             }
         }
 
-
         protected override void OnDispose()
         {
             var disposeList = new List<IWindow>(windows.Count);
@@ -143,6 +142,37 @@ namespace DosinisSDK.Core
             return default;
         }
 
+        public T GetOrCreateWindow<T>(CanvasType canvas = CanvasType.None) where T : IWindow
+        {
+            if (autoCreateWindowIfNotFound && TryGetWindow(out T window) == false)
+            {
+                window = CreateWindow<T>(canvas);
+            }
+            else
+            {
+                window = GetWindow<T>();
+            }
+
+            return window;
+        }
+        
+        public T GetOrCreateReadyWindow<T>(CanvasType canvas) where T : IWindow
+        {
+            var window = GetOrCreateWindow<T>(canvas);
+            
+            if (window.Initialized == false)
+            {
+                InitWindow(window);
+            }
+
+            if (canvas != CanvasType.None)
+            {
+                ApplyToCanvas(canvas, window);
+            }
+
+            return window;
+        }
+
         public bool TryGetWindow<T>(out T window) where T : IWindow
         {
             var wType = typeof(T);
@@ -213,120 +243,44 @@ namespace DosinisSDK.Core
         }
         
         public void ShowWindow<T>(Action shown, Action onHidden = null, Action onBeforeHide = null, 
-            CanvasType canvas = CanvasType.None) where T : MonoBehaviour, IWindow
+            CanvasType canvas = CanvasType.None) where T : IWindow
         {
-            if (autoCreateWindowIfNotFound && TryGetWindow(out T window) == false)
-            {
-                window = CreateWindow<T>(canvas);
-            }
-            else
-            {
-                window = GetWindow<T>();
-            }
-
-            if (window.Initialized == false)
-            {
-                InitWindow(window);
-            }
-
-            if (canvas != CanvasType.None)
-            {
-                var root = GetCanvas(canvas);
-            
-                if (window is MonoBehaviour mono)
-                {
-                    mono.transform.SetParent(root.transform);
-                    mono.transform.localPosition = Vector3.zero;
-                    mono.transform.localScale = Vector3.one;
-                }
-            }
-
+            var window = GetOrCreateReadyWindow<T>(canvas);
             window.Show(shown, onHidden, onBeforeHide);
         }
-
-        public void ShowWindow<T>() where T : MonoBehaviour, IWindow
+        
+        public void ShowWindow<T>() where T : IWindow
         {
             ShowWindow<T>(null);
         }
         
-        public void ShowWindow<T>(CanvasType canvas) where T : MonoBehaviour, IWindow
+        public void ShowWindow<T>(CanvasType canvas) where T : IWindow
         {
             ShowWindow<T>(null, canvas: canvas);
+        }
+        
+        public void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null, 
+            CanvasType canvas = CanvasType.None) where T : IWindow
+        {
+            var window = GetOrCreateReadyWindow<T>(canvas);
+
+            window.ShowImmediately(onHidden, onBeforeHide);
         }
 
         public void ShowWindowWithArgs<T, TArgs>(TArgs args, Action shown = null, Action onHidden = null,
             Action onBeforeHide = null, CanvasType canvas = CanvasType.None)
             where T : IWindowWithArgs<TArgs>
         {
-            var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
-
-            if (window.Initialized == false)
-            {
-                InitWindow(window);
-            }
+            var window = GetOrCreateReadyWindow<T>(canvas) as IWindowWithArgs<TArgs>;
             
-            if (canvas != CanvasType.None)
-            {
-                var root = GetCanvas(canvas);
-            
-                if (window is MonoBehaviour mono)
-                {
-                    mono.transform.SetParent(root.transform);
-                    mono.transform.localPosition = Vector3.zero;
-                    mono.transform.localScale = Vector3.one;
-                }
-            }
-
             window.Show(args, shown, onHidden, onBeforeHide);
-        }
-
-        public void ShowWindowImmediately<T>(Action onHidden = null, Action onBeforeHide = null, 
-            CanvasType canvas = CanvasType.None) where T : IWindow
-        {
-            var window = GetWindow<T>();
-
-            if (window.Initialized == false)
-            {
-                InitWindow(window);
-            }
-            
-            if (canvas != CanvasType.None)
-            {
-                var root = GetCanvas(canvas);
-            
-                if (window is MonoBehaviour mono)
-                {
-                    mono.transform.SetParent(root.transform);
-                    mono.transform.localPosition = Vector3.zero;
-                    mono.transform.localScale = Vector3.one;
-                }
-            }
-
-            window.ShowImmediately(onHidden, onBeforeHide);
         }
 
         public void ShowWindowImmediatelyWithArgs<T, TArgs>(TArgs args, Action onHidden = null, 
             Action onBeforeHide = null, CanvasType canvas = CanvasType.None) where T : IWindowWithArgs<TArgs>
         {
-            var window = GetWindow<T>() as IWindowWithArgs<TArgs>;
-
-            if (window.Initialized == false)
-            {
-                InitWindow(window);
-            }
+            var window = GetOrCreateReadyWindow<T>(canvas) as IWindowWithArgs<TArgs>;
             
-            if (canvas != CanvasType.None)
-            {
-                var root = GetCanvas(canvas);
-            
-                if (window is MonoBehaviour mono)
-                {
-                    mono.transform.SetParent(root.transform);
-                    mono.transform.localPosition = Vector3.zero;
-                    mono.transform.localScale = Vector3.one;
-                }
-            }
-
             window.ShowImmediately(args, onHidden, onBeforeHide);
         }
 
@@ -379,15 +333,15 @@ namespace DosinisSDK.Core
                 LogError($"Prefab contains no {nameof(T)} component");
                 return default;
             }
-            
+
             if (canvas == CanvasType.None)
             {
                 canvas = CanvasType.Main;
                 Warn("Specify canvas. Falling back to main canvas!");
             }
-            
+
             var root = GetCanvas(canvas);
-            
+
             var windowObj = Instantiate(prefab, root.transform);
 
             var window = windowObj.GetComponent<T>();
@@ -396,48 +350,46 @@ namespace DosinisSDK.Core
             {
                 mono.gameObject.SetActive(false);
             }
-            
+
             RegisterWindow(window);
 
             return window;
         }
-
-        public async Task<T> CreateWindowAsync<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow
+        
+        public async Task<T> CreateWindowAsync<T>(CanvasType canvas, AssetLink link = null) where T : IWindow
         {
-            T windowPrefab;
+            var assetLink = link ?? FindAssetLink<T>();
             
-            if (link == null)
-            {
-                windowPrefab = await FindAssetLink<T>().GetAssetAsync<T>();
-            }
-            else
-            {
-                windowPrefab = await link.GetAssetAsync<T>();
-            }
+            var prefab = await assetLink.GetAssetAsync<GameObject>();
 
-            return CreateWindow<T>(windowPrefab.gameObject, canvas);
+            return CreateWindow<T>(prefab, canvas);
         }
 
-        public T CreateWindow<T>(CanvasType canvas, AssetLink<T> link = null) where T : MonoBehaviour, IWindow
+        public T CreateWindow<T>(CanvasType canvas, AssetLink link = null) where T : IWindow
         {
-            T windowPrefab;
-            
-            if (link == null)
-            {
-                windowPrefab = FindAssetLink<T>().GetAsset<T>();
-            }
-            else
-            {
-                windowPrefab = link.GetAsset<T>();
-            }
+            var assetLink = link ?? FindAssetLink<T>();
 
-            return CreateWindow<T>(windowPrefab.gameObject, canvas);
+            var prefab = assetLink.GetAsset<GameObject>();
+
+            return CreateWindow<T>(prefab, canvas);
+        }
+        
+        private void ApplyToCanvas(CanvasType canvas, IWindow window)
+        {
+            var root = GetCanvas(canvas);
+
+            if (window is not MonoBehaviour mono)
+                return;
+            
+            mono.transform.SetParent(root.transform);
+            mono.transform.localPosition = Vector3.zero;
+            mono.transform.localScale = Vector3.one;
         }
 
-        private AssetLink FindAssetLink<T>() where T : MonoBehaviour, IWindow
+        private AssetLink FindAssetLink<T>() where T : IWindow
         {
             var lookupName = typeof(T).Name;
-            
+
             foreach (var a in windowAssets)
             {
                 if (a.Path.Contains(lookupName))
@@ -445,9 +397,8 @@ namespace DosinisSDK.Core
                     return a;
                 }
             }
-            
-            LogError($"Failed to find {lookupName} in asset links! Make sure you name your asset identically to their type name");
-            
+
+            LogError($"Failed to find {lookupName} in asset links!");
             return null;
         }
 
