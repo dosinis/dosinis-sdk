@@ -19,7 +19,8 @@ namespace DosinisSDK.Core
         private readonly Dictionary<Type, IWindow> windows = new();
         private readonly List<IProcessable> processedWindows = new();
         private readonly List<ITickable> tickableWindows = new();
-        private IApp app;
+        
+        private static IApp App => Core.App.Core;
         
 #if UNITY_EDITOR
         private void OnValidate()
@@ -43,8 +44,6 @@ namespace DosinisSDK.Core
 #endif
         protected override void OnInit(IApp app)
         {
-            this.app = app;
-
             Camera = GetComponentInChildren<Camera>();
 
             foreach (var win in GetComponentsInChildren<IWindow>(true))
@@ -70,7 +69,7 @@ namespace DosinisSDK.Core
             {
                 try
                 {
-                    window.Init(app);
+                    window.Init(App);
                 }
                 catch (Exception ex)
                 {
@@ -79,7 +78,7 @@ namespace DosinisSDK.Core
             }
             else
             {
-                window.Init(app);
+                window.Init(App);
             }
 
             if (window is IProcessable proc)

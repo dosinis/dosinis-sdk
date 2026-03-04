@@ -135,9 +135,9 @@ namespace DosinisSDK.Core
             eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
         }
 
-        public void ForwardTo<T>(bool waitUntilHidden = true) where T : IWindow
+        public void ForwardTo<T>(bool waitUntilHidden = true, CanvasType canvas = CanvasType.None) where T : IWindow
         {
-            var window = uiManager.GetWindow<T>();
+            var window = uiManager.GetOrCreateReadyWindow<T>(canvas);
 
             if (waitUntilHidden)
             {

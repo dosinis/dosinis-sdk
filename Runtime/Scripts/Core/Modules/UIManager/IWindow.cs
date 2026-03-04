@@ -23,7 +23,7 @@ namespace DosinisSDK.Core
         void ShowImmediately(Action onHidden = null, Action onBeforeHide = null);
         
         void Show(Action done, Action onHidden = null, Action onBeforeHide = null);
-        void ForwardTo<T>(bool waitUntilHidden = false) where T : IWindow;
+        void ForwardTo<T>(bool waitUntilHidden = true, CanvasType canvas = CanvasType.None) where T : IWindow;
         void Hide();
         void Hide(Action done);
         void HideImmediately();
