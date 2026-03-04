@@ -114,31 +114,12 @@ namespace DosinisSDK.Core
 
         public T GetWindow<T>() where T : IWindow
         {
-            var wType = typeof(T);
-
-            if (windows.TryGetValue(wType, out IWindow window))
+            if (TryGetWindow(out T window))
             {
-                return (T)window;
+                return window;
             }
 
-            IWindow found = null;
-
-            foreach (var kv in windows)
-            {
-                if (kv.Value is T)
-                {
-                    found = kv.Value;
-                    break;
-                }
-            }
-
-            if (found != null)
-            {
-                windows[wType] = found;
-                return (T)found;
-            }
-
-            LogError($"No Window {wType.Name} is available!");
+            LogError($"No Window {typeof(T).Name} is available!");
             return default;
         }
 
@@ -215,31 +196,7 @@ namespace DosinisSDK.Core
 
         public bool IsWindowReady<T>() where T : IWindow
         {
-            var wType = typeof(T);
-
-            if (windows.TryGetValue(wType, out IWindow _))
-            {
-                return true;
-            }
-
-            IWindow found = null;
-
-            foreach (var kv in windows)
-            {
-                if (kv.Value is T)
-                {
-                    found = kv.Value;
-                    break;
-                }
-            }
-
-            if (found != null)
-            {
-                windows[wType] = found;
-                return true;
-            }
-
-            return false;
+            return TryGetWindow<T>(out _);
         }
         
         public void ShowWindow<T>(Action shown, Action onHidden = null, Action onBeforeHide = null, 
