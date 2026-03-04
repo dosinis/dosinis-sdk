@@ -1,5 +1,5 @@
 using System;
-using DosinisSDK.Assets;
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.Localization

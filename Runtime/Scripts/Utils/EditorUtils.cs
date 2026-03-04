@@ -1,4 +1,5 @@
 using System.Linq;
+using DosinisSDK.Core;
 using UnityEditor;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ namespace DosinisSDK.Utils
 
             return assetPath;
         }
+        
         public static string GetAssetPathResourcesAdjusted(Object obj)
         {
             var path = AssetDatabase.GetAssetPath(obj);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityRandom = UnityEngine.Random;
 
@@ -338,6 +339,18 @@ namespace DosinisSDK.Core
         public static bool Approx(this float value, float other, float tolerance = 0.0001f)
         {
             return Mathf.Abs(value - other) <= tolerance;
+        }
+        
+        public static string RemovePathExtension(this string path)
+        {
+            string ext = Path.GetExtension(path);
+
+            if (string.IsNullOrEmpty(ext) == false)
+            {
+                return path.Remove(path.Length - ext.Length, ext.Length);
+            }
+
+            return path;
         }
     }
 }

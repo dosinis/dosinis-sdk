@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Object = UnityEngine.Object;
 
-namespace DosinisSDK.Assets
+namespace DosinisSDK.Core
 {
     public interface IAssetProvider
     {
