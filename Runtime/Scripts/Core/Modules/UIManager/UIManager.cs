@@ -360,6 +360,11 @@ namespace DosinisSDK.Core
 
             if (window is not MonoBehaviour mono)
                 return;
+
+            if (mono.transform.parent == root.transform)
+            {
+                return;
+            }
             
             mono.transform.SetParent(root.transform);
             mono.transform.localPosition = Vector3.zero;
