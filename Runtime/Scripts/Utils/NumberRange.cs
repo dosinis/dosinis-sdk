@@ -30,6 +30,11 @@ namespace DosinisSDK.Utils
         {
             return $"{min}-{max}";
         }
+
+        public bool InRange(int value)
+        {
+            return value >= min && value <= max;
+        }
     }
 
     [System.Serializable]
@@ -61,6 +66,11 @@ namespace DosinisSDK.Utils
         public override string ToString()
         {
             return $"[{min}, {max}]";
+        }
+
+        public bool InRange(float value)
+        {
+            return value >= min && value <= max;
         }
     }
 }
