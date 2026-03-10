@@ -135,18 +135,26 @@ namespace DosinisSDK.Core
             eventsManager.Invoke(new CoreEvents.WindowOpenedEvent(this));
         }
 
-        public void ForwardTo<T>(bool waitUntilHidden = true, CanvasType canvas = CanvasType.None) where T : IWindow
+        public void ForwardTo<T>(IWindow.ForwardParams fwdParams = IWindow.ForwardParams.Default, CanvasType canvas = CanvasType.None) where T : IWindow
         {
             var window = uiManager.GetOrCreateReadyWindow<T>(canvas);
-
-            if (waitUntilHidden)
-            {
-                Hide(() => { window.Show(null, onHidden: Show); });
-            }
-            else
+            
+            if (fwdParams == IWindow.ForwardParams.Default)
             {
                 Hide();
                 window.Show(null, onBeforeHide: Show);
+            }
+            else if (fwdParams == IWindow.ForwardParams.ReappearOnDestinationHidden)
+            {
+                Hide(() => { window.Show(null, onHidden: Show); });
+            }
+            else if (fwdParams == IWindow.ForwardParams.ShowDestinationFirst)
+            {
+                window.Show(Hide, onBeforeHide: Show);
+            }
+            else if (fwdParams == IWindow.ForwardParams.Combined)
+            {
+                window.Show(Hide, onHidden: Show);
             }
         }
 

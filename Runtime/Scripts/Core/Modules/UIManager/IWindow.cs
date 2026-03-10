@@ -23,12 +23,20 @@ namespace DosinisSDK.Core
         void ShowImmediately(Action onHidden = null, Action onBeforeHide = null);
         
         void Show(Action done, Action onHidden = null, Action onBeforeHide = null);
-        void ForwardTo<T>(bool waitUntilHidden = true, CanvasType canvas = CanvasType.None) where T : IWindow;
+        void ForwardTo<T>(ForwardParams fwdParams = ForwardParams.Default, CanvasType canvas = CanvasType.None) where T : IWindow;
         void Hide();
         void Hide(Action done);
         void HideImmediately();
         void Refresh();
         void RegisterWidget(Widget widget);
         void ClearHideCallbacks();
+        
+        public enum ForwardParams
+        {
+            Default,
+            ReappearOnDestinationHidden,
+            ShowDestinationFirst,
+            Combined,
+        }
     }
 }
