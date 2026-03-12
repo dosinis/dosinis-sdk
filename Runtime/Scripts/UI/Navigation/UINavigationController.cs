@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DosinisSDK.Core;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace DosinisSDK.UI.Navigation
         private IUINavigationElement currentElement;
         private IUINavigationElement cancellationElement;
         private readonly List<IUINavigationElement> navigationElements = new();
+        public event Action<IUINavigationElement> OnCurrentElementChanged;
+        
 
         protected override void OnInit(IApp app)
         {
@@ -40,6 +43,7 @@ namespace DosinisSDK.UI.Navigation
             navigationElements.Clear();
             currentElement = null;
         }
+
 
 
         public void RegisterElement(IUINavigationElement element)
@@ -89,6 +93,7 @@ namespace DosinisSDK.UI.Navigation
             currentElement?.Deselect();
             currentElement = element;
             currentElement.Select();
+            OnCurrentElementChanged?.Invoke(currentElement);
         }
 
         private void SyncWithEventSystem()
