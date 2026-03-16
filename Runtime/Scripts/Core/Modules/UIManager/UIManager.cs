@@ -373,29 +373,28 @@ namespace DosinisSDK.Core
         private AssetLink FindAssetLink<T>() where T : IWindow
         {
             var lookupType = typeof(T);
-            AssetLink found = null;
+
+            AssetLink fallback = null;
 
             foreach (var a in windowAssets)
             {
                 var windowType = a.WindowType;
-
                 if (windowType == null)
                     continue;
-
-                if (lookupType.IsAssignableFrom(windowType))
+                
+                if (windowType == lookupType)
                 {
-                    if (found != null)
-                    {
-                        Warn($"Multiple window assets match {lookupType.Name}");
-                        return found;
-                    }
-
-                    found = a.Asset;
+                    return a.Asset;
+                }
+                
+                if (fallback == null && lookupType.IsAssignableFrom(windowType))
+                {
+                    fallback = a.Asset;
                 }
             }
 
-            if (found != null)
-                return found;
+            if (fallback != null)
+                return fallback;
 
             LogError($"Failed to find {lookupType.Name} in asset links!");
             return null;
