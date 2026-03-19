@@ -9,8 +9,8 @@ namespace DosinisSDK.Ads
     public class DummyAdsManager : AdsManager
     {
         private bool rewardAdReady = false;
-
         private Canvas canvas;
+        private ITimer timer;
         // TODO: Implement fully
         private readonly Observable<bool> rewardedAdLoadingToShow = new (false);
         
@@ -21,8 +21,8 @@ namespace DosinisSDK.Ads
         public override Utils.IObservable<bool> RewardedAdLoadingToShow => rewardedAdLoadingToShow;
         public override float LastTimeAnyAdFullyShown { get; protected set; }
         public override bool IsBannerDisplayed { get; protected set; }
-
-        private ITimer timer;
+        
+        private const string PAUSE_ID = "dummy-ads-manager";
 
         protected override void OnInit(IApp app)
         {
@@ -86,11 +86,11 @@ namespace DosinisSDK.Ads
 
             OnRewardedShown?.Invoke(placement);
             
-            Time.timeScale = 0;
+            TimeScaleUtils.Pause(PAUSE_ID);
 
             timer.Delay(3f, () =>
             {
-                Time.timeScale = 1;
+                TimeScaleUtils.Resume(PAUSE_ID);
                 rewardAdReady = false;
 
                 Destroy(ad);

@@ -494,7 +494,7 @@ namespace DosinisSDK.Core
 
             InitProgress = 25;
             
-            await manifest.CreateUserModules(this);
+            await manifest.CreateUserModules(this); // TODO: ref InitProgress
 
             InitProgress = 50;
             

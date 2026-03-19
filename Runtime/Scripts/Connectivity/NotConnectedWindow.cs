@@ -1,4 +1,5 @@
 using DosinisSDK.Core;
+using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.Connectivity
@@ -9,6 +10,7 @@ namespace DosinisSDK.Connectivity
         [SerializeField] private bool pauseOnShown = true;
         
         private IConnectivityManager connectionManager;
+        private const string PAUSE_ID = "not-connected-window";
         
         protected override void OnInit(IApp app)
         {
@@ -30,7 +32,7 @@ namespace DosinisSDK.Connectivity
         {
             if (pauseOnShown)
             {
-                Time.timeScale = float.Epsilon;
+                TimeScaleUtils.Pause(PAUSE_ID);
             }
         }
         
@@ -38,7 +40,7 @@ namespace DosinisSDK.Connectivity
         {
             if (pauseOnShown)
             {
-                Time.timeScale = 1f;
+                TimeScaleUtils.Resume(PAUSE_ID);
             }
         }
 
