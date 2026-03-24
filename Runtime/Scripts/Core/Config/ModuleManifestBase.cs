@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -20,17 +22,42 @@ namespace DosinisSDK.Core
         internal int TargetFramerate => targetFramerate;
         internal bool SafeMode => safeMode;
 
-        protected GlobalAssetsManager assetManager;
+        [NonSerialized] private GlobalAssetsManager assetManager;
+        [NonSerialized] private IModuleFactory moduleFactory;
+        [NonSerialized] private Queue<(Task task, string description)> initializationQueue;
 
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
-            await CreateModules(moduleFactory);
+            this.moduleFactory = moduleFactory;
+            initializationQueue = new Queue<(Task, string)>();
+    
+            CreateCoreModules(moduleFactory);
+            BindUserModules();
+    
+            int total = initializationQueue.Count;
+            int done = 0;
+
+            foreach (var init in initializationQueue)
+            {
+                try
+                {
+                    await init.task;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+
+                done++;
+
+                float progress01 = total == 0 ? 1f : (float)done / total;
+                int percent = Mathf.RoundToInt(progress01 * 80f);// modules accumulate to max 80% of app progress
+
+                App.UpdateInitProgress(percent, init.description);
+            }
         }
 
-        /// <summary>
-        /// Add desired modules in override of this method
-        /// </summary>
-        protected virtual Task CreateModules(IModuleFactory moduleFactory)
+        protected virtual void CreateCoreModules(IModuleFactory moduleFactory)
         {
             moduleFactory.CreateModule<EventsManager>();
             moduleFactory.CreateModule<SceneManager>();
@@ -40,21 +67,62 @@ namespace DosinisSDK.Core
             moduleFactory.CreateModule<LocalClock>();
             assetManager = moduleFactory.CreateModule<GlobalAssetsManager>();
             SetupAssetProvider();
-            
-            return Task.CompletedTask;
         }
-
+        
         protected virtual void SetupAssetProvider()
         {
             assetManager.SetProvider(new AssetProviderResources());
         }
 
-        protected async Task CreateModuleWithConfig<TModule, TConfig>(IModuleFactory moduleFactory, AssetLink<TConfig> configLink)
+        /// <summary>
+        /// Add desired modules in override of this method
+        /// </summary>
+        protected abstract void BindUserModules();
+
+        protected void BindCustomTask(Task task, string taskName = "")
+        {
+            initializationQueue.Enqueue((task, taskName));
+        }
+        
+        protected void BindModule<TModule>(TModule source = null, ModuleConfig config = null)
             where TModule : class, IModule, new()
-            where TConfig : ModuleConfig, new()
+        {
+            var currentTaskName = $"Loading {typeof(TModule).Name}...";
+            initializationQueue.Enqueue((CreateModuleWithConfig(source, config), currentTaskName));
+        }
+        
+        protected void BindModule<TModule>(AssetLink<ModuleConfig> configLink, TModule source = null)
+            where TModule : class, IModule, new()
+        {
+            var currentTaskName = $"Loading {typeof(TModule).Name}...";
+            initializationQueue.Enqueue((CreateModuleWithConfig(source, configLink), currentTaskName));
+        }
+
+        private async Task CreateModuleWithConfig<TModule>(TModule source, ModuleConfig config)
+            where TModule : class, IModule, new()
+        {
+            if (source == null)
+            {
+                moduleFactory.CreateModule<TModule>(config: config);
+            }
+            else
+            {
+                if (source is IAsyncModule asyncModule)
+                {
+                    await moduleFactory.CreateModuleAsync(asyncModule, config: config);
+                }
+                else
+                {
+                    moduleFactory.CreateModule(source, config);
+                }
+            }
+        }
+        
+        private async Task CreateModuleWithConfig<TModule>(TModule source, AssetLink<ModuleConfig> configLink)
+            where TModule : class, IModule, new()
         {
             var config = await configLink.GetAssetAsync();
-            moduleFactory.CreateModule<TModule>(config: config);
+            await CreateModuleWithConfig(source, config);
         }
     }
 }

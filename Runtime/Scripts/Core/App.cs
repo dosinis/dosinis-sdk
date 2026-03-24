@@ -46,6 +46,7 @@ namespace DosinisSDK.Core
 
         private static Action onAppInitialized;
         public static int InitProgress { get; private set; }
+        public static string InitStatusString { get; private set; }
         public static bool Initialized { get; private set; }
         public static IApp Core { get; private set; }
         public static string FirstVersion { get; private set; }
@@ -314,9 +315,9 @@ namespace DosinisSDK.Core
             return source;
         }
 
-        public async Task CreateModuleAsync<T>(T source = null, ModuleConfig config = null) where T : class, IAsyncModule
+        public async Task CreateModuleAsync<T>(T source, ModuleConfig config = null) where T : class, IAsyncModule
         {
-            IAsyncModule module = source == null ? CreateModule<T>(config: config) : CreateModule(source, config);
+            IAsyncModule module = CreateModule(source, config);
             
             await module.InitAsync(this);
         }
@@ -492,7 +493,7 @@ namespace DosinisSDK.Core
 
             Debug.Log("Initializing App...");
 
-            InitProgress = 0;
+            UpdateInitProgress(0, "Initializing App...");
 
             Core = this;
 
@@ -507,12 +508,8 @@ namespace DosinisSDK.Core
             DontDestroyOnLoad(this);
 
             Debug.Log("Registering Modules...");
-
-            InitProgress = 25;
             
-            await manifest.CreateUserModules(this); // TODO: ref InitProgress
-
-            InitProgress = 50;
+            await manifest.CreateUserModules(this);
             
             Debug.Log("Setting up scene modules...");
             
@@ -530,7 +527,7 @@ namespace DosinisSDK.Core
                 SceneManager.OnSceneChanged += OnSceneChanged;
                 SceneManager.OnAdditiveSceneLoaded += OnAdditiveSceneLoaded;
 
-                InitProgress = 90;
+                UpdateInitProgress(90, "Loading scenes...");
                 Initialized = true;
                 
                 onAppInitialized?.Invoke();
@@ -541,7 +538,7 @@ namespace DosinisSDK.Core
 
         public static void MarkAppBootupComplete()
         {
-            InitProgress = 100;
+            UpdateInitProgress(100, "Loading complete");
         }
 
         private void OnSceneUnloaded(Scene scene)
@@ -619,6 +616,14 @@ namespace DosinisSDK.Core
             
             var appObject = new GameObject(nameof(App)).AddComponent<App>();
             appObject.Init(manifest);
+        }
+        
+        // Static
+
+        internal static void UpdateInitProgress(int progress, string status)
+        {
+            InitProgress = progress;
+            InitStatusString = status;
         }
 
         // MonoBehaviour
