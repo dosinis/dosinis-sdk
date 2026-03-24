@@ -7,13 +7,11 @@ namespace DosinisSDK.Core
         int DayOfYear { get; }
         long LastTimeActive { get; }
         long Now { get; }
-        long NowMilliseconds { get; }
         
         // UTC
         
         long LastTimeActiveUtc { get; }
         long UtcNow { get; }
-        long UtcNowMilliseconds { get; }
         int UtcDayOfYear { get; }
         
         // Shared
@@ -26,5 +24,6 @@ namespace DosinisSDK.Core
         /// <param name="forId">Specified id used for caching</param>
         /// <returns></returns>
         bool IsNewDayCached(string forId);
+        long TimeOffset { get; set; }
     }
 }

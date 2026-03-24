@@ -6,23 +6,22 @@ namespace DosinisSDK.Core
     public class LocalClock : Module, IClock
     {
         // UTC
-        
-        public long UtcNow => DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        public long UtcNowMilliseconds => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        public int UtcDayOfYear => DateTimeOffset.UtcNow.DayOfYear;
+
+        public long UtcNow => GetUtcNowSeconds();
+        public int UtcDayOfYear => GetUtcNowDate().DayOfYear;
         public long LastTimeActiveUtc => data.lastTimeActiveUtc;
-        
+
         // Local
 
-        public long Now => DateTimeOffset.Now.ToUnixTimeSeconds();
-        public long NowMilliseconds => DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        public int DayOfYear => DateTimeOffset.Now.DayOfYear;
+        public long Now => GetLocalNowSeconds();
+        public int DayOfYear => GetLocalNowDate().DayOfYear;
         public long LastTimeActive => data.lastTimeActive;
 
         // Shared
 
         public long TimeInactive => UtcNow - LastTimeActiveUtc;
         public bool IsNewDay { get; private set; }
+        public long TimeOffset { get; set; }
 
         // LocalClock
 
@@ -30,17 +29,18 @@ namespace DosinisSDK.Core
         private IDataManager dataManager;
         private LocalClockData data;
         private readonly List<string> newDayCache = new();
-        
+
         protected override void OnInit(IApp app)
         {
             this.app = app;
             dataManager = app.GetModule<IDataManager>();
-            
+
             data = dataManager.GetOrCreateData<LocalClockData>();
 
             if (data.lastTimeActive == 0)
             {
                 data.lastTimeActive = UtcNow;
+                data.lastTimeActiveUtc = UtcNow;
             }
 
             IsNewDay = data.previousDayOfYear != DayOfYear;
@@ -62,7 +62,7 @@ namespace DosinisSDK.Core
         {
             data.lastTimeActive = Now;
             data.lastTimeActiveUtc = UtcNow;
-            
+
             dataManager.SaveData(data);
         }
 
@@ -81,7 +81,7 @@ namespace DosinisSDK.Core
                 OnAppQuit();
             }
         }
-        
+
         public bool IsNewDayCached(string forId)
         {
             if (IsNewDay == false)
@@ -91,12 +91,32 @@ namespace DosinisSDK.Core
             {
                 Warn("Id is null or empty!");
             }
-            
+
             if (newDayCache.Contains(forId))
                 return false;
-            
+
             newDayCache.Add(forId);
             return true;
+        }
+
+        private long GetUtcNowSeconds()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeSeconds() + TimeOffset;
+        }
+
+        private long GetLocalNowSeconds()
+        {
+            return DateTimeOffset.Now.ToUnixTimeSeconds() + TimeOffset;
+        }
+
+        private DateTimeOffset GetUtcNowDate()
+        {
+            return DateTimeOffset.FromUnixTimeSeconds(GetUtcNowSeconds());
+        }
+
+        private DateTimeOffset GetLocalNowDate()
+        {
+            return DateTimeOffset.FromUnixTimeSeconds(GetLocalNowSeconds());
         }
     }
 }
