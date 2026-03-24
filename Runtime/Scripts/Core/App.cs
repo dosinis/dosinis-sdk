@@ -65,6 +65,9 @@ namespace DosinisSDK.Core
         
         public void Restart(int loadScene = 0)
         {
+            if (IsRestarting)
+                return;
+            
             OnAppAboutToRestart?.Invoke();
             IsRestarting = true;
             
