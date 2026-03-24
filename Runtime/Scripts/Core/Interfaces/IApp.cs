@@ -8,10 +8,12 @@ namespace DosinisSDK.Core
         event Action<bool> OnAppPaused;
         event Action<bool> OnAppFocus;
         event Action OnAppQuit;
-        event Action OnAppRestart;
-        void Restart();
+        event Action OnAppAboutToRestart;
+        event Action<IApp> OnAppRestarted;
+        void Restart(int loadScene = 0);
         
         float CurrentFrameRate { get; }
+        bool IsRestarting { get; }
         
         // Core Modules
         

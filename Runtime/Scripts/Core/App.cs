@@ -30,7 +30,8 @@ namespace DosinisSDK.Core
         public event Action<bool> OnAppPaused;
         public event Action<bool> OnAppFocus;
         public event Action OnAppQuit;
-        public event Action OnAppRestart;
+        public event Action OnAppAboutToRestart;
+        public event Action<IApp> OnAppRestarted;
 
         // Core Modules
         
@@ -59,41 +60,53 @@ namespace DosinisSDK.Core
         
         // App
         
+        public bool IsRestarting { get; private set; }
         public float CurrentFrameRate { get; private set; }
         
-        public void Restart()
+        public void Restart(int loadScene = 0)
         {
-            OnAppRestart?.Invoke();
+            OnAppAboutToRestart?.Invoke();
+            IsRestarting = true;
             
-            SceneManager.OnSceneUnloaded -= OnSceneUnloaded;
-            SceneManager.OnSceneChanged -= OnSceneChanged;
-            SceneManager.OnAdditiveSceneLoaded -= OnAdditiveSceneLoaded;
-            
-            var modulesToDispose = new List<IModule>(cachedModules.Values);
-
-            foreach (var m in modulesToDispose)
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0)!.completed += _ =>
             {
-                if (m is BehaviourModule behaviourModule)
+                Initialized = false;
+            
+                SceneManager.OnSceneUnloaded -= OnSceneUnloaded;
+                SceneManager.OnSceneChanged -= OnSceneChanged;
+                SceneManager.OnAdditiveSceneLoaded -= OnAdditiveSceneLoaded;
+
+                var modulesToDispose = new List<IModule>(cachedModules.Values);
+
+                foreach (var m in modulesToDispose)
                 {
-                    DestroyImmediate(behaviourModule);
+                    if (m is BehaviourModule behaviourModule)
+                    {
+                        DestroyImmediate(behaviourModule);
+                    }
+
+                    if (m is IDisposable disposableModule)
+                    {
+                        disposableModule.Dispose();
+                    }
                 }
 
-                if (m is IDisposable disposableModule)
-                {
-                    disposableModule.Dispose();
-                }
-            }
-
-            cachedModules.Clear();
-            processables.Clear();
-            fixedProcessables.Clear();
-            lateProcessables.Clear();
-            tickables.Clear();
-
-            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(0).completed += _ =>
-            {
+                cachedModules.Clear();
+                processables.Clear();
+                fixedProcessables.Clear();
+                lateProcessables.Clear();
+                tickables.Clear();
+                
                 Core = null;
                 Init(manifest);
+
+                if (loadScene != 0)
+                {
+                    Core.SceneManager.LoadScene(loadScene);
+                }
+                
+                OnAppRestarted?.Invoke(Core);
+                IsRestarting = false;
             };
         }
 
