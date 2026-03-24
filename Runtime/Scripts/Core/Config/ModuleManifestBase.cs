@@ -6,7 +6,7 @@ namespace DosinisSDK.Core
     /// <summary>
     /// NOTE: by default ModuleManifest registers modules before any SceneModule
     /// </summary>
-    public class ModuleManifestBase : ScriptableObject
+    public abstract class ModuleManifestBase : ScriptableObject
     {
         [Header("AppConfig")] 
         [SerializeField] private bool prewarmShaders;
@@ -19,6 +19,8 @@ namespace DosinisSDK.Core
         internal bool PrewarmShaders => prewarmShaders;
         internal int TargetFramerate => targetFramerate;
         internal bool SafeMode => safeMode;
+
+        protected GlobalAssetsManager assetManager;
 
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
@@ -36,7 +38,23 @@ namespace DosinisSDK.Core
             moduleFactory.CreateModule<Timer>();
             moduleFactory.CreateModule<DataManager>(config: dataManagerConfig);
             moduleFactory.CreateModule<LocalClock>();
+            assetManager = moduleFactory.CreateModule<GlobalAssetsManager>();
+            SetupAssetProvider();
+            
             return Task.CompletedTask;
+        }
+
+        protected virtual void SetupAssetProvider()
+        {
+            assetManager.SetProvider(new AssetProviderResources());
+        }
+
+        protected async Task CreateModuleWithConfig<TModule, TConfig>(IModuleFactory moduleFactory, AssetLink<TConfig> configLink)
+            where TModule : class, IModule, new()
+            where TConfig : ModuleConfig, new()
+        {
+            var config = await configLink.GetAssetAsync();
+            moduleFactory.CreateModule<TModule>(config: config);
         }
     }
 }
