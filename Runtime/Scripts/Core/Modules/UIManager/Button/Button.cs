@@ -116,8 +116,12 @@ namespace DosinisSDK.Core
             }
             
             buttonAnimation = GetComponent<IButtonAnimation>();
-            buttonAnimation?.Init();
-            buttonAnimation?.OnInteractableStateChanged(Interactable);
+
+            if (buttonAnimation != null)
+            {
+                buttonAnimation.Init();
+                buttonAnimation.OnInteractableStateChanged(Interactable);
+            }
         }
 
         private async void Start()
