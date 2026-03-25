@@ -124,18 +124,19 @@ namespace DosinisSDK.Core
             initializationQueue.Enqueue(initHandle);
         }
         
-        protected void BindModule<TModule>(AssetLink<ModuleConfig> configLink, TModule source = null, float weight = 1f)
+        protected void BindModule<TModule, TConfig>(AssetLink<TConfig> configLink, TModule source = null, float weight = 1f)
             where TModule : class, IModule, new()
+            where TConfig : ModuleConfig
         {
             var currentTaskName = $"Loading {typeof(TModule).Name}...";
-            
+
             var initHandle = new InitHandle
             {
                 task = () => CreateModuleWithConfig(source, configLink),
                 description = currentTaskName,
                 weight = weight,
             };
-            
+
             initializationQueue.Enqueue(initHandle);
         }
 
@@ -159,8 +160,9 @@ namespace DosinisSDK.Core
             }
         }
         
-        private async Task CreateModuleWithConfig<TModule>(TModule source, AssetLink<ModuleConfig> configLink)
+        private async Task CreateModuleWithConfig<TModule, TConfig>(TModule source, AssetLink<TConfig> configLink)
             where TModule : class, IModule, new()
+            where TConfig : ModuleConfig
         {
             var config = await configLink.GetAssetAsync();
             await CreateModuleWithConfig(source, config);
