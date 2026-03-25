@@ -23,6 +23,7 @@ namespace DosinisSDK.Core
 
         [Header("ModulesManifest")]
         [SerializeField] private bool safeMode = true;
+        [SerializeField] private bool explicitLoadStatus = false;
         [SerializeField] private DataManagerConfig dataManagerConfig;
         
         internal bool PrewarmShaders => prewarmShaders;
@@ -56,7 +57,9 @@ namespace DosinisSDK.Core
 
             foreach (var init in initializationQueue)
             {
-                App.UpdateInitStatus(init.description);
+                var loadStr = explicitLoadStatus ? init.description : "Loading modules...";
+                
+                App.UpdateInitStatus(loadStr);
 
                 try
                 {
@@ -71,7 +74,7 @@ namespace DosinisSDK.Core
                 
                 float p01 = totalWeight <= 0 ? 1f : doneWeight / totalWeight;
                 int percent = 20 + Mathf.RoundToInt(p01 * 60f);// 20-80% for modules
-                App.UpdateInitProgress(Mathf.RoundToInt(percent), init.description);
+                App.UpdateInitProgress(Mathf.RoundToInt(percent), loadStr);
             }
         }
 
