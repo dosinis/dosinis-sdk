@@ -626,6 +626,11 @@ namespace DosinisSDK.Core
             InitStatusString = status;
         }
 
+        internal static void UpdateInitStatus(string status)
+        {
+            InitStatusString = status;
+        }
+        
         // MonoBehaviour
         
         private void Update()

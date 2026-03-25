@@ -5,6 +5,13 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
+    public class InitHandle
+    {
+        public Func<Task> task;
+        public string description;
+        public float weight;
+    }
+    
     /// <summary>
     /// NOTE: by default ModuleManifest registers modules before any SceneModule
     /// </summary>
@@ -24,36 +31,47 @@ namespace DosinisSDK.Core
 
         [NonSerialized] private GlobalAssetsManager assetManager;
         [NonSerialized] private IModuleFactory moduleFactory;
-        [NonSerialized] private Queue<(Task task, string description)> initializationQueue;
+        [NonSerialized] private Queue<InitHandle> initializationQueue;
 
         internal async Task CreateUserModules(IModuleFactory moduleFactory)
         {
             this.moduleFactory = moduleFactory;
-            initializationQueue = new Queue<(Task, string)>();
-    
+            initializationQueue = new Queue<InitHandle>();
+            
             CreateCoreModules(moduleFactory);
-            BindUserModules();
-    
-            int total = initializationQueue.Count;
-            int done = 0;
+            
+            App.UpdateInitProgress(10, "Binding modules...");
+            await BindUserModules();
+            await RunInitializationQueue();
+        }
+
+        private async Task RunInitializationQueue()
+        {
+            float totalWeight = 0f;
+            
+            foreach (var s in initializationQueue)
+                totalWeight += s.weight;
+
+            float doneWeight = 0f;
 
             foreach (var init in initializationQueue)
             {
+                App.UpdateInitStatus(init.description);
+
                 try
                 {
-                    await init.task;
+                    await init.task.Invoke();
                 }
                 catch (Exception e)
                 {
                     Debug.LogException(e);
                 }
-
-                done++;
-
-                float progress01 = total == 0 ? 1f : (float)done / total;
-                int percent = Mathf.RoundToInt(progress01 * 80f);// modules accumulate to max 80% of app progress
-
-                App.UpdateInitProgress(percent, init.description);
+                
+                doneWeight += init.weight;
+                
+                float p01 = totalWeight <= 0 ? 1f : doneWeight / totalWeight;
+                int percent = 20 + Mathf.RoundToInt(p01 * 60f);// 20-80% for modules
+                App.UpdateInitProgress(Mathf.RoundToInt(percent), init.description);
             }
         }
 
@@ -77,25 +95,48 @@ namespace DosinisSDK.Core
         /// <summary>
         /// Add desired modules in override of this method
         /// </summary>
-        protected abstract void BindUserModules();
+        protected abstract Task BindUserModules();
 
-        protected void BindCustomTask(Task task, string taskName = "")
+        protected void BindCustomTask(Func<Task> task, string taskName = "", float weight = 1f)
         {
-            initializationQueue.Enqueue((task, taskName));
+            var initHandle = new InitHandle
+            {
+                task = task,
+                description = taskName,
+                weight = weight
+            };
+            
+            initializationQueue.Enqueue(initHandle);
         }
         
-        protected void BindModule<TModule>(TModule source = null, ModuleConfig config = null)
+        protected void BindModule<TModule>(TModule source = null, ModuleConfig config = null, float weight = 1f)
             where TModule : class, IModule, new()
         {
             var currentTaskName = $"Loading {typeof(TModule).Name}...";
-            initializationQueue.Enqueue((CreateModuleWithConfig(source, config), currentTaskName));
+            
+            var initHandle = new InitHandle
+            {
+                task = () => CreateModuleWithConfig(source, config),
+                description = currentTaskName,
+                weight = weight,
+            };
+            
+            initializationQueue.Enqueue(initHandle);
         }
         
-        protected void BindModule<TModule>(AssetLink<ModuleConfig> configLink, TModule source = null)
+        protected void BindModule<TModule>(AssetLink<ModuleConfig> configLink, TModule source = null, float weight = 1f)
             where TModule : class, IModule, new()
         {
             var currentTaskName = $"Loading {typeof(TModule).Name}...";
-            initializationQueue.Enqueue((CreateModuleWithConfig(source, configLink), currentTaskName));
+            
+            var initHandle = new InitHandle
+            {
+                task = () => CreateModuleWithConfig(source, configLink),
+                description = currentTaskName,
+                weight = weight,
+            };
+            
+            initializationQueue.Enqueue(initHandle);
         }
 
         private async Task CreateModuleWithConfig<TModule>(TModule source, ModuleConfig config)
