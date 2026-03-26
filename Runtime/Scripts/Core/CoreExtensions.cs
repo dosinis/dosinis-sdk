@@ -75,6 +75,11 @@ namespace DosinisSDK.Core
             
             return rangeArray;
         }
+
+        public static bool WithinBounds<T>(this IReadOnlyList<T> collection, int index)
+        {
+            return index >= 0 && index < collection.Count;
+        }
         
         public static List<T> RandomRange<T>(this List<T> list, int amount, bool canRepeat = true)
         {
