@@ -53,11 +53,11 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
-            GetComponentsInChildren(true, subWindowElements);
+            var widgets = GetComponentsInChildren<Widget>(true);
 
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var widget in widgets)
             {
-                subWindowElement.Init(app, this);
+                RegisterWidget(widget);
             }
 
             if (closeButton)
@@ -213,6 +213,13 @@ namespace DosinisSDK.Core
 
         public void RegisterWidget(Widget widget)
         {
+            if (subWindowElements.Contains(widget))
+            {
+                Debug.LogError($"Widget {widget.name} is already registered in {name}");
+                
+                return;
+            }
+            
             widget.Init(app, this);
             subWindowElements.Add(widget);
         }
