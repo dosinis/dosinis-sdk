@@ -229,42 +229,6 @@ namespace DosinisSDK.Core
             beforeHideCallback = null;
         }
 
-        [Obsolete("Widget now is realization of IWindowElement. Use TryGetWindowElement<T> instead")]
-        public T GetWidget<T>() where T : Widget
-        {
-            foreach (var element in elements)
-            {
-                if (element is T widget)
-                {
-                    return widget;
-                }
-            }
-
-            Debug.LogError($"Widget {nameof(T)} not found");
-            return default;
-        }
-
-        [Obsolete("Widget now is a realization of IWindowElement. Use TryGetWindowElements<T> instead")]
-        public List<T> GetWidgets<T>() where T : Widget
-        {
-            var result = new List<T>();
-
-            foreach (var element in elements)
-            {
-                if (element is T widget)
-                {
-                    result.Add(widget);
-                }
-            }
-
-            if (result.Count == 0)
-            {
-                Debug.LogError($"Widget of type {typeof(T).Name} not found");
-            }
-
-            return result;
-        }
-
         public T GetWindowElement<T>() where T : IWindowElement
         {
             foreach (var element in elements)
