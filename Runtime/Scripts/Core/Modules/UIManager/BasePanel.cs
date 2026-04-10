@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public abstract class BasePanel : MonoBehaviour, ISubWindowElement
+    public abstract class BasePanel : MonoBehaviour, IWindowElement
     {
         protected IWindow parentWindow;
         protected bool initialized;

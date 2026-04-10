@@ -28,7 +28,7 @@ namespace DosinisSDK.Core
         void Hide(Action done);
         void HideImmediately();
         void Refresh();
-        void RegisterWidget(Widget widget);
+        void RegisterWindowElement(IWindowElement widget);
         void ClearHideCallbacks();
         
         public enum ForwardParams

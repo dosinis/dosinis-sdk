@@ -2,7 +2,7 @@ using System;
 
 namespace DosinisSDK.Core
 {
-    public abstract class GenericPanelWithArgs<TArgs> : GenericPanel, ISubWindowElementWithArgs<TArgs>
+    public abstract class GenericPanelWithArgs<TArgs> : GenericPanel, IWindowElementWithArgs<TArgs>
     {
         protected TArgs args;
         

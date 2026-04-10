@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DosinisSDK.Core
 {
-    public class Widget : MonoBehaviour, ISubWindowElement
+    public class Widget : MonoBehaviour, IWindowElement
     {
         protected IWindow parentWindow;
         private bool isInitialized;

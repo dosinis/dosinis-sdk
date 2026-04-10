@@ -17,7 +17,7 @@ namespace DosinisSDK.Core
         private IApp app;
 
         private IWindowTransition transition;
-        private readonly List<ISubWindowElement> subWindowElements = new();
+        private readonly List<IWindowElement> elements = new();
 
         public event Action OnShown;
         public event Action OnHidden;
@@ -53,11 +53,10 @@ namespace DosinisSDK.Core
             if (ignoreSafeArea == false)
                 ApplySafeArea();
 #endif
-            var widgets = GetComponentsInChildren<Widget>(true);
-
-            foreach (var widget in widgets)
+            
+            foreach (var widget in GetComponentsInChildren<IWindowElement>(true))
             {
-                RegisterWidget(widget);
+                RegisterWindowElement(widget);
             }
 
             if (closeButton)
@@ -72,9 +71,9 @@ namespace DosinisSDK.Core
         {
             OnDispose();
 
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var element in elements)
             {
-                subWindowElement.Dispose();
+                element.Dispose();
             }
         }
 
@@ -211,9 +210,9 @@ namespace DosinisSDK.Core
         {
         }
 
-        public void RegisterWidget(Widget widget)
+        public void RegisterWindowElement(IWindowElement widget)
         {
-            if (subWindowElements.Contains(widget))
+            if (elements.Contains(widget))
             {
                 Debug.LogError($"Widget {widget.name} is already registered in {name}");
                 
@@ -221,7 +220,7 @@ namespace DosinisSDK.Core
             }
             
             widget.Init(app, this);
-            subWindowElements.Add(widget);
+            elements.Add(widget);
         }
 
         public void ClearHideCallbacks()
@@ -230,12 +229,12 @@ namespace DosinisSDK.Core
             beforeHideCallback = null;
         }
 
-        [Obsolete("Widget now is realization of ISubWindowElement. Use TryGetSubWindowElement<T> instead")]
+        [Obsolete("Widget now is realization of IWindowElement. Use TryGetWindowElement<T> instead")]
         public T GetWidget<T>() where T : Widget
         {
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var element in elements)
             {
-                if (subWindowElement is T widget)
+                if (element is T widget)
                 {
                     return widget;
                 }
@@ -245,14 +244,14 @@ namespace DosinisSDK.Core
             return default;
         }
 
-        [Obsolete("Widget now is a realization of ISubWindowElement. Use TryGetSubWindowElements<T> instead")]
+        [Obsolete("Widget now is a realization of IWindowElement. Use TryGetWindowElements<T> instead")]
         public List<T> GetWidgets<T>() where T : Widget
         {
             var result = new List<T>();
 
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var element in elements)
             {
-                if (subWindowElement is T widget)
+                if (element is T widget)
                 {
                     result.Add(widget);
                 }
@@ -266,27 +265,27 @@ namespace DosinisSDK.Core
             return result;
         }
 
-        public T GetSubWindowElement<T>() where T : ISubWindowElement
+        public T GetWindowElement<T>() where T : IWindowElement
         {
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var element in elements)
             {
-                if (subWindowElement is T result)
+                if (element is T result)
                 {
                     return result;
                 }
             }
 
-            Debug.LogError($"SubWindowElement {nameof(T)} not found");
+            Debug.LogError($"WindowElement {nameof(T)} not found");
             return default;
         }
         
-        public List<T> GetSubWindowElements<T>() where T : ISubWindowElement
+        public List<T> GetWindowElements<T>() where T : IWindowElement
         {
             var result = new List<T>();
 
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var winElement in elements)
             {
-                if (subWindowElement is T element)
+                if (winElement is T element)
                 {
                     result.Add(element);
                 }
@@ -294,17 +293,17 @@ namespace DosinisSDK.Core
 
             if (result.Count == 0)
             {
-                Debug.LogError($"Subwindow element of type {typeof(T).Name} not found");
+                Debug.LogError($"window element of type {typeof(T).Name} not found");
             }
 
             return result;
         }
 
-        public bool TryGetSubWindowElement<T>(out T element) where T : ISubWindowElement
+        public bool TryGetWindowElement<T>(out T element) where T : IWindowElement
         {
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var winElement in elements)
             {
-                if (subWindowElement is T result)
+                if (winElement is T result)
                 {
                     element = result;
                     return true;
@@ -315,12 +314,12 @@ namespace DosinisSDK.Core
             return false;
         }
 
-        public bool TryGetSubWindowElements<T>(out IEnumerable<T> elements) where T : ISubWindowElement
+        public bool TryGetWindowElements<T>(out IEnumerable<T> elements) where T : IWindowElement
         {
             var results = new List<T>();
-            foreach (var subWindowElement in subWindowElements)
+            foreach (var element in this.elements)
             {
-                if (subWindowElement is T result)
+                if (element is T result)
                 {
                     results.Add(result);
                 }
