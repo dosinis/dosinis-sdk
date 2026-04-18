@@ -51,6 +51,11 @@ namespace DosinisSDK.Utils
         {
             return Random.Range(1, 101) <= chance;
         }
+
+        public static float Random01()
+        {
+            return Random.Range(0f, 1f);
+        }
         
         /// <summary>
         /// Returns true if <paramref name="point"/> lies within <paramref name="radius"/> of <paramref name="center"/>.
