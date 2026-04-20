@@ -63,14 +63,14 @@ namespace DosinisSDK.UnityIAP
             
             foreach (var handler in config.PurchaseHandlers)
             {
-                RegisterProduct(handler.Id, (ProductType)handler.ProductType, handler.OnPurchased, handler.Restore);
+                RegisterProduct(handler.Id, handler.ProductType, handler.OnPurchased, handler.Restore);
             }
 
             var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 
             foreach (var product in productsRegistry)
             {
-                builder.AddProduct(product.Key, product.Value.type);
+                builder.AddProduct(product.Key, (ProductType)product.Value.type);
             }
             
             UnityPurchasing.Initialize(this, builder);
@@ -91,16 +91,6 @@ namespace DosinisSDK.UnityIAP
             {
                 await Task.Yield();
             }
-        }
-        
-        private void RegisterProduct(string productId, ProductType productType, Action<IModulesProvider> purchaseCallback, Action restoreCallback)
-        {
-            productsRegistry.Add(productId, new ProductData
-            {
-                type = productType,
-                purchaseCallback = purchaseCallback,
-                restoreCallback = restoreCallback
-            });
         }
 
         public void PurchaseProduct(string productId, Action<bool> onPurchased = null)
@@ -292,6 +282,26 @@ namespace DosinisSDK.UnityIAP
             }
             
             return false;
+        }
+
+        public void RegisterProduct(string productId, IAP.ProductType productType, Action<IModulesProvider> purchaseCallback, Action<IModulesProvider> restoreCallback)
+        {
+            productsRegistry.Add(productId, new ProductData
+            {
+                type = productType,
+                purchaseCallback = purchaseCallback,
+                restoreCallback = restoreCallback
+            });
+        }
+
+        public PurchaseHandler GetPurchaseHandler(string productId)
+        {
+            return config.PurchaseHandlers.Find(p => p.Id == productId);
+        }
+
+        public IReadOnlyList<PurchaseHandler> GetPurchaseHandlers()
+        {
+            return config.PurchaseHandlers;
         }
 
         // IStoreListener implementation

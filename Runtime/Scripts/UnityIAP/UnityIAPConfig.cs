@@ -4,7 +4,7 @@ using DosinisSDK.IAP;
 
 namespace DosinisSDK.UnityIAP
 {
-    public class UnityIAPConfig : IAPConfig
+    public class UnityIAPConfig : IAPManagerConfig
     {
         [SerializeField] private FakeStoreUIMode fakeStoreUIMode = FakeStoreUIMode.StandardUser;
         
