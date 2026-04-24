@@ -12,10 +12,11 @@ namespace DosinisSDK.UI.Navigation
     {
         private UINavigationConfig config;
         private IUINavigationElement currentElement;
-        private IUINavigationElement cancellationElement;
+        private IUINavigationElement currentCancellationElement;
+        private readonly List<IUINavigationElement> cancellationElements = new();
         private readonly List<IUINavigationElement> navigationElements = new();
         public event Action<IUINavigationElement> OnCurrentElementChanged;
-        
+
 
         protected override void OnInit(IApp app)
         {
@@ -45,7 +46,6 @@ namespace DosinisSDK.UI.Navigation
         }
 
 
-
         public void RegisterElement(IUINavigationElement element)
         {
             if (currentElement is null || element.StartNavigationFromHere)
@@ -58,13 +58,25 @@ namespace DosinisSDK.UI.Navigation
 
         public void RegisterCancellationElement(IUINavigationElement element)
         {
-            cancellationElement = element;
-        }
-        public void UnregisterCancellationElement()
-        {
-            cancellationElement = null;
+            currentCancellationElement = element;
+            cancellationElements.Add(element);
         }
 
+        public void UnregisterCancellationElement()
+        {
+            cancellationElements.Remove(currentCancellationElement);
+            currentCancellationElement = null;
+            LookForNewCancellationElement();
+        }
+
+        private void LookForNewCancellationElement()
+        {
+            if (cancellationElements.Count > 0)
+            {
+                currentCancellationElement = cancellationElements[0];
+            }
+        }
+        
         public void RebuildNavigation()
         {
             IUINavigationElement elementForStart = null;
@@ -75,8 +87,10 @@ namespace DosinisSDK.UI.Navigation
                     elementForStart = element;
                     break;
                 }
+
                 elementForStart ??= element;
             }
+
             SetCurrentElement(elementForStart);
         }
 
@@ -85,6 +99,10 @@ namespace DosinisSDK.UI.Navigation
             if (navigationElements.Contains(element))
             {
                 navigationElements.Remove(element);
+                if (element.StartNavigationFromHere)
+                {
+                    RebuildNavigation();
+                }
             }
         }
 
@@ -140,8 +158,8 @@ namespace DosinisSDK.UI.Navigation
             if (currentElement is null) return;
             currentElement.Cancel();
 
-            if (cancellationElement is null) return;
-            cancellationElement.Cancel();
+            if (currentCancellationElement is null) return;
+            currentCancellationElement.Cancel();
         }
     }
 }

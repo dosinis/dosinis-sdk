@@ -2,18 +2,22 @@ using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
 {
+    [RequireComponent(typeof(UIScrollElementNavigationBridge))]
     public class UIScrollFocusElement : MonoBehaviour, IUIScrollFocusElement
     {
-        private UIScrollFocusController controller;
+        private IUIScrollFocusController controller;
 
-        public void InitializeController(UIScrollFocusController controller)
+        public void InitializeController(IUIScrollFocusController controller)
         {
             this.controller = controller;
         }
 
         public void SetSelected()
         {
-            controller.CheckAndScroll(transform);
+            if (transform is RectTransform rectTransform)
+            {
+                controller.CheckAndScroll(rectTransform);
+            }
         }
     }
 }
