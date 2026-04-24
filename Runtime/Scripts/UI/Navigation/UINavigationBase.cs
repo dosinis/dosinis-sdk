@@ -49,7 +49,7 @@ namespace DosinisSDK.UI.Navigation
             navigationController?.UnregisterElement(this);
         }
 
-        protected virtual void OnDispose()
+        protected override void OnDispose()
         {
             navigationController.UnregisterElement(this);
         }
@@ -113,25 +113,26 @@ namespace DosinisSDK.UI.Navigation
         public void SetStartNavigationFromHere(bool value)
         {
             startNavigationFromHere = value;
-            navigationController?.RebuildNavigation();
+            navigationController?.SetCurrentElement(this);
         }
 
 
-        public void SetNavigationElement(NavigationDirection direction, UINavigationBase element)
+        public void SetNavigationElement(NavigationDirection direction, IUINavigationElement element)
         {
+            if (element is not UINavigationBase navigationBase) return;
             switch (direction)
             {
                 case NavigationDirection.Up:
-                    moveUp = element;
+                    moveUp = navigationBase;
                     break;
                 case NavigationDirection.Left:
-                    moveLeft = element;
+                    moveLeft = navigationBase;
                     break;
                 case NavigationDirection.Right:
-                    moveRight = element;
+                    moveRight = navigationBase;
                     break;
                 case NavigationDirection.Down:
-                    moveDown = element;
+                    moveDown = navigationBase;
                     break;
             }
         }
@@ -169,7 +170,6 @@ namespace DosinisSDK.UI.Navigation
 
         public void Move(Vector2 axis)
         {
-
             OnMove(axis);
         }
 

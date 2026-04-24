@@ -16,8 +16,25 @@ namespace DosinisSDK.UI.Navigation
             if (navigationElement != null && scrollFocusElement != null)
             {
                 navigationController = app.GetModule<IUINavigationController>();
+            }
+
+            if (navigationController != null && gameObject.activeInHierarchy)
+            {
                 navigationController.OnCurrentElementChanged += OnCurrentElementChanged;
             }
+        }
+
+
+        private void OnEnable()
+        {
+            if (navigationController == null) return;
+            navigationController.OnCurrentElementChanged += OnCurrentElementChanged;
+        }
+
+        private void OnDisable()
+        {
+            if (navigationController == null) return;
+            navigationController.OnCurrentElementChanged -= OnCurrentElementChanged;
         }
 
         private void OnCurrentElementChanged(IUINavigationElement element)

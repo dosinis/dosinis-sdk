@@ -15,6 +15,8 @@ namespace DosinisSDK.UI.Navigation
         public void Hold();
         public void Unhold();
         public void Move(Vector2 axis);
+        public void SetNavigationElement(NavigationDirection direction, IUINavigationElement element);
+        
         
         public void SetStartNavigationFromHere(bool value);
     }
