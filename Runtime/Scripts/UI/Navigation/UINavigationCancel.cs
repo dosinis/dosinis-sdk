@@ -8,7 +8,7 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnInit(IApp app)
         {
             base.OnInit(app);
-            if (Target.activeInHierarchy)
+            if (IsEnabled)
             {
                 navigationController.RegisterCancellationElement(this);
             }
@@ -23,13 +23,13 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnDisable()
         {
             base.OnDisable();
-            navigationController?.UnregisterCancellationElement();
+            navigationController?.UnregisterCancellationElement(this);
         }
 
         protected override void OnDispose()
         {
             base.OnDispose();
-            navigationController.UnregisterCancellationElement();
+            navigationController.UnregisterCancellationElement(this);
         }
 
         protected override void OnCancel()

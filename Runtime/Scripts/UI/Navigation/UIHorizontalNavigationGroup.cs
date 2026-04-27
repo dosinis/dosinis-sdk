@@ -1,3 +1,4 @@
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
@@ -14,26 +15,34 @@ namespace DosinisSDK.UI.Navigation
             {
                 navigationController.SetCurrentElement(moveDown);
             }
-            else if (axis.x < -0.5f && moveLeft != null)
+            else if (axis.x < -0.5f)
             {
+                Deselect();
                 currentIndex--;
                 if (currentIndex < 0)
                 {
                     currentIndex = 0;
-                    navigationController.SetCurrentElement(moveLeft);
+                    if (moveLeft != null)
+                    {
+                        navigationController.SetCurrentElement(moveLeft);
+                    }
                 }
                 else
                 {
                     navigationController.SetCurrentElement(this);
                 }
             }
-            else if (axis.x > 0.5f && moveRight != null)
+            else if (axis.x > 0.5f)
             {
+                Deselect();
                 currentIndex++;
-                if (currentIndex >= children.Count)
+                if (currentIndex >= ActiveChildrenCount)
                 {
-                    currentIndex = children.Count - 1;
-                    navigationController.SetCurrentElement(moveRight);
+                    currentIndex = ActiveChildrenCount - 1;
+                    if (moveRight != null)
+                    {
+                        navigationController.SetCurrentElement(moveRight);
+                    }
                 }
                 else
                 {

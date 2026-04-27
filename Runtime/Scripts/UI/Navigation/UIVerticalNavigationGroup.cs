@@ -8,26 +8,33 @@ namespace DosinisSDK.UI.Navigation
         {
             if (axis.y > 0.5f && moveUp != null)
             {
+                Deselect();
+
                 currentIndex--;
                 if (currentIndex < 0)
                 {
                     currentIndex = 0;
-                    navigationController.SetCurrentElement(moveUp);
+                    if (moveUp != null)
+                    {
+                        navigationController.SetCurrentElement(moveUp);
+                    }
                 }
                 else
                 {
                     navigationController.SetCurrentElement(this);
                 }
-
-                navigationController.SetCurrentElement(moveUp);
             }
             else if (axis.y < -0.5f && moveDown != null)
             {
+                Deselect();
                 currentIndex++;
-                if (currentIndex >= children.Count)
+                if (currentIndex >= ActiveChildrenCount)
                 {
-                    currentIndex = children.Count - 1;
-                    navigationController.SetCurrentElement(moveRight);
+                    currentIndex = ActiveChildrenCount - 1;
+                    if (moveDown != null)
+                    {
+                        navigationController.SetCurrentElement(moveDown);
+                    }
                 }
                 else
                 {

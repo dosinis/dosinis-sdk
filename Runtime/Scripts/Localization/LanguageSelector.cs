@@ -7,8 +7,8 @@ namespace DosinisSDK.Localization
 {
     public class LanguageSelector : ManagedBehaviour
     {
-        [SerializeField] private Button closeButton;
-        [SerializeField] private GameObjectPool languagePool;
+        [SerializeField] protected Button closeButton;
+        [SerializeField] protected GameObjectPool languagePool;
         
         private ILocalizationManager localizationManager;
         

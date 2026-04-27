@@ -15,7 +15,6 @@ namespace DosinisSDK.UI.Navigation
 
         [Header("Optional")] [SerializeField] protected GameObject target;
         [SerializeField] private bool startNavigationFromHere = false;
-
         protected IUINavigationController navigationController;
 
         public bool IsEnabled => Target.activeInHierarchy;
@@ -33,7 +32,7 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnInit(IApp app)
         {
             navigationController = app.GetModule<IUINavigationController>();
-            if (gameObject.activeInHierarchy)
+            if (IsEnabled)
             {
                 navigationController.RegisterElement(this);
             }
@@ -69,8 +68,10 @@ namespace DosinisSDK.UI.Navigation
 
         protected virtual void OnSubmit()
         {
-            ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1 },
+            ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1, },
                 ExecuteEvents.pointerClickHandler);
+            ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1, },
+                ExecuteEvents.submitHandler);
         }
 
         protected virtual void OnHold()
@@ -103,12 +104,12 @@ namespace DosinisSDK.UI.Navigation
             {
                 navigationController.SetCurrentElement(moveRight);
             }
-       
         }
 
         protected virtual void OnCancel()
         {
         }
+
 
         public void SetStartNavigationFromHere(bool value)
         {

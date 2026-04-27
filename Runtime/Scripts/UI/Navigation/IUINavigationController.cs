@@ -9,8 +9,8 @@ namespace DosinisSDK.UI.Navigation
         public void RegisterElement(IUINavigationElement element);
         public void UnregisterElement(IUINavigationElement element);
         public void SetCurrentElement(IUINavigationElement element);
-        public void RegisterCancellationElement(IUINavigationElement element);
-        public void UnregisterCancellationElement();
+        public void RegisterCancellationElement(IUINavigationCancel element);
+        public void UnregisterCancellationElement(IUINavigationCancel element);
         public void RebuildNavigation();
     }
 }

@@ -12,8 +12,8 @@ namespace DosinisSDK.UI.Navigation
     {
         private UINavigationConfig config;
         private IUINavigationElement currentElement;
-        private IUINavigationElement currentCancellationElement;
-        private readonly List<IUINavigationElement> cancellationElements = new();
+        private IUINavigationCancel currentCancellationElement;
+        private readonly List<IUINavigationCancel> cancellationElements = new();
         private readonly List<IUINavigationElement> navigationElements = new();
         public event Action<IUINavigationElement> OnCurrentElementChanged;
 
@@ -56,16 +56,15 @@ namespace DosinisSDK.UI.Navigation
             navigationElements.Add(element);
         }
 
-        public void RegisterCancellationElement(IUINavigationElement element)
+        public void RegisterCancellationElement(IUINavigationCancel element)
         {
             currentCancellationElement = element;
             cancellationElements.Add(element);
         }
 
-        public void UnregisterCancellationElement()
+        public void UnregisterCancellationElement(IUINavigationCancel element)
         {
-            cancellationElements.Remove(currentCancellationElement);
-            currentCancellationElement = null;
+            cancellationElements.Remove(element);
             LookForNewCancellationElement();
         }
 
