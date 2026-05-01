@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -12,6 +13,15 @@ namespace DosinisSDK.UI.Navigation
         [SerializeField] private float scrollDuration = 0.3f;
         [SerializeField] private HorizontalOrVerticalLayoutGroup layoutGroup;
         private CancellationTokenSource cts = new();
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (!scrollRect) return;
+            var initPivot = scrollRect.viewport.pivot;
+            scrollRect.viewport.pivot = horizontalScroll ? new Vector2(0, initPivot.y) : new Vector2(initPivot.x, 1);
+        }
+#endif
 
         private void Awake()
         {
@@ -40,34 +50,19 @@ namespace DosinisSDK.UI.Navigation
             var content = scrollRect.content;
             var viewport = scrollRect.viewport;
 
+            if (CheckInBounds(viewport, target)) return;
             var targetBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, target);
+            Debug.Log($"Top {viewport.rect.yMin}, Bottom {viewport.rect.yMax}, Center {viewport.rect.center}");
             // var contentBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, content);
-
             float offset = 0f;
 
             if (horizontalScroll)
             {
-                float left = targetBounds.min.x;
-                float right = targetBounds.max.x;
-
-                if (left < 0)
-                    offset = left;
-                else if (right > viewport.rect.width)
-                    offset = right - viewport.rect.width;
-                else
-                    return;
+                offset = targetBounds.min.x;
             }
             else
             {
-                float bottom = targetBounds.min.y;
-                float top = targetBounds.max.y;
-
-                if (top > 0)
-                    offset = top;
-                else if (bottom < -viewport.rect.height)
-                    offset = bottom + viewport.rect.height;
-                else
-                    return;
+                offset = targetBounds.max.y;
             }
 
             var moveFrom = content.anchoredPosition;
@@ -76,17 +71,31 @@ namespace DosinisSDK.UI.Navigation
             float t = 0;
             while (t < 1)
             {
-                t += Time.deltaTime / scrollDuration;
+                t += Mathf.Clamp(Time.deltaTime / scrollDuration, 0, 1);
                 content.anchoredPosition = Vector2.Lerp(moveFrom, moveTo, t);
                 await UniTask.Yield(token);
             }
         }
+
         private bool CheckInBounds(RectTransform bounds, RectTransform target, float spacing = 0)
         {
-            var leftBounds = target.rect.xMin - bounds.rect.xMin - spacing;
-            if (leftBounds < 0) return false;
-            var rightBounds = bounds.rect.xMax - target.rect.xMax - spacing;
-            if (rightBounds < 0) return false;
+            var targetBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(bounds, target);
+
+            if (horizontalScroll)
+            {
+                var leftBounds = targetBounds.min.x - bounds.rect.xMin - spacing;
+                if (leftBounds < 0) return false;
+                var rightBounds = bounds.rect.xMax - targetBounds.max.x - spacing;
+                if (rightBounds < 0) return false;
+            }
+            else
+            {
+                var topBounds = targetBounds.min.y - bounds.rect.yMin - spacing;
+                if (topBounds < 0) return false;
+                var rightBounds = bounds.rect.yMax - targetBounds.max.y - spacing;
+                if (rightBounds < 0) return false;
+            }
+
             return true;
         }
     }

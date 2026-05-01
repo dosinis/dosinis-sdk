@@ -10,5 +10,7 @@ namespace DosinisSDK.UI.Navigation
         [field: SerializeField] public InputActionReference OnSubmitAction { get; private set; }
         [field: SerializeField] public InputActionReference OnCancelAction { get; private set; }
         [field: SerializeField] public InputActionReference OnMoveAction { get; private set; }
+        [field: SerializeField] public InputActionReference OnTabMovePrevAction { get; private set; }
+        [field: SerializeField] public InputActionReference OnTabMoveNextAction { get; private set; }
     }
 }

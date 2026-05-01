@@ -6,6 +6,7 @@ namespace DosinisSDK.UI.Navigation
     {
         protected override void OnMove(Vector2 axis)
         {
+            if(!IsActiveNavigation) return;
             if (axis.y > 0.5f && moveUp != null)
             {
                 Deselect();

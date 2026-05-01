@@ -16,6 +16,8 @@ namespace DosinisSDK.UI.Navigation
         private readonly List<IUINavigationCancel> cancellationElements = new();
         private readonly List<IUINavigationElement> navigationElements = new();
         public event Action<IUINavigationElement> OnCurrentElementChanged;
+        public event Action<bool> OnTabMovePerformed; 
+        
 
 
         protected override void OnInit(IApp app)
@@ -24,11 +26,34 @@ namespace DosinisSDK.UI.Navigation
             config.OnMoveAction.action.Enable();
             config.OnSubmitAction.action.Enable();
             config.OnCancelAction.action.Enable();
+            config.OnTabMovePrevAction.action.Enable();
+            config.OnTabMoveNextAction.action.Enable();
 
             config.OnMoveAction.action.performed += OnMovePerformed;
             config.OnSubmitAction.action.performed += OnSubmitPerformed;
             config.OnSubmitAction.action.canceled += OnSubmitCanceled;
             config.OnCancelAction.action.performed += OnCancelPerformed;
+            config.OnCancelAction.action.canceled += OnCancelCanceled;
+            config.OnTabMovePrevAction.action.performed += OnTabMovePerformedPrevious;
+            config.OnTabMoveNextAction.action.performed += OnTabMovePerformedNext;
+        }
+
+        private void OnTabMovePerformedNext(InputAction.CallbackContext obj)
+        {
+            OnTabMovePerformedCall(obj, true);
+        }
+
+        private void OnTabMovePerformedPrevious(InputAction.CallbackContext obj)
+        {
+            OnTabMovePerformedCall(obj, false);
+        }
+
+        private void OnTabMovePerformedCall(InputAction.CallbackContext obj, bool increase)
+        {
+            if (obj.interaction is PressInteraction)
+            {
+                OnTabMovePerformed?.Invoke(increase);
+            }
         }
 
 
@@ -37,10 +62,14 @@ namespace DosinisSDK.UI.Navigation
             config.OnMoveAction.action.performed -= OnMovePerformed;
             config.OnSubmitAction.action.performed -= OnSubmitPerformed;
             config.OnCancelAction.action.performed -= OnCancelPerformed;
-
+            config.OnCancelAction.action.canceled -= OnCancelCanceled;
+            config.OnTabMovePrevAction.action.performed -= OnTabMovePerformedPrevious;
+            config.OnTabMoveNextAction.action.performed -= OnTabMovePerformedNext;
             config.OnMoveAction.action.Disable();
             config.OnSubmitAction.action.Disable();
             config.OnCancelAction.action.Disable();
+            config.OnTabMoveNextAction.action.Disable();
+            config.OnTabMovePrevAction.action.Disable();
             navigationElements.Clear();
             currentElement = null;
         }
@@ -70,12 +99,9 @@ namespace DosinisSDK.UI.Navigation
 
         private void LookForNewCancellationElement()
         {
-            if (cancellationElements.Count > 0)
-            {
-                currentCancellationElement = cancellationElements[0];
-            }
+            currentCancellationElement = cancellationElements.Count > 0 ? cancellationElements[0] : null;
         }
-        
+
         public void RebuildNavigation()
         {
             IUINavigationElement elementForStart = null;
@@ -109,7 +135,7 @@ namespace DosinisSDK.UI.Navigation
         {
             currentElement?.Deselect();
             currentElement = element;
-            currentElement.Select();
+            currentElement?.Select();
             OnCurrentElementChanged?.Invoke(currentElement);
         }
 
@@ -117,7 +143,8 @@ namespace DosinisSDK.UI.Navigation
         {
             var selectedGameObject = EventSystem.current.currentSelectedGameObject;
 
-            if (selectedGameObject is null || selectedGameObject.Equals(currentElement.Target)) return;
+            if (selectedGameObject is null || currentElement == null ||
+                selectedGameObject.Equals(currentElement.Target)) return;
 
             if (selectedGameObject.TryGetComponent(out IUINavigationElement element))
             {
@@ -154,11 +181,15 @@ namespace DosinisSDK.UI.Navigation
         private void OnCancelPerformed(InputAction.CallbackContext obj)
         {
             SyncWithEventSystem();
-            if (currentElement is null) return;
-            currentElement.Cancel();
+            if (obj.interaction is PressInteraction)
+            {
+                currentElement?.Cancel();
+                currentCancellationElement?.Cancel();
+            }
+        }
 
-            if (currentCancellationElement is null) return;
-            currentCancellationElement.Cancel();
+        private void OnCancelCanceled(InputAction.CallbackContext obj)
+        {
         }
     }
 }

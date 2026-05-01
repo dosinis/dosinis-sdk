@@ -11,6 +11,12 @@ namespace DosinisSDK.UI.Navigation
         protected int ActiveChildrenCount => children.Count(o => o.activeInHierarchy);
         protected int currentIndex = 0;
 
+        public override bool IsActiveNavigation
+        {
+            get => isActiveNavigation && ActiveChildrenCount > 0;
+            protected set => isActiveNavigation = value;
+        }
+
         public override GameObject Target
         {
             get

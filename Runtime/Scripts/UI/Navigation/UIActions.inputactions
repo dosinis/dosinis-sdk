@@ -31,6 +31,24 @@
                     "processors": "",
                     "interactions": "Press,Hold",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "TabPrevious",
+                    "type": "Button",
+                    "id": "a5ac5a94-e0fd-45ab-8f5f-f24875c112bf",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TabNext",
+                    "type": "Button",
+                    "id": "486da53b-a863-4624-8cf0-341cf74c2c9d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -284,6 +302,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "696faf40-fb68-4aa5-847e-57f3231f7792",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TabPrevious",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3cbc544-79c7-4f5e-a4da-1855ff152064",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TabNext",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
