@@ -21,9 +21,16 @@ namespace DosinisSDK.UI
         public void SetWithoutNotify(bool value)
         {
             toggled = value;
-            
-            onState.SetActive(toggled);
-            offState.SetActive(!toggled);
+
+            if (onState)
+            {
+                onState.SetActive(toggled);
+            }
+
+            if (offState)
+            {
+                offState.SetActive(!toggled);
+            }
         }
         
         public void Set(bool value)
