@@ -14,11 +14,17 @@ namespace DosinisSDK.UI.Navigation
             base.OnInit(app);
             navigationController.OnTabMovePerformed += OnTabMovePerformed;
         }
-        
+
+        protected override void OnDispose()
+        {
+            base.OnDispose();
+            navigationController.OnTabMovePerformed -= OnTabMovePerformed;
+        }
+
         private void OnTabMovePerformed(bool obj)
         {
             if (!IsEnabled || !IsActiveNavigation) return;
-            if (requireTabSelection && !isSelected) return;
+            if (requireTabSelection && !IsSelected.Value) return;
             Deselect();
             int toAdd = obj ? 1 : -1;
             currentIndex = Math.Clamp(currentIndex + toAdd, 0, ActiveChildrenCount - 1);

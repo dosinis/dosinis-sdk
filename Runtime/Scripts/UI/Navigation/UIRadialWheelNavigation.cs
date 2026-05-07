@@ -12,14 +12,8 @@ namespace DosinisSDK.UI.Navigation
 
         protected override void OnMove(Vector2 axis)
         {
-            if(!IsActiveNavigation) return;
-            if (axis == Vector2.zero)
-            {
-                Deselect();
-                currentIndex = 0;
-                navigationController.SetCurrentElement(this);
-                return;
-            }
+            if (axis == Vector2.zero) return;
+
             var nextIndex = GetIndex(axis);
             if (nextIndex != currentIndex)
             {

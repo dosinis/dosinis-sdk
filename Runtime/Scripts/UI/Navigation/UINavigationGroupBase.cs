@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
@@ -8,8 +10,9 @@ namespace DosinisSDK.UI.Navigation
     {
         [SerializeField] protected bool autoPopulateChildren = true;
         [SerializeField] protected List<GameObject> children = new();
-        protected int ActiveChildrenCount => children.Count(o => o.activeInHierarchy);
         protected int currentIndex = 0;
+
+        protected int ActiveChildrenCount => children.Count(CheckForChild);
 
         public override bool IsActiveNavigation
         {
@@ -21,11 +24,21 @@ namespace DosinisSDK.UI.Navigation
         {
             get
             {
-                var activeChildren = children.Where(o => o.activeInHierarchy).ToList();
+                var activeChildren = children.Where(CheckForChild).ToList();
                 if (activeChildren.Count == 0) return target;
 
                 return activeChildren[currentIndex];
             }
+        }
+
+        private bool CheckForChild(GameObject gO)
+        {
+            if (gO.activeInHierarchy)
+            {
+                return !gO.TryGetComponent<IInteractableElement>(out var interactable) || interactable.Interactable;
+            }
+
+            return false;
         }
 
         public void SetChildren(IEnumerable<GameObject> childrenElements)

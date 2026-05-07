@@ -16,15 +16,17 @@ namespace DosinisSDK.UI.Navigation
         [Header("Optional")] [SerializeField] protected GameObject target;
         [SerializeField] private bool startNavigationFromHere = false;
         [SerializeField] protected bool isActiveNavigation = true;
-        protected bool isSelected;
 
         protected IUINavigationController navigationController;
 
+        public Observable<bool> IsSelected { get; } = new(false);
         public bool IsEnabled => Target.activeInHierarchy;
 
         public virtual bool IsActiveNavigation
         {
-            get => isActiveNavigation;
+            get => Target.TryGetComponent(out IInteractableElement interactableElement)
+                ? interactableElement.Interactable && isActiveNavigation
+                : isActiveNavigation;
             protected set => isActiveNavigation = value;
         }
 
@@ -38,6 +40,7 @@ namespace DosinisSDK.UI.Navigation
                 target = gameObject;
         }
 #endif
+
 
         protected override void OnInit(IApp app)
         {
@@ -56,13 +59,13 @@ namespace DosinisSDK.UI.Navigation
         protected virtual void OnDisable()
         {
             navigationController?.UnregisterElement(this);
-            isSelected = false;
+            IsSelected.Value = false;
         }
 
         protected override void OnDispose()
         {
             navigationController.UnregisterElement(this);
-            isSelected = false;
+            IsSelected.Value = false;
         }
 
         protected virtual void OnSelect()
@@ -71,13 +74,13 @@ namespace DosinisSDK.UI.Navigation
             EventSystem.current.SetSelectedGameObject(Target);
             ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1 },
                 ExecuteEvents.pointerEnterHandler);
-            isSelected = true;
+            IsSelected.Value = true;
         }
 
         protected virtual void OnDeselect()
         {
-            if (!IsActiveNavigation) return;
-            isSelected = false;
+            if (Target == null || !IsActiveNavigation) return;
+            IsSelected.Value = false;
             ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1 },
                 ExecuteEvents.pointerExitHandler);
         }
@@ -109,21 +112,19 @@ namespace DosinisSDK.UI.Navigation
 
         protected virtual void OnMove(Vector2 axis)
         {
-            if (!IsActiveNavigation) return;
-
-            if (axis.y > 0.5f && moveUp != null && moveUp.IsActiveNavigation)
+            if (axis.y > 0.5f && moveUp is { IsActiveNavigation: true })
             {
                 navigationController.SetCurrentElement(moveUp);
             }
-            else if (axis.y < -0.5f && moveDown != null && moveDown.IsActiveNavigation)
+            else if (axis.y < -0.5f && moveDown is { IsActiveNavigation: true })
             {
                 navigationController.SetCurrentElement(moveDown);
             }
-            else if (axis.x < -0.5f && moveLeft != null && moveLeft.IsActiveNavigation)
+            else if (axis.x < -0.5f && moveLeft is { IsActiveNavigation: true })
             {
                 navigationController.SetCurrentElement(moveLeft);
             }
-            else if (axis.x > 0.5f && moveRight != null && moveRight.IsActiveNavigation)
+            else if (axis.x > 0.5f && moveRight is { IsActiveNavigation: true })
             {
                 navigationController.SetCurrentElement(moveRight);
             }
@@ -133,6 +134,30 @@ namespace DosinisSDK.UI.Navigation
         {
         }
 
+
+        public bool TryGetNavigationElement(NavigationDirection direction, out IUINavigationElement element)
+        {
+            switch (direction)
+            {
+                case NavigationDirection.Up:
+                    element = moveUp;
+                    break;
+                case NavigationDirection.Left:
+                    element = moveLeft;
+                    break;
+                case NavigationDirection.Right:
+                    element = moveRight;
+                    break;
+                case NavigationDirection.Down:
+                    element = moveDown;
+                    break;
+                default:
+                    element = null;
+                    break;
+            }
+
+            return element != null;
+        }
 
         public void SetStartNavigationFromHere(bool value)
         {
@@ -164,6 +189,10 @@ namespace DosinisSDK.UI.Navigation
             }
         }
 
+        public void SetActiveNavigation(bool value)
+        {
+            IsActiveNavigation = value;
+        }
 
         public void Select()
         {
@@ -183,11 +212,6 @@ namespace DosinisSDK.UI.Navigation
         public void Hold()
         {
             OnHold();
-        }
-
-        public void SetActiveNavigation(bool value)
-        {
-            IsActiveNavigation = value;
         }
 
         public void Unhold()

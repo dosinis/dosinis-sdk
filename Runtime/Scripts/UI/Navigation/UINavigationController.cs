@@ -16,47 +16,32 @@ namespace DosinisSDK.UI.Navigation
         private readonly List<IUINavigationCancel> cancellationElements = new();
         private readonly List<IUINavigationElement> navigationElements = new();
         public event Action<IUINavigationElement> OnCurrentElementChanged;
-        public event Action<bool> OnTabMovePerformed; 
-        
+        public event Action<bool> OnTabMovePerformed;
+        public bool IsEnabled { get; private set; }
 
 
         protected override void OnInit(IApp app)
         {
             config = GetConfigAs<UINavigationConfig>();
-            config.OnMoveAction.action.Enable();
-            config.OnSubmitAction.action.Enable();
-            config.OnCancelAction.action.Enable();
-            config.OnTabMovePrevAction.action.Enable();
-            config.OnTabMoveNextAction.action.Enable();
-
-            config.OnMoveAction.action.performed += OnMovePerformed;
-            config.OnSubmitAction.action.performed += OnSubmitPerformed;
-            config.OnSubmitAction.action.canceled += OnSubmitCanceled;
-            config.OnCancelAction.action.performed += OnCancelPerformed;
-            config.OnCancelAction.action.canceled += OnCancelCanceled;
-            config.OnTabMovePrevAction.action.performed += OnTabMovePerformedPrevious;
-            config.OnTabMoveNextAction.action.performed += OnTabMovePerformedNext;
-        }
-
-        private void OnTabMovePerformedNext(InputAction.CallbackContext obj)
-        {
-            OnTabMovePerformedCall(obj, true);
-        }
-
-        private void OnTabMovePerformedPrevious(InputAction.CallbackContext obj)
-        {
-            OnTabMovePerformedCall(obj, false);
-        }
-
-        private void OnTabMovePerformedCall(InputAction.CallbackContext obj, bool increase)
-        {
-            if (obj.interaction is PressInteraction)
+            IsEnabled = config.IsEnabled;
+            if (IsEnabled)
             {
-                OnTabMovePerformed?.Invoke(increase);
+                config.OnMoveAction.action.Enable();
+                config.OnSubmitAction.action.Enable();
+                config.OnCancelAction.action.Enable();
+                config.OnTabMovePrevAction.action.Enable();
+                config.OnTabMoveNextAction.action.Enable();
+
+                config.OnMoveAction.action.performed += OnMovePerformed;
+                config.OnSubmitAction.action.performed += OnSubmitPerformed;
+                config.OnSubmitAction.action.canceled += OnSubmitCanceled;
+                config.OnCancelAction.action.performed += OnCancelPerformed;
+                config.OnCancelAction.action.canceled += OnCancelCanceled;
+                config.OnTabMovePrevAction.action.performed += OnTabMovePerformedPrevious;
+                config.OnTabMoveNextAction.action.performed += OnTabMovePerformedNext;
             }
         }
-
-
+        
         protected override void OnDispose()
         {
             config.OnMoveAction.action.performed -= OnMovePerformed;
@@ -77,6 +62,7 @@ namespace DosinisSDK.UI.Navigation
 
         public void RegisterElement(IUINavigationElement element)
         {
+            if (!IsEnabled) return;
             if (currentElement is null || element.StartNavigationFromHere)
             {
                 SetCurrentElement(element);
@@ -87,23 +73,31 @@ namespace DosinisSDK.UI.Navigation
 
         public void RegisterCancellationElement(IUINavigationCancel element)
         {
+            if (!IsEnabled) return;
+            
             currentCancellationElement = element;
             cancellationElements.Add(element);
         }
 
         public void UnregisterCancellationElement(IUINavigationCancel element)
         {
+            if (!IsEnabled) return;
+            
             cancellationElements.Remove(element);
             LookForNewCancellationElement();
         }
 
         private void LookForNewCancellationElement()
         {
+            if (!IsEnabled) return;
+            
             currentCancellationElement = cancellationElements.Count > 0 ? cancellationElements[0] : null;
         }
 
         public void RebuildNavigation()
         {
+            if (!IsEnabled) return;
+            
             IUINavigationElement elementForStart = null;
             foreach (var element in navigationElements)
             {
@@ -119,8 +113,15 @@ namespace DosinisSDK.UI.Navigation
             SetCurrentElement(elementForStart);
         }
 
+        public IEnumerable<IUINavigationElement> GetRegisteredElements()
+        {
+            return navigationElements;
+        }
+
         public void UnregisterElement(IUINavigationElement element)
         {
+            if (!IsEnabled) return;
+            
             if (navigationElements.Contains(element))
             {
                 navigationElements.Remove(element);
@@ -133,6 +134,8 @@ namespace DosinisSDK.UI.Navigation
 
         public void SetCurrentElement(IUINavigationElement element)
         {
+            if (!IsEnabled) return;
+            
             currentElement?.Deselect();
             currentElement = element;
             currentElement?.Select();
@@ -141,6 +144,8 @@ namespace DosinisSDK.UI.Navigation
 
         private void SyncWithEventSystem()
         {
+            if (!IsEnabled) return;
+            
             var selectedGameObject = EventSystem.current.currentSelectedGameObject;
 
             if (selectedGameObject is null || currentElement == null ||
@@ -154,6 +159,7 @@ namespace DosinisSDK.UI.Navigation
 
         private void OnMovePerformed(InputAction.CallbackContext obj)
         {
+            
             SyncWithEventSystem();
             if (currentElement is null) return;
             var moveInput = obj.ReadValue<Vector2>();
@@ -190,6 +196,24 @@ namespace DosinisSDK.UI.Navigation
 
         private void OnCancelCanceled(InputAction.CallbackContext obj)
         {
+        }
+        
+        private void OnTabMovePerformedNext(InputAction.CallbackContext obj)
+        {
+            OnTabMovePerformedCall(obj, true);
+        }
+
+        private void OnTabMovePerformedPrevious(InputAction.CallbackContext obj)
+        {
+            OnTabMovePerformedCall(obj, false);
+        }
+
+        private void OnTabMovePerformedCall(InputAction.CallbackContext obj, bool increase)
+        {
+            if (obj.interaction is PressInteraction)
+            {
+                OnTabMovePerformed?.Invoke(increase);
+            }
         }
     }
 }
