@@ -517,9 +517,9 @@ namespace DosinisSDK.Core
             StartCoroutine(SkipFrameNative(continueScenesInit)); // Tiny delay for scene to be completely loaded (next frame)
 #else
             await Task.Delay(1);
-            _ = continueScenesInit();
+            continueScenesInit();
 #endif
-            async Task continueScenesInit()
+            async void continueScenesInit()
             {
                 await SetupScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             
