@@ -213,6 +213,9 @@ namespace DosinisSDK.Core
         public void DeleteSaveSlot(string saveSlot)
         {
             var cacheCopy = new List<object>(dataCache.Values);
+
+            var previousSlot = loadedSaveSlot;
+            loadedSaveSlot = saveSlot;
             
             foreach (IData c in cacheCopy)
             {
@@ -221,6 +224,8 @@ namespace DosinisSDK.Core
                     DeleteData(c);
                 }
             }
+
+            loadedSaveSlot = previousSlot;
         }
 
         public void SaveData<T>(T data) where T : class, IData
