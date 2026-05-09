@@ -8,9 +8,11 @@ namespace DosinisSDK.Core
         T GetOrCreateData<T>() where T : class, IData, new();
         bool HasData<T>() where T : class, IData;
         void DeleteData<T>() where T : class, IData;
+        void DeleteData(IData data);
         void DeleteAllData();
         bool DataWipeDetected { get; }
         void LoadSaveSlot(string saveSlot);
+        void DeleteSaveSlot(string saveSlot);
     }
 
 }

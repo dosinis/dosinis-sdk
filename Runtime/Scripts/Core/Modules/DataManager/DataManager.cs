@@ -48,8 +48,12 @@ namespace DosinisSDK.Core
                 
                     if (wipeId != config.WipeVersion)
                     {
+                        if (config)
+                        {
+                            PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+                        }
+                        
                         DeleteAllData();
-                    
                         DataWipeDetected = true;
                         Warn("Automatic data wipe detected, all data was deleted");
                     }
@@ -205,7 +209,20 @@ namespace DosinisSDK.Core
             
             App.Core.Restart();
         }
-        
+
+        public void DeleteSaveSlot(string saveSlot)
+        {
+            var cacheCopy = new List<object>(dataCache.Values);
+            
+            foreach (IData c in cacheCopy)
+            {
+                if (c is not IGlobalData)
+                {
+                    DeleteData(c);
+                }
+            }
+        }
+
         public void SaveData<T>(T data) where T : class, IData
         {
             SaveRawData(data, data.GetType());
@@ -238,6 +255,34 @@ namespace DosinisSDK.Core
             dataCache.Remove(key);
             
             var saveKey = BuildSaveKey<T>();
+            
+            bool save = false;
+            
+            if (PlayerPrefs.HasKey(saveKey))
+            {
+                PlayerPrefs.DeleteKey(saveKey);
+                save = true;
+            }
+
+            if (save)
+            {
+                PlayerPrefs.Save();
+            }
+            
+#if UNITY_EDITOR
+            if (File.Exists(GetEditorSavePath(saveKey)))
+            {
+                File.Delete(GetEditorSavePath(saveKey));
+            }
+#endif
+        }
+
+        public void DeleteData(IData data)
+        {
+            var key = data.GetType().Name;
+            dataCache.Remove(key);
+            
+            var saveKey = BuildSaveKey(data.GetType());
             
             bool save = false;
             
@@ -293,11 +338,6 @@ namespace DosinisSDK.Core
                 Directory.Delete(EDITOR_SAVE_PATH, true);
             }
 #endif
-            
-            if (config)
-            {
-                PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
-            }
             
             PlayerPrefs.Save();
         }
