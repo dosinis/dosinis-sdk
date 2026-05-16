@@ -41,6 +41,9 @@ namespace DosinisSDK.Core
                     DeleteAllData();
                     DataWipeDetected = true;
                     Warn("Data wipe forced by config, all data was deleted");
+#if UNITY_EDITOR
+                    Directory.CreateDirectory(EDITOR_SAVE_PATH);
+#endif
                 }
                 else
                 {
@@ -48,14 +51,18 @@ namespace DosinisSDK.Core
                 
                     if (wipeId != config.WipeVersion)
                     {
-                        if (config)
-                        {
-                            PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
-                        }
-                        
                         DeleteAllData();
                         DataWipeDetected = true;
                         Warn("Automatic data wipe detected, all data was deleted");
+                        
+                        if (config)
+                        {
+                            PlayerPrefs.SetInt(DATA_WIPE_SAVE_KEY, config.WipeVersion);
+                            PlayerPrefs.Save();
+                        }
+#if UNITY_EDITOR
+                        Directory.CreateDirectory(EDITOR_SAVE_PATH);
+#endif
                     }
                 }
             }
