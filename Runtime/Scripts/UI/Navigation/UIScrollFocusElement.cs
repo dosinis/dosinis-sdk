@@ -1,10 +1,11 @@
+using System;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
 {
-    public class UIScrollFocusElement : ManagedBehaviour, IUIScrollFocusElement
+    public class UIScrollFocusElement : ManagedBehaviour, IUIScrollFocusElement, IDisposable
     {
         private IUINavigationElement navigationElement;
         private IUINavigationController navigationController;
@@ -52,6 +53,18 @@ namespace DosinisSDK.UI.Navigation
         {
             if (navigationController == null) return;
             navigationController.OnCurrentElementChanged -= OnCurrentElementChanged;
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (navigationController == null) return;
+            navigationController.OnCurrentElementChanged -= OnCurrentElementChanged;
+
         }
     }
 }

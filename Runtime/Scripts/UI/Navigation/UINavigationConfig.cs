@@ -13,5 +13,6 @@ namespace DosinisSDK.UI.Navigation
         [field: SerializeField] public InputActionReference OnMoveAction { get; private set; }
         [field: SerializeField] public InputActionReference OnTabMovePrevAction { get; private set; }
         [field: SerializeField] public InputActionReference OnTabMoveNextAction { get; private set; }
+        [field: SerializeField] public float MinimalThreshold { get; private set; } = 0.1f;
     }
 }

@@ -22,13 +22,10 @@ namespace DosinisSDK.UI.Navigation
         public Observable<bool> IsSelected { get; } = new(false);
         public bool IsEnabled => Target.activeInHierarchy;
 
-        public virtual bool IsActiveNavigation
-        {
-            get => Target.TryGetComponent(out IInteractableElement interactableElement)
+        public virtual bool IsActiveNavigation =>
+            Target.TryGetComponent(out IInteractableElement interactableElement)
                 ? interactableElement.Interactable && isActiveNavigation
                 : isActiveNavigation;
-            protected set => isActiveNavigation = value;
-        }
 
         public bool StartNavigationFromHere => startNavigationFromHere;
         public virtual GameObject Target => target;
@@ -64,7 +61,7 @@ namespace DosinisSDK.UI.Navigation
 
         protected override void OnDispose()
         {
-            navigationController.UnregisterElement(this);
+            navigationController?.UnregisterElement(this);
             IsSelected.Value = false;
         }
 
@@ -191,7 +188,7 @@ namespace DosinisSDK.UI.Navigation
 
         public void SetActiveNavigation(bool value)
         {
-            IsActiveNavigation = value;
+            isActiveNavigation = value;
         }
 
         public void Select()

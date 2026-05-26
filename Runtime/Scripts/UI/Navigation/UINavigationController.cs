@@ -8,7 +8,7 @@ using UnityEngine.InputSystem.Interactions;
 
 namespace DosinisSDK.UI.Navigation
 {
-    public class UINavigationController : Module, IUINavigationController
+    public class UINavigationController : Module, IProcessable, IUINavigationController
     {
         private UINavigationConfig config;
         private IUINavigationElement currentElement;
@@ -18,11 +18,14 @@ namespace DosinisSDK.UI.Navigation
         public event Action<IUINavigationElement> OnCurrentElementChanged;
         public event Action<bool> OnTabMovePerformed;
         public bool IsEnabled { get; private set; }
+        private float thresholdTimer;
+        private Vector2 currentDirectionInput;
 
 
         protected override void OnInit(IApp app)
         {
             config = GetConfigAs<UINavigationConfig>();
+            thresholdTimer = config.MinimalThreshold;
             IsEnabled = config.IsEnabled;
             if (IsEnabled)
             {
@@ -33,6 +36,7 @@ namespace DosinisSDK.UI.Navigation
                 config.OnTabMoveNextAction.action.Enable();
 
                 config.OnMoveAction.action.performed += OnMovePerformed;
+                config.OnMoveAction.action.canceled += OnMoveCanceled;
                 config.OnSubmitAction.action.performed += OnSubmitPerformed;
                 config.OnSubmitAction.action.canceled += OnSubmitCanceled;
                 config.OnCancelAction.action.performed += OnCancelPerformed;
@@ -41,10 +45,12 @@ namespace DosinisSDK.UI.Navigation
                 config.OnTabMoveNextAction.action.performed += OnTabMovePerformedNext;
             }
         }
-        
+
+
         protected override void OnDispose()
         {
             config.OnMoveAction.action.performed -= OnMovePerformed;
+            config.OnMoveAction.action.canceled += OnMoveCanceled;
             config.OnSubmitAction.action.performed -= OnSubmitPerformed;
             config.OnCancelAction.action.performed -= OnCancelPerformed;
             config.OnCancelAction.action.canceled -= OnCancelCanceled;
@@ -74,7 +80,7 @@ namespace DosinisSDK.UI.Navigation
         public void RegisterCancellationElement(IUINavigationCancel element)
         {
             if (!IsEnabled) return;
-            
+
             currentCancellationElement = element;
             cancellationElements.Add(element);
         }
@@ -82,7 +88,7 @@ namespace DosinisSDK.UI.Navigation
         public void UnregisterCancellationElement(IUINavigationCancel element)
         {
             if (!IsEnabled) return;
-            
+
             cancellationElements.Remove(element);
             LookForNewCancellationElement();
         }
@@ -90,14 +96,14 @@ namespace DosinisSDK.UI.Navigation
         private void LookForNewCancellationElement()
         {
             if (!IsEnabled) return;
-            
+
             currentCancellationElement = cancellationElements.Count > 0 ? cancellationElements[0] : null;
         }
 
         public void RebuildNavigation()
         {
             if (!IsEnabled) return;
-            
+
             IUINavigationElement elementForStart = null;
             foreach (var element in navigationElements)
             {
@@ -121,7 +127,7 @@ namespace DosinisSDK.UI.Navigation
         public void UnregisterElement(IUINavigationElement element)
         {
             if (!IsEnabled) return;
-            
+
             if (navigationElements.Contains(element))
             {
                 navigationElements.Remove(element);
@@ -135,7 +141,7 @@ namespace DosinisSDK.UI.Navigation
         public void SetCurrentElement(IUINavigationElement element)
         {
             if (!IsEnabled) return;
-            
+
             currentElement?.Deselect();
             currentElement = element;
             currentElement?.Select();
@@ -145,7 +151,7 @@ namespace DosinisSDK.UI.Navigation
         private void SyncWithEventSystem()
         {
             if (!IsEnabled) return;
-            
+
             var selectedGameObject = EventSystem.current.currentSelectedGameObject;
 
             if (selectedGameObject is null || currentElement == null ||
@@ -159,12 +165,14 @@ namespace DosinisSDK.UI.Navigation
 
         private void OnMovePerformed(InputAction.CallbackContext obj)
         {
-            
             SyncWithEventSystem();
-            if (currentElement is null) return;
-            var moveInput = obj.ReadValue<Vector2>();
-            moveInput.Normalize();
-            currentElement.Move(moveInput);
+            currentDirectionInput = obj.ReadValue<Vector2>();
+            currentDirectionInput.Normalize();
+        }
+
+        private void OnMoveCanceled(InputAction.CallbackContext obj)
+        {
+            currentDirectionInput = Vector2.zero;
         }
 
         private void OnSubmitCanceled(InputAction.CallbackContext obj)
@@ -197,7 +205,7 @@ namespace DosinisSDK.UI.Navigation
         private void OnCancelCanceled(InputAction.CallbackContext obj)
         {
         }
-        
+
         private void OnTabMovePerformedNext(InputAction.CallbackContext obj)
         {
             OnTabMovePerformedCall(obj, true);
@@ -213,6 +221,22 @@ namespace DosinisSDK.UI.Navigation
             if (obj.interaction is PressInteraction)
             {
                 OnTabMovePerformed?.Invoke(increase);
+            }
+        }
+
+        public void Process(in float delta)
+        {
+            if (!IsEnabled) return;
+            if (thresholdTimer >= config.MinimalThreshold)
+            {
+                if (currentDirectionInput == Vector2.zero) return;
+                if (currentElement is null) return;
+                currentElement.Move(currentDirectionInput);
+                thresholdTimer = 0;
+            }
+            else
+            {
+                thresholdTimer += delta;
             }
         }
     }

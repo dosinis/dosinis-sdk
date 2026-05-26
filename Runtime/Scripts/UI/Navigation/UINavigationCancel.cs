@@ -29,7 +29,7 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnDispose()
         {
             base.OnDispose();
-            navigationController.UnregisterCancellationElement(this);
+            navigationController?.UnregisterCancellationElement(this);
         }
 
         protected override void OnCancel()

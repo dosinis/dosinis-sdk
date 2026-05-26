@@ -7,6 +7,7 @@ namespace DosinisSDK.UI.Navigation
     {
         protected override void OnMove(Vector2 axis)
         {
+            int newIndex = currentIndex;
             if (axis.y > 0.5f && moveUp is { IsActiveNavigation: true })
             {
                 Deselect();
@@ -19,37 +20,41 @@ namespace DosinisSDK.UI.Navigation
             }
             else if (axis.x < -0.5f)
             {
-                currentIndex--;
-                if (currentIndex < 0)
+                newIndex--;
+                if (newIndex < 0)
                 {
-                    currentIndex = 0;
+                    newIndex = 0;
                     if (moveLeft is { IsActiveNavigation: true })
                     {
                         Deselect();
+                        currentIndex = newIndex;
                         navigationController.SetCurrentElement(moveLeft);
                     }
                 }
                 else
                 {
                     Deselect();
+                    currentIndex = newIndex;
                     navigationController.SetCurrentElement(this);
                 }
             }
             else if (axis.x > 0.5f)
             {
-                currentIndex++;
-                if (currentIndex >= ActiveChildrenCount)
+                newIndex++;
+                if (newIndex >= ActiveChildrenCount)
                 {
-                    currentIndex = ActiveChildrenCount - 1;
+                    newIndex = ActiveChildrenCount - 1;
                     if (moveRight is { IsActiveNavigation: true })
                     {
                         Deselect();
+                        currentIndex = newIndex;
                         navigationController.SetCurrentElement(moveRight);
                     }
                 }
                 else
                 {
                     Deselect();
+                    currentIndex = newIndex;
                     navigationController.SetCurrentElement(this);
                 }
             }

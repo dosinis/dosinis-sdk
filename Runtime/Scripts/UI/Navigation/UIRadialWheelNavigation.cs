@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DosinisSDK.Core;
 using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
@@ -21,6 +22,7 @@ namespace DosinisSDK.UI.Navigation
                 currentIndex = nextIndex;
                 navigationController.SetCurrentElement(this);
             }
+         
         }
 
         private int GetIndex(Vector2 axis)

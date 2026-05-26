@@ -1,8 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace DosinisSDK.UI.Navigation
@@ -27,6 +29,7 @@ namespace DosinisSDK.UI.Navigation
             var elements = GetComponentsInChildren<UINavigationBase>(true);
             if (elements == null) return;
             navigationElements = elements.ToList();
+            EditorUtility.SetDirty(this);
         }
 
         [ContextMenu("Disable Navigation")]
@@ -36,6 +39,7 @@ namespace DosinisSDK.UI.Navigation
             foreach (var element in navigationElements)
             {
                 element.SetActiveNavigation(false);
+                EditorUtility.SetDirty(element);
             }
         }
 #endif

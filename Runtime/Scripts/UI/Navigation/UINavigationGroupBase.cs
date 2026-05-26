@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using DosinisSDK.Core;
@@ -14,11 +13,7 @@ namespace DosinisSDK.UI.Navigation
 
         protected int ActiveChildrenCount => children.Count(CheckForChild);
 
-        public override bool IsActiveNavigation
-        {
-            get => isActiveNavigation && ActiveChildrenCount > 0;
-            protected set => isActiveNavigation = value;
-        }
+        public override bool IsActiveNavigation => isActiveNavigation && ActiveChildrenCount > 0;
 
         public override GameObject Target
         {
