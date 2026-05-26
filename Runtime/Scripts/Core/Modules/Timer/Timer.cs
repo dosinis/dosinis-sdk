@@ -53,14 +53,20 @@ namespace DosinisSDK.Core
             return action;
         }
 
-        public void SkipFrame(Action done)
+        public ITimedAction SkipFrame(Action done)
         {
-            coroutineManager.Begin(SkipFrameCoroutine(done));
+            var enumerator = SkipFrameCoroutine(done);
+            var action = new TimedAction(enumerator, coroutineManager);
+            action.Start();
+            return action;
         }
 
-        public void SkipFixedUpdate(Action done)
+        public ITimedAction SkipFixedUpdate(Action done)
         {
-            coroutineManager.Begin(SkipFixedUpdateCoroutine(done));
+           var enumerator=  SkipFixedUpdateCoroutine(done);
+           var action = new TimedAction(enumerator, coroutineManager);
+           action.Start();
+           return action;
         }
         
         public ITimedAction WaitUntil(Func<bool> condition, Action onComplete)
