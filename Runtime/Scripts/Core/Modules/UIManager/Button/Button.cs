@@ -114,6 +114,12 @@ namespace DosinisSDK.Core
                 Debug.LogError($"Image is not found on {gameObject.name} button", gameObject);
                 return;
             }
+        }
+
+        private async void Start()
+        {
+            await App.Ready();
+            OnInit(App.Core);
             
             buttonAnimation = GetComponent<IButtonAnimation>();
 
@@ -122,12 +128,6 @@ namespace DosinisSDK.Core
                 buttonAnimation.Init();
                 buttonAnimation.OnInteractableStateChanged(Interactable);
             }
-        }
-
-        private async void Start()
-        {
-            await App.Ready();
-            OnInit(App.Core);
         }
 
         protected virtual void OnEnable()
