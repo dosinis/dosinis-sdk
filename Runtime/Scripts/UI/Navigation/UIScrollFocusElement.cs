@@ -11,6 +11,20 @@ namespace DosinisSDK.UI.Navigation
         private IUINavigationController navigationController;
         private IUIScrollFocusController scrollFocusController;
 
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (rectTransform != null) return rectTransform;
+
+                rectTransform = GetComponent<RectTransform>();
+
+                return rectTransform;
+            }
+        }
+
+        private RectTransform rectTransform;
+
         protected override void OnInit(IApp app)
         {
             navigationElement = GetComponent<IUINavigationElement>();
@@ -29,10 +43,7 @@ namespace DosinisSDK.UI.Navigation
 
         public void SetSelected()
         {
-            if (navigationElement.Target.transform is RectTransform rectTransform)
-            {
-                scrollFocusController.CheckAndScroll(rectTransform);
-            }
+            scrollFocusController.CheckAndScroll(this);
         }
 
         private void OnCurrentElementChanged(IUINavigationElement element)
@@ -64,7 +75,6 @@ namespace DosinisSDK.UI.Navigation
         {
             if (navigationController == null) return;
             navigationController.OnCurrentElementChanged -= OnCurrentElementChanged;
-
         }
     }
 }

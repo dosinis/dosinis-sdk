@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -11,8 +13,10 @@ namespace DosinisSDK.UI.Navigation
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private bool horizontalScroll = true;
         [SerializeField] private float scrollDuration = 0.3f;
-        [SerializeField] private HorizontalOrVerticalLayoutGroup layoutGroup;
+        [SerializeField] private UINavigationGroupBase navigationGroup;
+        private List<IUIScrollFocusElement> scrollFocusElements = new();
         private CancellationTokenSource cts = new();
+        private Coroutine scrollRoutine;
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -20,6 +24,7 @@ namespace DosinisSDK.UI.Navigation
             if (!scrollRect) return;
             var initPivot = scrollRect.viewport.pivot;
             scrollRect.viewport.pivot = horizontalScroll ? new Vector2(0, initPivot.y) : new Vector2(initPivot.x, 1);
+            navigationGroup = GetComponent<UINavigationGroupBase>();
         }
 #endif
 
@@ -27,8 +32,14 @@ namespace DosinisSDK.UI.Navigation
         {
             foreach (var element in scrollRect.content.GetComponentsInChildren<IUIScrollFocusElement>())
             {
-                element.InitializeController(this);
+                AddUIFocusElement(element);
             }
+        }
+
+        public void Cleanup()
+        {
+            scrollFocusElements.Clear();
+            navigationGroup.Cleanup();
         }
 
         private void OnDisable()
@@ -38,65 +49,104 @@ namespace DosinisSDK.UI.Navigation
             cts = null;
         }
 
-        public void CheckAndScroll(RectTransform target)
+        public void CheckAndScroll(IUIScrollFocusElement element)
         {
             cts?.Cancel();
             cts = new CancellationTokenSource();
-            ScrollToTarget(target, cts.Token).Forget();
+            var index = scrollFocusElements.FindIndex(scrollElement => scrollElement == element);
+            index = Mathf.Clamp(index, 0, scrollFocusElements.Count - 1);
+            ScrollToIndex(index);
         }
 
-        private async UniTask ScrollToTarget(RectTransform target, CancellationToken token)
+        public void AddUIFocusElement(IUIScrollFocusElement element)
         {
-            var content = scrollRect.content;
-            var viewport = scrollRect.viewport;
+            element.InitializeController(this);
+            scrollFocusElements.Add(element);
+            navigationGroup.AddChild(element.RectTransform.gameObject);
+        }
 
-            if (CheckInBounds(viewport, target)) return;
-            var targetBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, target);
-            Debug.Log($"Top {viewport.rect.yMin}, Bottom {viewport.rect.yMax}, Center {viewport.rect.center}");
-            // var contentBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, content);
-            float offset = 0f;
+        public void RemoveUIFocusElement(IUIScrollFocusElement element)
+        {
+            scrollFocusElements.Remove(element);
+            navigationGroup.RemoveChild(element.RectTransform.gameObject);
+        }
+
+        public void ScrollToIndex(int index)
+        {
+            Canvas.ForceUpdateCanvases();
+
+            index = Mathf.Clamp(index, 0, scrollFocusElements.Count - 1);
+
+            RectTransform target =
+                scrollFocusElements[index].RectTransform;
+
+            float contentWidth = scrollRect.content.rect.width;
+            float viewportWidth = scrollRect.viewport.rect.width;
+
+            // Target center inside content
+            float targetCenter =
+                Mathf.Abs(target.anchoredPosition.x);
+
+            // Move so target center becomes viewport center
+            float targetPosition =
+                targetCenter - (viewportWidth * 0.5f);
+
+            // Convert to normalized
+            float normalized =
+                Mathf.Clamp01(
+                    targetPosition /
+                    (contentWidth - viewportWidth)
+                );
+
+            ScrollTo(normalized);
+        }
+
+        private void ScrollTo(float target)
+        {
+            if (scrollRoutine != null)
+                StopCoroutine(scrollRoutine);
+
+            scrollRoutine =
+                StartCoroutine(SmoothScroll(target));
+        }
+
+        private IEnumerator SmoothScroll(float target)
+        {
+            float start = horizontalScroll
+                ? scrollRect.horizontalNormalizedPosition
+                : scrollRect.verticalNormalizedPosition;
+
+            float time = 0f;
+
+            while (time < scrollDuration)
+            {
+                time += Time.deltaTime;
+
+                float t = time / scrollDuration;
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                if (horizontalScroll)
+                {
+                    scrollRect.horizontalNormalizedPosition =
+                        Mathf.Lerp(start, target, t);
+                }
+                else
+                {
+                    scrollRect.verticalNormalizedPosition =
+                        Mathf.Lerp(start, target, t);
+                }
+
+                yield return null;
+            }
 
             if (horizontalScroll)
             {
-                offset = targetBounds.min.x;
+                scrollRect.horizontalNormalizedPosition = target;
             }
             else
             {
-                offset = targetBounds.max.y;
+                scrollRect.verticalNormalizedPosition = target;
             }
-
-            var moveFrom = content.anchoredPosition;
-            var moveTo = moveFrom - (horizontalScroll ? new Vector2(offset, 0) : new Vector2(0, offset));
-
-            float t = 0;
-            while (t < 1)
-            {
-                t += Mathf.Clamp(Time.deltaTime / scrollDuration, 0, 1);
-                content.anchoredPosition = Vector2.Lerp(moveFrom, moveTo, t);
-                await UniTask.Yield(token);
-            }
-        }
-
-        private bool CheckInBounds(RectTransform bounds, RectTransform target, float spacing = 0)
-        {
-            var targetBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(bounds, target);
-
-            if (horizontalScroll)
-            {
-                var leftBounds = targetBounds.min.x - bounds.rect.xMin - spacing;
-                if (leftBounds < 0) return false;
-                var rightBounds = bounds.rect.xMax - targetBounds.max.x - spacing;
-                if (rightBounds < 0) return false;
-            }
-            else
-            {
-                var topBounds = targetBounds.min.y - bounds.rect.yMin - spacing;
-                if (topBounds < 0) return false;
-                var rightBounds = bounds.rect.yMax - targetBounds.max.y - spacing;
-                if (rightBounds < 0) return false;
-            }
-
-            return true;
         }
     }
 }

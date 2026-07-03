@@ -234,7 +234,7 @@
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -256,7 +256,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "Press,Hold",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -267,7 +267,7 @@
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "Press",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "TabPrevious",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -278,7 +278,7 @@
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "Press",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Gamepad",
                     "action": "TabNext",
                     "isComposite": false,
                     "isPartOfComposite": false

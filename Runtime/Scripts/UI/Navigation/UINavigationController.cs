@@ -141,7 +141,6 @@ namespace DosinisSDK.UI.Navigation
         public void SetCurrentElement(IUINavigationElement element)
         {
             if (!IsEnabled) return;
-
             currentElement?.Deselect();
             currentElement = element;
             currentElement?.Select();

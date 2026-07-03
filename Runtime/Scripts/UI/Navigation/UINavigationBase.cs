@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
@@ -18,6 +20,7 @@ namespace DosinisSDK.UI.Navigation
         [SerializeField] protected bool isActiveNavigation = true;
 
         protected IUINavigationController navigationController;
+        protected CancellationTokenSource cts = new();
 
         public Observable<bool> IsSelected { get; } = new(false);
         public bool IsEnabled => Target.activeInHierarchy;
@@ -109,19 +112,19 @@ namespace DosinisSDK.UI.Navigation
 
         protected virtual void OnMove(Vector2 axis)
         {
-            if (axis.y > 0.5f && moveUp is { IsActiveNavigation: true })
+            if (axis.y > 0.5f && moveUp is { IsActiveNavigation: true, isActiveAndEnabled: true })
             {
                 navigationController.SetCurrentElement(moveUp);
             }
-            else if (axis.y < -0.5f && moveDown is { IsActiveNavigation: true })
+            else if (axis.y < -0.5f && moveDown is { IsActiveNavigation: true, isActiveAndEnabled: true })
             {
                 navigationController.SetCurrentElement(moveDown);
             }
-            else if (axis.x < -0.5f && moveLeft is { IsActiveNavigation: true })
+            else if (axis.x < -0.5f && moveLeft is { IsActiveNavigation: true, isActiveAndEnabled: true })
             {
                 navigationController.SetCurrentElement(moveLeft);
             }
-            else if (axis.x > 0.5f && moveRight is { IsActiveNavigation: true })
+            else if (axis.x > 0.5f && moveRight is { IsActiveNavigation: true, isActiveAndEnabled: true })
             {
                 navigationController.SetCurrentElement(moveRight);
             }
@@ -131,6 +134,16 @@ namespace DosinisSDK.UI.Navigation
         {
         }
 
+        protected virtual async UniTask SimulateSubmit()
+        {
+            OnSelect();
+            await UniTask.NextFrame(cts.Token);
+            OnHold();
+            await UniTask.NextFrame(cts.Token);
+            OnUnhold();
+            await UniTask.NextFrame(cts.Token);
+            OnSubmit();
+        }
 
         public bool TryGetNavigationElement(NavigationDirection direction, out IUINavigationElement element)
         {

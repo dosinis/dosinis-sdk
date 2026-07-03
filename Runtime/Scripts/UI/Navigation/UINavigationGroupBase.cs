@@ -9,9 +9,10 @@ namespace DosinisSDK.UI.Navigation
     {
         [SerializeField] protected bool autoPopulateChildren = true;
         [SerializeField] protected List<GameObject> children = new();
+        [SerializeField] protected bool onlyInteractableChildren = true;
         protected int currentIndex = 0;
 
-        protected int ActiveChildrenCount => children.Count(CheckForChild);
+        protected int ActiveChildrenCount => onlyInteractableChildren ? children.Count(CheckForChild) : children.Count;
 
         public override bool IsActiveNavigation => isActiveNavigation && ActiveChildrenCount > 0;
 
@@ -19,16 +20,16 @@ namespace DosinisSDK.UI.Navigation
         {
             get
             {
-                var activeChildren = children.Where(CheckForChild).ToList();
+                var activeChildren = onlyInteractableChildren ? children.Where(CheckForChild).ToList() : children;
                 if (activeChildren.Count == 0) return target;
-
+                currentIndex = Mathf.Clamp(currentIndex, 0, activeChildren.Count - 1);
                 return activeChildren[currentIndex];
             }
         }
 
-        private bool CheckForChild(GameObject gO)
+        protected bool CheckForChild(GameObject gO)
         {
-            if (gO.activeInHierarchy)
+            if (gO && gO.activeInHierarchy)
             {
                 return !gO.TryGetComponent<IInteractableElement>(out var interactable) || interactable.Interactable;
             }
@@ -40,6 +41,23 @@ namespace DosinisSDK.UI.Navigation
         {
             children.Clear();
             children.AddRange(childrenElements);
+            navigationController?.SetCurrentElement(this);
+        }
+
+        public void AddChild(GameObject element)
+        {
+            children.Add(element);
+            navigationController?.SetCurrentElement(this);
+        }
+
+        public void Cleanup()
+        {
+            children.Clear();
+        }
+
+        public void RemoveChild(GameObject element)
+        {
+            children.Remove(element);
             navigationController?.SetCurrentElement(this);
         }
 #if UNITY_EDITOR

@@ -7,7 +7,7 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnMove(Vector2 axis)
         {
             int newIndex = currentIndex;
-            if (axis.y > 0.5f && moveUp is { IsActiveNavigation: true })
+            if (axis.y > 0.5f )
             {
                 newIndex--;
                 if (newIndex < 0)
@@ -27,7 +27,7 @@ namespace DosinisSDK.UI.Navigation
                     navigationController.SetCurrentElement(this);
                 }
             }
-            else if (axis.y < -0.5f && moveDown is { IsActiveNavigation: true })
+            else if (axis.y < -0.5f )
             {
                 newIndex++;
                 if (newIndex >= ActiveChildrenCount)

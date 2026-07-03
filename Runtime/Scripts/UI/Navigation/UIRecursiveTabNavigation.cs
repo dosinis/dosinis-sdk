@@ -52,7 +52,7 @@ namespace DosinisSDK.UI.Navigation
         {
             if (elementFrom.IsActiveNavigation && elementFrom.TryGetNavigationElement(fromDirection, out var from))
             {
-                if (Equals(from))
+                if (ReferenceEquals(from, this))
                 {
                     result = elementFrom;
                     return true;
