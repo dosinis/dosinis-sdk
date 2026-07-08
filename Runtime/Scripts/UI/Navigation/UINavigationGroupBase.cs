@@ -74,5 +74,15 @@ namespace DosinisSDK.UI.Navigation
             }
         }
 #endif
+        public void DeselectAll()
+        {
+            var index = currentIndex;
+            for (int i = 0; i < children.Count; i++)
+            {
+                currentIndex = i;
+                Deselect();
+            }
+            currentIndex = index;
+        }
     }
 }

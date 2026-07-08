@@ -21,6 +21,7 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnDisable()
         {
             base.OnDisable();
+            DeselectAll();
             currentIndex = 0;
         }
 
@@ -36,7 +37,7 @@ namespace DosinisSDK.UI.Navigation
         {
             if (!IsEnabled || !IsActiveNavigation) return;
             if (requireTabSelection && !IsSelected.Value) return;
-            base.OnDeselect();
+            Deselect();
             int toAdd = obj ? 1 : -1;
             currentIndex = Math.Clamp(currentIndex + toAdd, 0, ActiveChildrenCount - 1);
             navigationController.SetCurrentElement(this);

@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Option1",
+                    "type": "Button",
+                    "id": "c57cffca-4887-4771-82b6-4363494f208c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -274,12 +283,56 @@
                 },
                 {
                     "name": "",
+                    "id": "68fb2504-9efa-4db5-aa6d-1e40803320ca",
+                    "path": "<Keyboard>/pageDown",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TabPrevious",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "c3cbc544-79c7-4f5e-a4da-1855ff152064",
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "Press",
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "TabNext",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2d0faa33-b940-4dd6-a281-02991777bdc4",
+                    "path": "<Keyboard>/pageUp",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TabNext",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "85fbd7ac-a146-4e9a-97eb-ca1893cf93bb",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Option1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2715752a-e9a6-4451-b0c3-8c0979a9a4bf",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Option1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

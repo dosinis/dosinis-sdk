@@ -6,8 +6,7 @@ namespace DosinisSDK.UI.Navigation
 {
     public interface IUINavigationElement : IDisposable, IUINavigationCancel
     {
-        public bool IsEnabled { get; }
-        public bool IsActiveNavigation { get; }
+      
         public bool StartNavigationFromHere { get; }
         public GameObject Target { get; }
         public Observable<bool> IsSelected { get; } 

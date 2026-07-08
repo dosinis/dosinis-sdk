@@ -1,16 +1,22 @@
 using System;
 using DosinisSDK.Core;
-using DosinisSDK.Utils;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace DosinisSDK.UI.Navigation
 {
-    public class UICancellationAction : ManagedBehaviour, IUINavigationCancel
+    public class UICancellationAction : UIAction, IUINavigationCancel
     {
-        [SerializeField] private UnityEvent onCancel;
+        [SerializeField] private bool isActiveNavigation = true;
+        [SerializeField] public UnityEvent onCancel;
         private IUINavigationController navigationController;
-        private bool IsEnabled => gameObject.activeInHierarchy;
+        public override bool IsEnabled => gameObject.activeInHierarchy;
+        public override bool IsActiveNavigation => isActiveNavigation;
+
+        public override void SetActiveNavigation(bool value)
+        {
+            isActiveNavigation = value;
+        }
 
         protected override void OnInit(IApp app)
         {
@@ -33,7 +39,10 @@ namespace DosinisSDK.UI.Navigation
 
         public void Cancel()
         {
-            onCancel.Invoke();
+            if (IsEnabled && IsActiveNavigation)
+            {
+                onCancel?.Invoke();
+            }
         }
     }
 }
