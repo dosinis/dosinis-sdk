@@ -18,6 +18,7 @@ namespace DosinisSDK.UI.Navigation
             var directions = new List<NavigationDirection>();
             foreach (var element in elements)
             {
+                if(!element.IsActiveNavigation) continue;
                 if (!directions.Contains(NavigationDirection.Right) &&
                     TryGetElement(NavigationDirection.Left, element, out var result))
                 {

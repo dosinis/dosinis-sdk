@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using Cysharp.Threading.Tasks;
 using DosinisSDK.Core;
 using UnityEngine;
@@ -37,9 +36,11 @@ namespace DosinisSDK.UI.Navigation
         {
             if (!IsEnabled || !IsActiveNavigation) return;
             if (requireTabSelection && !IsSelected.Value) return;
+            Unhold();
             Deselect();
             int toAdd = obj ? 1 : -1;
             currentIndex = Math.Clamp(currentIndex + toAdd, 0, ActiveChildrenCount - 1);
+            Hold();
             navigationController.SetCurrentElement(this);
             if (submitOnSelection)
             {

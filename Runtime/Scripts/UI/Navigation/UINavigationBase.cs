@@ -134,15 +134,12 @@ namespace DosinisSDK.UI.Navigation
         {
         }
 
-        protected virtual async UniTask SimulateSubmit()
+        protected virtual UniTask SimulateSubmit()
         {
-            OnSelect();
-            await UniTask.NextFrame(cts.Token);
             OnHold();
-            await UniTask.NextFrame(cts.Token);
             OnUnhold();
-            await UniTask.NextFrame(cts.Token);
             OnSubmit();
+            return UniTask.CompletedTask;
         }
 
         public bool TryGetNavigationElement(NavigationDirection direction, out IUINavigationElement element)
