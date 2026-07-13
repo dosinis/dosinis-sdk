@@ -68,7 +68,6 @@ namespace DosinisSDK.Core
         {
             if (Interactable == false)
                 return;
-            Debug.Log("Click performed");
             buttonAnimation?.ReleaseAnimation();
 
             ClickPerformed();

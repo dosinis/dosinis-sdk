@@ -1,5 +1,4 @@
 using System;
-using Cysharp.Threading.Tasks;
 using DosinisSDK.Core;
 using UnityEngine;
 
@@ -44,7 +43,7 @@ namespace DosinisSDK.UI.Navigation
             navigationController.SetCurrentElement(this);
             if (submitOnSelection)
             {
-                SimulateSubmit().Forget();
+                SimulateSubmit();
             }
         }
     }

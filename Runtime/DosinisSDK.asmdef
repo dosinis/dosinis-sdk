@@ -4,8 +4,7 @@
     "references": [
         "DosinisSDK.Core",
         "Unity.TextMeshPro",
-        "Unity.InputSystem",
-        "UniTask"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

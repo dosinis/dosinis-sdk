@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using DosinisSDK.Core;
 using UnityEngine.EventSystems;
 
@@ -37,7 +36,7 @@ namespace DosinisSDK.UI.Navigation
         {
             if(!IsActiveNavigation) return;
             EventSystem.current.SetSelectedGameObject(Target);
-            SimulateSubmit().Forget();
+            SimulateSubmit();
         }
     }
 }

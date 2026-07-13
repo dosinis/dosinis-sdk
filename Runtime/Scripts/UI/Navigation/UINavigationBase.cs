@@ -1,6 +1,4 @@
-using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using DosinisSDK.Core;
 using DosinisSDK.Utils;
 using UnityEngine;
@@ -134,12 +132,11 @@ namespace DosinisSDK.UI.Navigation
         {
         }
 
-        protected virtual UniTask SimulateSubmit()
+        protected virtual void SimulateSubmit()
         {
             OnHold();
             OnUnhold();
             OnSubmit();
-            return UniTask.CompletedTask;
         }
 
         public bool TryGetNavigationElement(NavigationDirection direction, out IUINavigationElement element)
