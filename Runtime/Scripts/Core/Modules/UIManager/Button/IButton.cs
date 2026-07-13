@@ -3,11 +3,9 @@ using UnityEngine.UI;
 
 namespace DosinisSDK.Core
 {
-    public interface IButton
+    public interface IButton : IInteractableElement
     {
-        Image Image { get; }
-        bool Interactable { get; set; }
-        
+        Graphic Image { get; }
         event Action OnClick;
         event Action OnPointerEntered;
         event Action OnPointerExited;
