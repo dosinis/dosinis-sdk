@@ -311,6 +311,9 @@ namespace DosinisSDK.Core
 #if UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
         private void ApplySafeArea()
         {
+            if (UnityEngine.XR.XRSettings.enabled)
+                return;
+
             var rootCanvas = GetComponentInParent<Canvas>();
 
             Rect safeArea = Screen.safeArea;
