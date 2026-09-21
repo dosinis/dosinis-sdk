@@ -8,7 +8,7 @@ namespace DosinisSDK.UI.Navigation
     {
         [SerializeField] private List<GameObject> children = new();
 
-        public override GameObject Target => children.FirstOrDefault(go => go.activeInHierarchy) ?? target;
+        public override GameObject Target => children.FirstOrDefault(go => go && go.activeInHierarchy) ?? target;
 
 #if UNITY_EDITOR
         protected override void OnValidate()
