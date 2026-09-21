@@ -128,6 +128,11 @@ namespace DosinisSDK.UI.Navigation
         {
             if (!IsEnabled) return;
 
+            if (ReferenceEquals(currentElement, element))
+            {
+                currentElement = null;
+            }
+
             if (navigationElements.Contains(element))
             {
                 navigationElements.Remove(element);
@@ -141,10 +146,31 @@ namespace DosinisSDK.UI.Navigation
         public void SetCurrentElement(IUINavigationElement element)
         {
             if (!IsEnabled) return;
-            currentElement?.Deselect();
-            currentElement = element;
-            currentElement?.Select();
+
+            if (IsAlive(currentElement))
+            {
+                currentElement.Deselect();
+            }
+
+            currentElement = IsAlive(element) ? element : null;
+
+            if (currentElement != null)
+            {
+                currentElement.Select();
+            }
+
             OnCurrentElementChanged?.Invoke(currentElement);
+        }
+
+        // Elements are held by interface, so a destroyed MonoBehaviour does not compare equal to null here
+        private static bool IsAlive(IUINavigationElement element)
+        {
+            if (element is UnityEngine.Object unityObject)
+            {
+                return unityObject;
+            }
+
+            return element != null;
         }
 
         private void SyncWithEventSystem()
