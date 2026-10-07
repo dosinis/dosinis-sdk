@@ -69,9 +69,14 @@ namespace DosinisSDK.UI.Navigation
         protected virtual void OnSelect()
         {
             if (!IsActiveNavigation) return;
-            EventSystem.current.SetSelectedGameObject(Target);
-            ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1 },
-                ExecuteEvents.pointerEnterHandler);
+
+            if (EventSystem.current)
+            {
+                EventSystem.current.SetSelectedGameObject(Target);
+                ExecuteEvents.Execute(Target, new PointerEventData(EventSystem.current) { pointerId = -1 },
+                    ExecuteEvents.pointerEnterHandler);
+            }
+
             IsSelected.Value = true;
         }
 

@@ -35,7 +35,12 @@ namespace DosinisSDK.UI.Navigation
         protected override void OnCancel()
         {
             if(!IsActiveNavigation) return;
-            EventSystem.current.SetSelectedGameObject(Target);
+
+            if (EventSystem.current)
+            {
+                EventSystem.current.SetSelectedGameObject(Target);
+            }
+
             SimulateSubmit();
         }
     }
