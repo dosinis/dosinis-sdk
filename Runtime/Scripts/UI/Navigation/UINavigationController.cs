@@ -175,7 +175,7 @@ namespace DosinisSDK.UI.Navigation
 
         private void SyncWithEventSystem()
         {
-            if (!IsEnabled) return;
+            if (!IsEnabled || !EventSystem.current) return;
 
             var selectedGameObject = EventSystem.current.currentSelectedGameObject;
 
